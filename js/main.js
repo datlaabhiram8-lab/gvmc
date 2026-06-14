@@ -22,9 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
     if (navbar) {
-      navbar.style.background = window.scrollY > 50
-        ? 'rgba(11,15,30,0.97)'
-        : 'rgba(11,15,30,0.85)';
+      navbar.classList.toggle('scrolled', window.scrollY > 50);
     }
   });
 
@@ -208,14 +206,26 @@ const COMPLAINT_STATUSES   = ['Pending', 'In Progress', 'Resolved'];
 const PROJECT_TYPES        = ['Road Construction', 'Drainage Repair', 'Park Development', 'Water Pipeline', 'Street Lighting'];
 
 function sampleComplaints(count = 5) {
-  return Array.from({ length: count }, (_, i) => ({
-    id: generateId(),
-    category: COMPLAINT_CATEGORIES[i % COMPLAINT_CATEGORIES.length],
-    ward: Math.floor(Math.random() * 72) + 1,
-    date: new Date(Date.now() - Math.random() * 30 * 86400000).toLocaleDateString('en-IN'),
-    status: COMPLAINT_STATUSES[Math.floor(Math.random() * 3)],
-    desc: 'Reported issue requires immediate attention.'
-  }));
+  return Array.from({ length: count }, (_, i) => {
+    const ward = Math.floor(Math.random() * 72) + 1;
+    let colony = 'Local area';
+    const wardKey = String(ward);
+    if (typeof WARD_AREAS !== 'undefined' && WARD_AREAS[wardKey]?.length) {
+      const areas = WARD_AREAS[wardKey];
+      colony = areas[Math.floor(Math.random() * areas.length)];
+    } else if (typeof WARD_DEMOGRAPHICS !== 'undefined' && WARD_DEMOGRAPHICS[ward]) {
+      colony = WARD_DEMOGRAPHICS[ward].name || colony;
+    }
+    return {
+      id: generateId(),
+      category: COMPLAINT_CATEGORIES[i % COMPLAINT_CATEGORIES.length],
+      ward,
+      colony,
+      date: new Date(Date.now() - Math.random() * 30 * 86400000).toLocaleDateString('en-IN'),
+      status: COMPLAINT_STATUSES[Math.floor(Math.random() * 3)],
+      desc: 'Reported issue requires immediate attention.'
+    };
+  });
 }
 
 function sampleProjects(count = 5) {
@@ -331,7 +341,10 @@ function handleModalLogin(e) {
   showToast('Login successful! Redirecting…', 'success');
 
   setTimeout(() => {
-    window.location.href = 'ward-dashboard.html';
+    const lastWard = sessionStorage.getItem('gvmc_last_ward');
+    window.location.href = lastWard
+      ? `ward-dashboard.html?ward=${lastWard}`
+      : 'ward-dashboard.html?ward=17';
   }, 900);
 }
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -202,6 +202,20 @@
       background: rgba(255,255,255,0.02);
       color: var(--text-primary);
     }
+    .ward-context-banner {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 0.85rem 1.1rem;
+      margin-bottom: 1.25rem;
+      background: rgba(26,86,219,0.1);
+      border: 1px solid rgba(26,86,219,0.25);
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .ward-context-banner.show { display: flex; flex-wrap: wrap; }
+    .ward-context-banner strong { color: var(--accent); }
     @media (max-width: 992px) {
       .complaints-grid { grid-template-columns: 1fr; }
     }
@@ -258,6 +272,7 @@
     <li><a href="complaints.html" class="active">Complaints</a></li>
     <li><a href="community.html">Community</a></li>
     
+    <li><a href="contact.html">Contact Us</a></li>
     <li class="emergency-link"><a href="emergency.html"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;font-size:.75rem"></i>Emergency</a></li>
   </ul>
 
@@ -274,6 +289,7 @@
   <a href="complaints.html" class="active">📢 Complaints</a>
   <a href="community.html">🤝 Community</a>
   
+  <a href="contact.html">📞 Contact Us</a>
   <a href="emergency.html">🚨 Emergency</a>
 </div>
 
@@ -288,6 +304,10 @@
     <!-- Lodge Form -->
     <div class="form-card">
       <h2><i class="fa-solid fa-file-pen" style="color:var(--accent);"></i> Lodge Complaint</h2>
+      <div class="ward-context-banner" id="wardContextBanner">
+        <i class="fa-solid fa-location-dot" style="color:var(--accent);"></i>
+        <span>Filing for <strong id="ctxWard">Ward —</strong> · <strong id="ctxArea">—</strong></span>
+      </div>
       <form id="complaintForm" onsubmit="submitComplaint(event)">
         <div class="form-group">
           <label class="form-label" for="compWard">Select Ward</label>
@@ -341,6 +361,7 @@
               <tr>
                 <th>Complaint ID</th>
                 <th>Ward</th>
+                <th>Colony / Area</th>
                 <th>Category</th>
                 <th>Status</th>
                 <th>Submitted On</th>
@@ -411,7 +432,7 @@
     }
   }
 
-  // Load Wards options
+  // Load Wards options & pre-fill from ward search
   document.addEventListener('DOMContentLoaded', () => {
     initComplaintsData();
     renderRecentComplaints();
@@ -424,7 +445,59 @@
         select.add(option);
       });
     }
+
+    applySearchedWardContext();
+    document.getElementById('compWard').addEventListener('change', updateWardContextBanner);
   });
+
+  function getColonyLabel(c) {
+    if (c.colony) return c.colony;
+    const wardKey = String(c.ward);
+    if (typeof WARD_AREAS !== 'undefined' && WARD_AREAS[wardKey]?.length) {
+      return WARD_AREAS[wardKey][0];
+    }
+    if (typeof WARD_DEMOGRAPHICS !== 'undefined' && WARD_DEMOGRAPHICS[c.ward]) {
+      return WARD_DEMOGRAPHICS[c.ward].name || '—';
+    }
+    return '—';
+  }
+
+  function applySearchedWardContext() {
+    const lastWard = sessionStorage.getItem('gvmc_last_ward');
+    const lastArea = sessionStorage.getItem('gvmc_last_area');
+    const wardSelect = document.getElementById('compWard');
+    const colonyInput = document.getElementById('compColony');
+
+    if (lastWard && wardSelect.querySelector(`option[value="${lastWard}"]`)) {
+      wardSelect.value = lastWard;
+    }
+    if (lastArea) {
+      colonyInput.value = lastArea;
+    }
+    updateWardContextBanner();
+  }
+
+  function updateWardContextBanner() {
+    const banner = document.getElementById('wardContextBanner');
+    const ward = document.getElementById('compWard').value;
+    const colony = document.getElementById('compColony').value.trim();
+    const ctxWard = document.getElementById('ctxWard');
+    const ctxArea = document.getElementById('ctxArea');
+
+    if (!ward && !colony) {
+      banner.classList.remove('show');
+      return;
+    }
+
+    const wardName = (typeof WARD_DEMOGRAPHICS !== 'undefined' && WARD_DEMOGRAPHICS[ward])
+      ? WARD_DEMOGRAPHICS[ward].name
+      : '';
+    ctxWard.textContent = ward ? `Ward ${ward}${wardName ? ' – ' + wardName : ''}` : 'Ward —';
+    ctxArea.textContent = colony || 'Area not specified';
+    banner.classList.add('show');
+  }
+
+  document.getElementById('compColony').addEventListener('input', updateWardContextBanner);
 
   function renderRecentComplaints() {
     const tbody = document.getElementById('recentComplaintsBody');
@@ -434,16 +507,18 @@
     const list = [...storedComplaints].reverse().slice(0, 6);
     
     if (list.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted)">No complaints filed yet.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted)">No complaints filed yet.</td></tr>`;
       return;
     }
 
     list.forEach(c => {
       const badgeClass = c.status === 'Resolved' ? 's-resolved' : c.status === 'In Progress' ? 's-progress' : 's-pending';
+      const colony = getColonyLabel(c);
       tbody.innerHTML += `
         <tr>
           <td style="color:var(--accent);font-weight:700;">${c.id}</td>
           <td>Ward ${c.ward}</td>
+          <td>${colony}</td>
           <td>${c.category}</td>
           <td><span class="status-badge ${badgeClass}">${c.status}</span></td>
           <td>${c.date || new Date().toLocaleDateString('en-IN')}</td>
@@ -478,6 +553,7 @@
     // Toast & Reset
     showToast(`Complaint lodged successfully! ID: ${newId}`, 'success');
     document.getElementById('complaintForm').reset();
+    applySearchedWardContext();
     renderRecentComplaints();
   }
 
@@ -501,7 +577,8 @@
         </div>
         <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;">
           <div><strong>Category:</strong> ${match.category}</div>
-          <div><strong>Ward / Locality:</strong> Ward ${match.ward} (${match.colony || 'N/A'})</div>
+          <div><strong>Ward:</strong> Ward ${match.ward}</div>
+          <div><strong>Colony / Area:</strong> ${getColonyLabel(match)}</div>
           <div><strong>Details:</strong> ${match.desc}</div>
           <div style="margin-top:4px;font-style:italic;"><strong>Filed on:</strong> ${match.date}</div>
         </div>

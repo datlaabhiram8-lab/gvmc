@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us | GVMC – Greater Visakhapatnam Municipal Corporation</title>
+  <meta name="description" content="GVMC Contact Directory – Commissioner, Additional Commissioners, Zonal Commissioners, Engineers and all 572 Ward Sachivalayam contacts for Visakhapatnam." />
+  <link rel="icon" href="assets/gvmc-logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue:#1d4ed8; --blue2:#3b82f6; --cyan:#06b6d4; --purple:#7c3aed;
+      --green:#10b981; --gold:#f59e0b; --red:#ef4444;
+      --bg:#f8fafc; --card:#fff; --border:#e2e8f0;
+      --txt:#1e293b; --txt2:#475569; --muted:#64748b;
+      --grad: linear-gradient(135deg,#1d4ed8,#7c3aed);
+      --shadow: 0 8px 32px rgba(15,23,42,.08);
+      --r:14px; --tr: all .3s cubic-bezier(.4,0,.2,1);
+    }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--txt); overflow-x:hidden; line-height:1.6; }
+    ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:#f1f5f9}
+    ::-webkit-scrollbar-thumb{background:var(--grad);border-radius:3px}
+
+    /* ── TOP BAR ── */
+    .top-bar{background:#f8f9fa;border-bottom:1px solid var(--border);padding:6px 2rem;font-size:.78rem;color:#475569;z-index:1001}
+    .top-bar-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+    .top-bar-left{display:flex;align-items:center;gap:16px}
+    .top-bar-left a,.top-bar-left span{color:#475569;text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .2s}
+    .top-bar-left a:hover{color:var(--blue)}
+
+    /* ── HEADER ── */
+    .main-header{background:#fff;padding:12px 2rem;border-bottom:3px solid var(--blue);z-index:1001}
+    .main-header-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .header-brand{display:flex;align-items:center;gap:14px;text-decoration:none}
+    .header-brand .gvmc-logo{width:68px;height:68px;border-radius:50%;object-fit:contain;flex-shrink:0}
+    .header-brand .brand-title{font-family:'Outfit',sans-serif;font-size:1.25rem;font-weight:800;color:var(--txt);letter-spacing:.3px}
+    .header-brand .brand-title span{color:var(--blue)}
+    .header-cm{display:flex;align-items:center;gap:12px}
+    .header-cm .cm-photo{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+    .header-cm .cm-name{font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:var(--txt);text-transform:uppercase;letter-spacing:.5px}
+    .header-cm .cm-title{font-size:.7rem;color:var(--muted);font-style:italic}
+    .header-login-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 24px;border-radius:8px;background:linear-gradient(135deg,#059669,#10b981);color:#fff;font-size:.88rem;font-weight:700;font-family:'Outfit',sans-serif;text-decoration:none;border:none;cursor:pointer;box-shadow:0 4px 15px rgba(16,185,129,.3);transition:var(--tr);white-space:nowrap}
+    .header-login-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(16,185,129,.45)}
+
+    /* ── NAVBAR ── */
+    .navbar{position:sticky;top:0;left:0;right:0;z-index:1000;padding:0 2rem;height:48px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:var(--tr)}
+    .navbar.scrolled{box-shadow:0 4px 20px rgba(15,23,42,.08)}
+    .nav-links{display:flex;align-items:center;gap:2px;list-style:none;margin:0 auto}
+    .nav-links a{display:block;padding:6px 12px;border-radius:6px;font-size:.8rem;font-weight:500;color:var(--txt2);text-decoration:none;transition:var(--tr);white-space:nowrap}
+    .nav-links a:hover{color:var(--txt);background:rgba(26,86,219,.08)}
+    .nav-links a.active{color:var(--blue);background:rgba(59,130,246,.1)}
+    .nav-links .emergency-link a{background:rgba(239,68,68,.1);color:#dc2626;border:1px solid rgba(239,68,68,.25)}
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:6px}
+    .hamburger span{display:block;width:24px;height:2px;background:var(--txt2);border-radius:2px;transition:var(--tr)}
+    .mobile-nav{display:none;position:fixed;top:48px;left:0;right:0;z-index:999;background:rgba(255,255,255,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:1rem;flex-direction:column;gap:4px}
+    .mobile-nav.open{display:flex}
+    .mobile-nav a{padding:10px 14px;border-radius:8px;color:var(--txt2);text-decoration:none;font-size:.9rem;font-weight:500;transition:var(--tr)}
+    .mobile-nav a:hover{color:var(--txt);background:rgba(26,86,219,.08)}
+
+    /* ── HERO BAND ── */
+    .contact-hero {
+      background: linear-gradient(135deg,#1e3a8a 0%,#1d4ed8 45%,#4f46e5 100%);
+      padding: 64px 2rem 52px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-hero::before {
+      content:'';position:absolute;inset:0;
+      background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+      background-size:50px 50px;
+    }
+    .contact-hero-inner { position:relative;z-index:2;max-width:800px;margin:0 auto }
+    .contact-hero .badge {
+      display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:100px;
+      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+      font-size:.75rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.9);margin-bottom:22px;
+    }
+    .contact-hero h1 { font-family:'Outfit',sans-serif;font-size:clamp(2rem,5vw,3rem);font-weight:900;color:#fff;margin-bottom:14px;letter-spacing:-.5px }
+    .contact-hero p { font-size:1rem;color:rgba(255,255,255,.78);max-width:560px;margin:0 auto 32px }
+    .hero-info-cards { display:flex;flex-wrap:wrap;gap:14px;justify-content:center }
+    .hero-info-card {
+      display:flex;align-items:flex-start;gap:10px;
+      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+      border-radius:12px;padding:14px 18px;min-width:200px;text-align:left;backdrop-filter:blur(8px);
+      transition:var(--tr);
+    }
+    .hero-info-card:hover{background:rgba(255,255,255,.18);transform:translateY(-2px)}
+    .hero-info-card i{font-size:1.1rem;color:#93c5fd;margin-top:2px;flex-shrink:0}
+    .hero-info-card .card-label{font-size:.7rem;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+    .hero-info-card .card-val{font-size:.85rem;color:#fff;font-weight:600;line-height:1.4}
+
+    /* ── SECTION SHELL ── */
+    .section { max-width:1300px;margin:0 auto;padding:0 2rem }
+    .section-block { padding:56px 0 }
+    .section-header { display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:28px }
+    .section-title-group { display:flex;align-items:center;gap:14px }
+    .section-icon {
+      width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+      font-size:1.1rem;flex-shrink:0;
+    }
+    .section-icon.blue { background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff }
+    .section-icon.green { background:linear-gradient(135deg,#059669,#10b981);color:#fff }
+    .section-title { font-family:'Outfit',sans-serif;font-size:1.45rem;font-weight:800;color:var(--txt) }
+    .section-sub { font-size:.82rem;color:var(--muted);margin-top:2px }
+    .divider { border:none;border-top:1px solid var(--border);margin:0 0 32px }
+
+    /* ── SEARCH BAR ── */
+    .search-row { display:flex;gap:10px;flex-wrap:wrap;align-items:center }
+    .search-box {
+      display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);
+      border-radius:10px;padding:8px 16px;flex:1;min-width:220px;max-width:480px;
+      box-shadow:0 2px 8px rgba(15,23,42,.05);transition:var(--tr);
+    }
+    .search-box:focus-within{border-color:var(--blue2);box-shadow:0 2px 8px rgba(15,23,42,.05),0 0 0 3px rgba(59,130,246,.12)}
+    .search-box i{color:var(--muted);font-size:.9rem}
+    .search-box input{flex:1;border:none;outline:none;font-size:.88rem;color:var(--txt);font-family:inherit}
+    .search-box input::placeholder{color:var(--muted)}
+    .filter-select {
+      padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:#fff;
+      font-family:inherit;font-size:.85rem;color:var(--txt2);cursor:pointer;outline:none;
+      box-shadow:0 2px 8px rgba(15,23,42,.05);transition:var(--tr);
+    }
+    .filter-select:focus{border-color:var(--blue2)}
+    .result-count-pill {
+      padding:6px 14px;border-radius:100px;background:rgba(59,130,246,.1);
+      border:1px solid rgba(59,130,246,.2);font-size:.78rem;font-weight:600;color:var(--blue);
+      white-space:nowrap;
+    }
+
+    /* ── GVMC CONTACTS TABLE ── */
+    .table-card {
+      background:#fff;border-radius:var(--r);border:1px solid var(--border);
+      box-shadow:var(--shadow);overflow:hidden;
+    }
+    .contacts-table { width:100%;border-collapse:collapse }
+    .contacts-table thead th {
+      background:linear-gradient(135deg,#1e3a8a,#1d4ed8);color:#fff;
+      padding:13px 14px;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;
+      text-align:left;letter-spacing:.4px;white-space:nowrap;
+    }
+    .contacts-table thead th:first-child{border-radius:0}
+    .contacts-table tbody tr{border-bottom:1px solid #f1f5f9;transition:var(--tr)}
+    .contacts-table tbody tr:hover{background:#f8faff}
+    .contacts-table tbody tr:last-child{border-bottom:none}
+    .contacts-table td{padding:11px 14px;font-size:.83rem;color:var(--txt2);vertical-align:top}
+    .contacts-table td.sno{color:var(--muted);font-weight:600;text-align:center;width:42px}
+    .contacts-table td.name-cell{font-weight:600;color:var(--txt)}
+    .contacts-table td.desig-cell{color:var(--txt2)}
+    .contact-chip {
+      display:inline-flex;align-items:center;gap:5px;padding:3px 10px;
+      border-radius:100px;background:rgba(29,78,216,.08);border:1px solid rgba(29,78,216,.15);
+      color:var(--blue);font-size:.77rem;font-weight:600;white-space:nowrap;text-decoration:none;
+      transition:var(--tr);
+    }
+    .contact-chip:hover{background:rgba(29,78,216,.15);transform:translateY(-1px)}
+    .contact-chip.whatsapp{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.2);color:#059669}
+    .contact-chip.email{background:rgba(124,58,237,.08);border-color:rgba(124,58,237,.2);color:var(--purple)}
+    .chips-wrap{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px}
+    .row-hidden{display:none!important}
+
+    /* ── PDF DOWNLOAD BLOCK ── */
+    .pdf-download-block {
+      background:linear-gradient(135deg,#f0fdf4,#dcfce7);
+      border:1px solid #bbf7d0;border-radius:var(--r);
+      padding:28px 32px;display:flex;align-items:center;justify-content:space-between;
+      flex-wrap:wrap;gap:18px;margin-bottom:28px;
+    }
+    .pdf-download-block .pdf-left{ display:flex;align-items:center;gap:18px }
+    .pdf-icon{ width:56px;height:56px;background:linear-gradient(135deg,#dc2626,#ef4444);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#fff;flex-shrink:0 }
+    .pdf-title{ font-family:'Outfit',sans-serif;font-size:1.05rem;font-weight:700;color:#14532d;margin-bottom:3px }
+    .pdf-desc{ font-size:.82rem;color:#166534 }
+    .pdf-btns{ display:flex;gap:10px;flex-wrap:wrap }
+    .btn-download {
+      display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:10px;
+      background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;font-size:.88rem;
+      font-weight:700;font-family:'Outfit',sans-serif;text-decoration:none;border:none;cursor:pointer;
+      box-shadow:0 4px 14px rgba(220,38,38,.3);transition:var(--tr);
+    }
+    .btn-download:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(220,38,38,.4)}
+    .btn-view {
+      display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:10px;
+      background:#fff;color:#14532d;font-size:.88rem;font-weight:700;font-family:'Outfit',sans-serif;
+      text-decoration:none;border:2px solid #bbf7d0;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.05);transition:var(--tr);
+    }
+    .btn-view:hover{background:#f0fdf4;border-color:#86efac;transform:translateY(-2px)}
+
+    /* ── SACHIVALAYAM TABLE ── */
+    .sach-table { width:100%;border-collapse:collapse }
+    .sach-table thead th {
+      background:linear-gradient(135deg,#059669,#10b981);color:#fff;
+      padding:11px 12px;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:700;
+      text-align:left;letter-spacing:.4px;white-space:nowrap;
+    }
+    .sach-table tbody tr{border-bottom:1px solid #f1f5f9;transition:var(--tr)}
+    .sach-table tbody tr:hover{background:#f0fdf8}
+    .sach-table tbody tr:last-child{border-bottom:none}
+    .sach-table td{padding:9px 12px;font-size:.8rem;color:var(--txt2);vertical-align:top}
+    .sach-table td.sno-c{color:var(--muted);font-weight:600;text-align:center;width:38px}
+    .sach-table td.code-c{font-family:'Courier New',monospace;font-size:.72rem;color:var(--blue);background:rgba(59,130,246,.06);border-radius:4px;padding:4px 7px;white-space:nowrap}
+    .sach-table td.name-c{font-weight:600;color:var(--txt)}
+    .zone-badge {
+      display:inline-block;padding:2px 8px;border-radius:100px;font-size:.7rem;font-weight:700;
+      background:rgba(124,58,237,.1);color:var(--purple);white-space:nowrap;
+    }
+
+    /* ── PAGINATION ── */
+    .pagination {
+      display:flex;align-items:center;justify-content:center;gap:6px;padding:24px 0 0;flex-wrap:wrap;
+    }
+    .page-btn {
+      width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+      border:1px solid var(--border);background:#fff;color:var(--txt2);font-size:.82rem;font-weight:600;
+      cursor:pointer;transition:var(--tr);
+    }
+    .page-btn:hover{background:rgba(59,130,246,.1);border-color:var(--blue2);color:var(--blue)}
+    .page-btn.active{background:var(--grad);border-color:transparent;color:#fff}
+    .page-btn:disabled{opacity:.4;cursor:not-allowed}
+    .page-ellipsis{color:var(--muted);font-size:.82rem;padding:0 2px}
+
+    /* ── STATS ROW ── */
+    .stats-strip {
+      display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px;
+    }
+    .stat-card {
+      background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px 20px;
+      box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;transition:var(--tr);
+    }
+    .stat-card:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(15,23,42,.1)}
+    .stat-card .stat-ico{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+    .stat-card .stat-val{font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:800;color:var(--txt);line-height:1}
+    .stat-card .stat-lbl{font-size:.75rem;color:var(--muted);margin-top:3px}
+    .ico-blue{background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff}
+    .ico-green{background:linear-gradient(135deg,#059669,#10b981);color:#fff}
+    .ico-purple{background:linear-gradient(135deg,#6d28d9,#7c3aed);color:#fff}
+    .ico-gold{background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff}
+
+    /* ── FOOTER ── */
+    footer{background:#0f172a;padding:2.5rem;text-align:center;color:#64748b;font-size:.82rem;margin-top:60px}
+    footer a{color:#3b82f6;text-decoration:none}
+    footer .footer-grid{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;text-align:left;margin-bottom:2rem}
+    footer .footer-brand-title{font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;color:#e2e8f0;margin-bottom:8px}
+    footer h4{font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;color:#e2e8f0;margin-bottom:12px;text-transform:uppercase;letter-spacing:.8px}
+    footer ul{list-style:none}
+    footer ul li{margin-bottom:6px}
+    footer ul li a{color:#64748b;transition:color .2s}
+    footer ul li a:hover{color:#3b82f6}
+    footer .footer-bottom{border-top:1px solid #1e293b;padding-top:20px;color:#475569}
+    .contact-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+    .contact-item i{margin-top:2px;color:var(--cyan);font-size:.85rem}
+    .contact-item span{font-size:.83rem;color:#64748b;line-height:1.5}
+
+    @media(max-width:900px){
+      .stats-strip{grid-template-columns:repeat(2,1fr)}
+      .hamburger{display:flex}
+      .nav-links{display:none}
+      footer .footer-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:640px){
+      .stats-strip{grid-template-columns:1fr}
+      .pdf-download-block{flex-direction:column}
+      .contacts-table thead th:nth-child(1),
+      .contacts-table tbody td:nth-child(1){display:none}
+      footer .footer-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div class="top-bar-left">
+      <span><i class="fa-solid fa-phone"></i> 1800-599-4977 (Toll Free)</span>
+      <span>|</span>
+      <span><i class="fa-solid fa-envelope"></i> commissioner@gvmc.gov.in</span>
+    </div>
+    <span style="font-size:.75rem;color:#94a3b8">Grievance WhatsApp: 9666909192</span>
+  </div>
+</div>
+
+<!-- MAIN HEADER -->
+<header class="main-header">
+  <div class="main-header-inner">
+    <a href="index.html" class="header-brand">
+      <img src="assets/gvmc-logo.png" alt="GVMC Logo" class="gvmc-logo" />
+      <div class="brand-text">
+        <div class="brand-title">MY AREA | <span>GVMC</span></div>
+        <div style="font-size:.72rem;color:#64748b;margin-top:2px">Greater Visakhapatnam Municipal Corporation</div>
+      </div>
+    </a>
+    <div class="header-cm">
+      <img src="assets/cm-photo.png" alt="Chief Minister" class="cm-photo" />
+      <div class="cm-info">
+        <div class="cm-name">Sri Nara Chandrababu Naidu</div>
+        <div class="cm-title">HON'BLE CHIEF MINISTER</div>
+      </div>
+    </div>
+    <button class="header-login-btn" onclick="openLoginModal()">
+      <i class="fa-solid fa-right-to-bracket"></i> Login / Register
+    </button>
+  </div>
+</header>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="ward-search.html">Ward Search</a></li>
+    <li><a href="ward-comparison.html">Compare</a></li>
+    <li><a href="complaints.html">Complaints</a></li>
+    <li><a href="community.html">Community</a></li>
+    <li><a href="contact.html" class="active">Contact Us</a></li>
+    <li class="emergency-link"><a href="emergency.html"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;font-size:.75rem"></i>Emergency</a></li>
+  </ul>
+  <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html">🏠 Home</a>
+  <a href="ward-search.html">🔍 Ward Search</a>
+  <a href="ward-comparison.html">⚖️ Compare</a>
+  <a href="complaints.html">📢 Complaints</a>
+  <a href="community.html">🤝 Community</a>
+  <a href="contact.html">📞 Contact Us</a>
+  <a href="emergency.html">🚨 Emergency</a>
+</div>
+
+<!-- HERO -->
+<div class="contact-hero">
+  <div class="contact-hero-inner">
+    <div class="badge"><i class="fa-solid fa-address-book"></i>&nbsp; Official Directory</div>
+    <h1>GVMC Contact Directory</h1>
+    <p>Find contact details for all key GVMC officials, Zonal Commissioners, Engineers, and all 572 Ward Sachivalayam offices across Greater Visakhapatnam.</p>
+    <div class="hero-info-cards">
+      <div class="hero-info-card">
+        <i class="fa-solid fa-location-dot"></i>
+        <div>
+          <div class="card-label">Main Office</div>
+          <div class="card-val">2-32, Asilmetta, GVMC<br>Visakhapatnam – 530003</div>
+        </div>
+      </div>
+      <div class="hero-info-card">
+        <i class="fa-solid fa-phone-volume"></i>
+        <div>
+          <div class="card-label">Grievance Helpline</div>
+          <div class="card-val">1800 425 00009<br>WhatsApp: 9666909192</div>
+        </div>
+      </div>
+      <div class="hero-info-card">
+        <i class="fa-solid fa-envelope"></i>
+        <div>
+          <div class="card-label">Commissioner Email</div>
+          <div class="card-val">Commissioner_gvmc<br>@yahoo.co.in</div>
+        </div>
+      </div>
+      <div class="hero-info-card">
+        <i class="fa-solid fa-clock"></i>
+        <div>
+          <div class="card-label">Office Hours</div>
+          <div class="card-val">Mon – Sat<br>10:00 AM – 5:00 PM</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+
+  <!-- ─────────────────────────────────────────
+       STATS STRIP
+  ───────────────────────────────────────── -->
+  <div class="section-block" style="padding-bottom:0;padding-top:44px">
+    <div class="stats-strip">
+      <div class="stat-card">
+        <div class="stat-ico ico-blue"><i class="fa-solid fa-users-gear"></i></div>
+        <div><div class="stat-val">46</div><div class="stat-lbl">Key GVMC Officials</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-ico ico-green"><i class="fa-solid fa-building-columns"></i></div>
+        <div><div class="stat-val">572</div><div class="stat-lbl">Ward Sachivalayam Offices</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-ico ico-purple"><i class="fa-solid fa-map-location-dot"></i></div>
+        <div><div class="stat-val">10</div><div class="stat-lbl">Municipal Zones</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-ico ico-gold"><i class="fa-solid fa-city"></i></div>
+        <div><div class="stat-val">98</div><div class="stat-lbl">Wards Covered</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────
+       SECTION 1 – GVMC MAIN CONTACTS TABLE
+  ───────────────────────────────────────── -->
+  <div class="section-block">
+    <div class="section-header">
+      <div class="section-title-group">
+        <div class="section-icon blue"><i class="fa-solid fa-id-card-clip"></i></div>
+        <div>
+          <div class="section-title">GVMC Key Officials</div>
+          <div class="section-sub">Commissioner, Additional Commissioners, Zonal Officers & Engineers</div>
+        </div>
+      </div>
+      <div id="gvmcCount" class="result-count-pill">46 contacts</div>
+    </div>
+    <hr class="divider" />
+
+    <div class="search-row" style="margin-bottom:18px">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="gvmcSearch" placeholder="Search by name, designation or office…" oninput="filterGvmc()" autocomplete="off" />
+      </div>
+      <select class="filter-select" id="gvmcFilter" onchange="filterGvmc()">
+        <option value="">All Roles</option>
+        <option value="Commissioner">Commissioner</option>
+        <option value="Additional">Additional Commissioner</option>
+        <option value="Zonal">Zonal Commissioner</option>
+        <option value="Superintending">Superintending Engineer</option>
+        <option value="DCP">Deputy Commissioner</option>
+        <option value="Biologist">Biologist</option>
+      </select>
+    </div>
+
+    <div class="table-card">
+      <div style="overflow-x:auto">
+        <table class="contacts-table" id="gvmcTable">
+          <thead>
+            <tr>
+              <th style="width:42px">S.No</th>
+              <th>Name</th>
+              <th>Designation</th>
+              <th>Contact Numbers</th>
+              <th>Email</th>
+            </tr>
+          </thead>
+          <tbody id="gvmcTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────
+       SECTION 2 – SACHIVALAYAM CONTACTS
+  ───────────────────────────────────────── -->
+  <div class="section-block" style="padding-top:0">
+    <div class="section-header">
+      <div class="section-title-group">
+        <div class="section-icon green"><i class="fa-solid fa-house-flag"></i></div>
+        <div>
+          <div class="section-title">Ward Sachivalayam Directory</div>
+          <div class="section-sub">All 572 ward-level secretariats with addresses, codes & contact persons</div>
+        </div>
+      </div>
+      <div id="sachCount" class="result-count-pill" style="background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.3);color:#059669">572 offices</div>
+    </div>
+    <hr class="divider" />
+
+    <!-- PDF Download Block -->
+    <div class="pdf-download-block">
+      <div class="pdf-left">
+        <div class="pdf-icon"><i class="fa-solid fa-file-pdf"></i></div>
+        <div>
+          <div class="pdf-title">Sachivalayam Contacts – Official PDF</div>
+          <div class="pdf-desc">Complete printable directory with all 572 offices, addresses, codes and contact persons (A4 Landscape)</div>
+        </div>
+      </div>
+      <div class="pdf-btns">
+        <a href="assets/sachivalayam_contacts.pdf" target="_blank" class="btn-view" id="viewPdfBtn">
+          <i class="fa-solid fa-eye"></i> View PDF
+        </a>
+        <a href="assets/sachivalayam_contacts.pdf" download="GVMC_Sachivalayam_Contacts.pdf" class="btn-download" id="downloadPdfBtn">
+          <i class="fa-solid fa-download"></i> Download PDF
+        </a>
+      </div>
+    </div>
+
+    <!-- Search controls -->
+    <div class="search-row" style="margin-bottom:18px">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="sachSearch" placeholder="Search by name, area, address or code…" oninput="filterSach()" autocomplete="off" />
+      </div>
+      <select class="filter-select" id="sachZoneFilter" onchange="filterSach()">
+        <option value="">All Zones</option>
+        <option value="EAST">East</option>
+        <option value="NORTH">North</option>
+        <option value="SOUTH">South</option>
+        <option value="WEST">West</option>
+        <option value="MADHURAWADA">Madhurawada</option>
+        <option value="BHEEMUNIPATNAM">Bheemunipatnam</option>
+        <option value="Gajuwaka">Gajuwaka</option>
+        <option value="ANAKAPALLI">Anakapalli</option>
+        <option value="Aganampudi">Aganampudi</option>
+        <option value="PENDURTHI">Pendurthi</option>
+      </select>
+      <select class="filter-select" id="sachPerPage" onchange="renderSach()">
+        <option value="25">25 / page</option>
+        <option value="50" selected>50 / page</option>
+        <option value="100">100 / page</option>
+      </select>
+    </div>
+
+    <div class="table-card">
+      <div style="overflow-x:auto">
+        <table class="sach-table">
+          <thead>
+            <tr>
+              <th style="width:38px">S.No</th>
+              <th>Zone / Area</th>
+              <th style="width:52px">Ward</th>
+              <th>Sachivalayam Address</th>
+              <th>Code</th>
+              <th>Contact Person</th>
+              <th>Phone</th>
+            </tr>
+          </thead>
+          <tbody id="sachTbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="pagination" id="sachPagination"></div>
+  </div>
+
+</div><!-- /section -->
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand-title">GVMC Smart Ward Portal</div>
+      <p style="font-size:.8rem;color:#475569;max-width:280px;margin-bottom:14px">Greater Visakhapatnam Municipal Corporation's official ward management portal for residents of all 98 wards.</p>
+      <div class="contact-item"><i class="fa-solid fa-location-dot"></i><span>2-32, Asilmetta, GVMC, Visakhapatnam – 530 003, AP</span></div>
+      <div class="contact-item"><i class="fa-solid fa-phone"></i><span>1800 425 00009 (Toll Free)</span></div>
+      <div class="contact-item"><i class="fa-solid fa-envelope"></i><span>Commissioner_gvmc@yahoo.co.in</span></div>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="ward-search.html">Ward Search</a></li>
+        <li><a href="ward-comparison.html">Compare Wards</a></li>
+        <li><a href="complaints.html">File Complaint</a></li>
+        <li><a href="community.html">Community</a></li>
+        <li><a href="contact.html">Contact Us</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#">Property Tax</a></li>
+        <li><a href="#">Water Connection</a></li>
+        <li><a href="#">Building Permission</a></li>
+        <li><a href="#">Trade License</a></li>
+        <li><a href="sustainability.html">Sustainability</a></li>
+        <li><a href="emergency.html">Emergency</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Zones</h4>
+      <ul>
+        <li><a href="#">East (Asilmetta)</a></li>
+        <li><a href="#">North (Madhavadhara)</a></li>
+        <li><a href="#">South (Suryabagh)</a></li>
+        <li><a href="#">West (Gnanapuram)</a></li>
+        <li><a href="#">Gajuwaka</a></li>
+        <li><a href="#">Anakapalli</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2025 Greater Visakhapatnam Municipal Corporation. All rights reserved. &nbsp;|&nbsp;
+    Need help? Contact <a href="mailto:support@gvmc.gov.in">support@gvmc.gov.in</a>
+  </div>
+</footer>
+
+<script src="js/contacts-data.js"></script>
+<script src="js/sachivalayam-data.js"></script>
+<script>
+// ──────────────────────────────────────────────────
+//  NAVBAR SCROLL
+// ──────────────────────────────────────────────────
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 10);
+});
+const hbBtn = document.getElementById('hamburgerBtn');
+const mobileNav = document.getElementById('mobileNav');
+hbBtn.addEventListener('click', () => {
+  hbBtn.classList.toggle('open');
+  mobileNav.classList.toggle('open');
+});
+
+// ──────────────────────────────────────────────────
+//  GVMC CONTACTS TABLE
+// ──────────────────────────────────────────────────
+function buildContactChips(contact, email) {
+  let html = '<div class="chips-wrap">';
+  const numbers = contact.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+  numbers.forEach(num => {
+    const clean = num.replace(/[^\d]/g, '');
+    if (clean.length >= 10) {
+      html += `<a href="tel:${clean}" class="contact-chip"><i class="fa-solid fa-phone"></i> ${num}</a>`;
+    } else if (num.toLowerCase().includes('whatsapp')) {
+      const wa = clean;
+      html += `<a href="https://wa.me/91${wa}" target="_blank" class="contact-chip whatsapp"><i class="fa-brands fa-whatsapp"></i> ${num}</a>`;
+    } else {
+      html += `<span class="contact-chip">${num}</span>`;
+    }
+  });
+  if (email) {
+    html += `<a href="mailto:${email}" class="contact-chip email"><i class="fa-solid fa-envelope"></i> ${email}</a>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderGvmc(data) {
+  const tbody = document.getElementById('gvmcTbody');
+  document.getElementById('gvmcCount').textContent = data.length + ' contact' + (data.length !== 1 ? 's' : '');
+  tbody.innerHTML = data.map(c => `
+    <tr>
+      <td class="sno">${c.sno}</td>
+      <td class="name-cell">${c.name}</td>
+      <td class="desig-cell">${c.designation}</td>
+      <td>${buildContactChips(c.contact, '')}</td>
+      <td>${c.email ? `<a href="mailto:${c.email}" class="contact-chip email" style="font-size:.75rem"><i class="fa-solid fa-envelope"></i> ${c.email}</a>` : '<span style="color:#cbd5e1">—</span>'}</td>
+    </tr>
+  `).join('');
+}
+
+function filterGvmc() {
+  const q = document.getElementById('gvmcSearch').value.toLowerCase();
+  const f = document.getElementById('gvmcFilter').value.toLowerCase();
+  const filtered = GVMC_CONTACTS.filter(c =>
+    (c.name.toLowerCase().includes(q) || c.designation.toLowerCase().includes(q) || c.contact.includes(q)) &&
+    (f === '' || c.designation.toLowerCase().includes(f))
+  );
+  renderGvmc(filtered);
+}
+
+renderGvmc(GVMC_CONTACTS);
+
+// ──────────────────────────────────────────────────
+//  SACHIVALAYAM CONTACTS TABLE  
+// ──────────────────────────────────────────────────
+let sachFiltered = [];
+let sachPage = 1;
+
+function filterSach() {
+  const q = document.getElementById('sachSearch').value.toLowerCase();
+  const z = document.getElementById('sachZoneFilter').value;
+  sachFiltered = SACHIVALAYAM_CONTACTS.filter(c => {
+    const matchZone = z === '' || c.area === z || c.area.toUpperCase().startsWith(z.toUpperCase());
+    const matchQ = q === '' || [c.area, c.ward_no, c.address, c.code, c.name, c.contact]
+      .join(' ').toLowerCase().includes(q);
+    return matchZone && matchQ;
+  });
+  document.getElementById('sachCount').textContent = sachFiltered.length + ' offices';
+  sachPage = 1;
+  renderSach();
+}
+
+function renderSach() {
+  const perPage = parseInt(document.getElementById('sachPerPage').value, 10);
+  const totalPages = Math.max(1, Math.ceil(sachFiltered.length / perPage));
+  if (sachPage > totalPages) sachPage = totalPages;
+
+  const start = (sachPage - 1) * perPage;
+  const slice = sachFiltered.slice(start, start + perPage);
+
+  const tbody = document.getElementById('sachTbody');
+  if (slice.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:#94a3b8"><i class="fa-solid fa-magnifying-glass" style="margin-right:8px"></i>No records found. Try a different search term.</td></tr>';
+  } else {
+    tbody.innerHTML = slice.map(c => `
+      <tr>
+        <td class="sno-c">${c.sl_no}</td>
+        <td><span class="zone-badge">${c.area}</span></td>
+        <td style="text-align:center;font-weight:600;color:#475569">${c.ward_no}</td>
+        <td style="max-width:300px;line-height:1.4">${c.address}</td>
+        <td class="code-c">${c.code}</td>
+        <td class="name-c">${c.name}</td>
+        <td><a href="tel:${c.contact.replace(/\D/g,'')}" class="contact-chip" style="font-size:.75rem"><i class="fa-solid fa-phone"></i> ${c.contact}</a></td>
+      </tr>
+    `).join('');
+  }
+
+  buildPagination(totalPages, perPage);
+}
+
+function buildPagination(totalPages) {
+  const pg = document.getElementById('sachPagination');
+  if (totalPages <= 1) { pg.innerHTML = ''; return; }
+
+  let html = `
+    <button class="page-btn" onclick="goPage(${sachPage-1})" ${sachPage===1?'disabled':''}>
+      <i class="fa-solid fa-chevron-left" style="font-size:.7rem"></i>
+    </button>`;
+
+  const range = [];
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || (i >= sachPage-2 && i <= sachPage+2)) range.push(i);
+    else if (range[range.length-1] !== '…') range.push('…');
+  }
+
+  range.forEach(r => {
+    if (r === '…') {
+      html += `<span class="page-ellipsis">…</span>`;
+    } else {
+      html += `<button class="page-btn${r===sachPage?' active':''}" onclick="goPage(${r})">${r}</button>`;
+    }
+  });
+
+  html += `
+    <button class="page-btn" onclick="goPage(${sachPage+1})" ${sachPage===totalPages?'disabled':''}>
+      <i class="fa-solid fa-chevron-right" style="font-size:.7rem"></i>
+    </button>`;
+
+  pg.innerHTML = html;
+}
+
+function goPage(p) {
+  sachPage = p;
+  renderSach();
+  document.querySelector('.sach-table')?.closest('.table-card')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// Init Sachivalayam table
+sachFiltered = [...SACHIVALAYAM_CONTACTS];
+renderSach();
+
+// Login modal stub
+function openLoginModal() {
+  alert('Login/Register feature coming soon. For urgent support call 1800-599-4977.');
+}
+</script>
+</body>
+</html>
