@@ -12,3 +12,17 @@ Thumbs.db
 # Python
 __pycache__/
 *.pyc
+
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Test/coverage artifacts
+*.out
+coverage.*
+*.coverprofile
+profile.cov
