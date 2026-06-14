@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ward Search | GVMC – Smart Ward Management Portal</title>
+  <meta name="description" content="GVMC Smart Ward Management Portal – Search your area, track complaints, view ward demographics, and access civic services for all 72 wards." />
+  <link rel="icon" href="assets/gvmc-logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .search-page-body {
+      padding: 3rem 2rem 5rem;
+      background: var(--gradient-hero);
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .search-page-body::before {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(26,86,219,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(26,86,219,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+    .search-container-box {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 700px;
+      margin-top: 2rem;
+    }
+    .search-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      background: var(--gradient-btn);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .search-subtitle {
+      font-size: 1rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .search-bar-wrap {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-xl);
+      padding: 8px 8px 8px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-card);
+      transition: var(--transition);
+    }
+    .search-bar-wrap:focus-within {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 30px rgba(26,86,219,0.25);
+    }
+    .search-bar-wrap i {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+    .search-bar-wrap input {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 1.05rem;
+      font-family: inherit;
+    }
+    .search-bar-wrap input::placeholder {
+      color: rgba(148,163,184,0.5);
+    }
+    .btn-search-go {
+      background: var(--gradient-btn);
+      color: white;
+      padding: 0.75rem 1.75rem;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      transition: var(--transition);
+    }
+    .btn-search-go:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-glow);
+    }
+    .chips-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 1.5rem;
+    }
+    .search-chip {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-glass);
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .search-chip:hover {
+      background: rgba(26,86,219,0.12);
+      border-color: rgba(26,86,219,0.3);
+      color: var(--primary-light);
+    }
+    .search-result-display {
+      display: none;
+      margin-top: 3rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(26,86,219,0.25);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      backdrop-filter: blur(28px);
+      box-shadow: var(--shadow-card);
+      width: 100%;
+      animation: fadeInUp 0.45s ease-out both;
+    }
+    .search-result-display.show {
+      display: block;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .res-title-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-glass);
+      padding-bottom: 1rem;
+    }
+    .res-ward-no {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+    .res-ward-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-top: 0.25rem;
+    }
+    .res-badge {
+      background: rgba(16,185,129,0.15);
+      border: 1px solid rgba(16,185,129,0.3);
+      color: var(--success);
+      padding: 0.35rem 1rem;
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .res-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .res-stat-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .res-stat-card:hover {
+      border-color: rgba(26,86,219,0.25);
+      background: rgba(255,255,255,0.06);
+    }
+    .res-stat-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary-light);
+    }
+    .res-stat-lbl {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .res-btn-wrap {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .res-action-btn {
+      background: var(--gradient-btn);
+      color: white;
+      padding: 0.8rem 2rem;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+      box-shadow: 0 4px 20px rgba(26,86,219,0.3);
+    }
+    .res-action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(26,86,219,0.45);
+    }
+    .search-no-result {
+      display: none;
+      width: 100%;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      text-align: center;
+      color: #fca5a5;
+      font-size: 0.95rem;
+      margin-top: 2rem;
+      animation: fadeInUp 0.3s ease;
+    }
+    .search-no-result.show {
+      display: block;
+    }
+    @media (max-width: 768px) {
+      .res-stats-grid { grid-template-columns: 1fr; }
+      .search-title { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP UTILITY BAR -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div class="top-bar-left">
+      <a href="tel:18000425000009"><i class="fa-solid fa-phone"></i> 18000425000009</a>
+      <span><i class="fa-solid fa-envelope"></i> commissioner@gvmc.gov.in</span>
+    </div>
+    <div class="top-bar-right">
+      <button class="lang-btn"><i class="fa-solid fa-language"></i> Telugu</button>
+      <div class="font-controls">
+        <button title="Small text" onclick="document.documentElement.style.fontSize='14px'">A</button>
+        <button title="Normal text" class="active" onclick="document.documentElement.style.fontSize='16px'">A</button>
+        <button title="Large text" onclick="document.documentElement.style.fontSize='18px'">A<sup>+</sup></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN HEADER -->
+<header class="main-header">
+  <div class="main-header-inner">
+    <a href="index.html" class="header-brand">
+      <img src="assets/gvmc-logo.png" alt="GVMC Emblem" class="gvmc-logo" />
+      <div class="brand-text">
+        <div class="brand-title"><span>G</span>reater <span>V</span>isakhapatnam <span>M</span>unicipal <span>C</span>orporation</div>
+      </div>
+    </a>
+    <div class="header-cm">
+      <img src="assets/cm-photo.png" alt="Hon'ble Chief Minister" class="cm-photo" />
+      <div class="cm-info">
+        <div class="cm-name">Sri Nara Chandrababu Naidu</div>
+        <div class="cm-title">HON'BLE CHIEF MINISTER</div>
+      </div>
+    </div>
+    <button class="header-login-btn" onclick="openLoginModal()">
+      <i class="fa-solid fa-right-to-bracket"></i> Login / Register
+    </button>
+  </div>
+</header>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="ward-search.html" class="active">Ward Search</a></li>
+    <li><a href="ward-comparison.html">Compare</a></li>
+    <li><a href="complaints.html">Complaints</a></li>
+    <li><a href="community.html">Community</a></li>
+    
+    <li class="emergency-link"><a href="emergency.html"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;font-size:.75rem"></i>Emergency</a></li>
+  </ul>
+
+  <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html">🏠 Home</a>
+  <a href="ward-search.html" class="active">🔍 Ward Search</a>
+  <a href="ward-comparison.html">⚖️ Compare</a>
+  <a href="complaints.html">📢 Complaints</a>
+  <a href="community.html">🤝 Community</a>
+  
+  <a href="emergency.html">🚨 Emergency</a>
+</div>
+
+<!-- MAIN BODY -->
+<div class="search-page-body">
+  <div class="search-container-box">
+    <h1 class="search-title">GVMC Ward Finder</h1>
+    <p class="search-subtitle">Locate your ward secretariat and access localized civic services instantly.</p>
+
+    <!-- Search Form -->
+    <div class="search-bar-wrap">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="Search by area name, colony, landmark..." autocomplete="off" />
+      <button class="btn-search-go" id="searchBtn">Find Ward</button>
+    </div>
+
+    <!-- Suggested Chips -->
+    <div class="chips-container">
+      <span class="search-chip" onclick="chipSearch('MVP Colony')">📍 MVP Colony</span>
+      <span class="search-chip" onclick="chipSearch('Sagarnagar')">📍 Sagarnagar</span>
+      <span class="search-chip" onclick="chipSearch('Maddilapalem')">📍 Maddilapalem</span>
+      <span class="search-chip" onclick="chipSearch('Arilova')">📍 Arilova</span>
+      <span class="search-chip" onclick="chipSearch('Gajuwaka')">📍 Gajuwaka</span>
+    </div>
+
+    <!-- Error/No results -->
+    <div class="search-no-result" id="noResult">
+      <i class="fa-solid fa-circle-exclamation" style="margin-right:6px"></i>
+      No matching area found for "<span id="searchedTerm"></span>". Try another locality or secretariats name.
+    </div>
+
+    <!-- Result Card -->
+    <div class="search-result-display" id="searchResult">
+      <div class="res-title-wrap">
+        <div>
+          <div class="res-ward-no" id="rWardNum">Ward --</div>
+          <div class="res-ward-name" id="rAreaName">--</div>
+        </div>
+        <div class="res-badge">✓ Active Ward</div>
+      </div>
+      <div class="res-stats-grid">
+        <div class="res-stat-card">
+          <div class="res-stat-val" id="rPop">--</div>
+          <div class="res-stat-lbl">Population</div>
+        </div>
+        <div class="res-stat-card">
+          <div class="res-stat-val" id="rWomen">--%</div>
+          <div class="res-stat-lbl">Women Population</div>
+        </div>
+        <div class="res-stat-card">
+          <div class="res-stat-val" id="rSC">--</div>
+          <div class="res-stat-lbl">SC Population</div>
+        </div>
+      </div>
+      <div class="res-btn-wrap">
+        <a href="#" id="dashBtn" class="res-action-btn">
+          <i class="fa-solid fa-chart-line"></i> Open Ward Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-bottom">
+    <p>© 2025 Greater Visakhapatnam Municipal Corporation · All rights reserved · Built for citizens of Vizag</p>
+    <div style="margin-top:8px;">
+      <span class="sdg-badge">🌿 SDG-11 Aligned</span>
+      <span class="sdg-badge" style="color:var(--primary-light);border-color:rgba(26,86,219,0.2);background:rgba(26,86,219,0.1)">🔒 Gov Secure</span>
+    </div>
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="js/main.js"></script>
+<script src="js/ward_data.js"></script>
+<script src="js/demographics.js"></script>
+<script>
+  // Navbar scroll & Hamburger
+  const navEl = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navEl.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  const hamburger = document.getElementById('hamburgerBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileNav.classList.toggle('open');
+  });
+  document.addEventListener('click', (e) => {
+    if (!navEl.contains(e.target) && !mobileNav.contains(e.target)) {
+      hamburger.classList.remove('open');
+      mobileNav.classList.remove('open');
+    }
+  });
+
+  // Search Logic
+  function chipSearch(term) {
+    document.getElementById('searchInput').value = term;
+    runSearch(term);
+  }
+
+  document.getElementById('searchBtn').addEventListener('click', () => {
+    runSearch(document.getElementById('searchInput').value.trim());
+  });
+  document.getElementById('searchInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') runSearch(document.getElementById('searchInput').value.trim());
+  });
+
+  function runSearch(query) {
+    if (!query) return;
+    const resultEl   = document.getElementById('searchResult');
+    const noResultEl = document.getElementById('noResult');
+    resultEl.classList.remove('show');
+    noResultEl.classList.remove('show');
+
+    let ward = null;
+    let matchedArea = query; // the area name that matched
+
+    const q = query.toLowerCase().trim();
+
+    // 1. Try AREA_TO_WARD lookup (fastest, most accurate)
+    if (typeof findWardByArea === 'function') {
+      const wardNum = findWardByArea(query);
+      if (wardNum !== null && wardNum !== undefined) {
+        // Find the matched area name for display
+        if (typeof AREA_TO_WARD !== 'undefined') {
+          for (const [area, wn] of Object.entries(AREA_TO_WARD)) {
+            if (wn === wardNum && (area.includes(q) || q.includes(area))) {
+              matchedArea = area.replace(/\b\w/g, c => c.toUpperCase());
+              break;
+            }
+          }
+        }
+        if (typeof WARD_DEMOGRAPHICS !== 'undefined' && WARD_DEMOGRAPHICS[wardNum]) {
+          ward = { wardNo: wardNum, ...WARD_DEMOGRAPHICS[wardNum] };
+        } else {
+          // Ward exists in area data but not in demographics — still show it
+          ward = { wardNo: wardNum, name: matchedArea };
+        }
+      }
+    }
+
+    // 2. Fallback: search WARD_AREAS (array of locality strings per ward)
+    if (!ward && typeof WARD_AREAS !== 'undefined') {
+      for (const [wardKey, areas] of Object.entries(WARD_AREAS)) {
+        const hit = areas.find(a => a.toLowerCase().includes(q) || q.includes(a.toLowerCase()));
+        if (hit) {
+          matchedArea = hit;
+          const demog = (typeof WARD_DEMOGRAPHICS !== 'undefined') ? WARD_DEMOGRAPHICS[wardKey] : null;
+          ward = demog ? { wardNo: wardKey, ...demog } : { wardNo: wardKey, name: hit };
+          break;
+        }
+      }
+    }
+
+    // 3. Fallback: match ward names in WARD_DEMOGRAPHICS
+    if (!ward && typeof WARD_DEMOGRAPHICS !== 'undefined') {
+      for (const [key, val] of Object.entries(WARD_DEMOGRAPHICS)) {
+        const name = (val.name || '').toLowerCase();
+        if (name.includes(q)) {
+          ward = { wardNo: key, ...val };
+          matchedArea = val.name;
+          break;
+        }
+      }
+    }
+
+    if (ward) {
+      const wardNo   = ward.wardNo || '—';
+      const wardName = ward.name || matchedArea || query;
+      const pop      = ward.population;
+      const womenPct = ward.womenPct || ward.women_pct;
+      const scPop    = ward.sc || ward.sc_population;
+
+      document.getElementById('rWardNum').textContent  = `Ward ${wardNo}`;
+      document.getElementById('rAreaName').textContent = wardName;
+      document.getElementById('rPop').textContent      = (pop && typeof pop === 'number')
+        ? pop.toLocaleString('en-IN') : (pop || 'Data pending');
+      document.getElementById('rWomen').textContent    = (womenPct !== undefined && womenPct !== null)
+        ? (typeof womenPct === 'number' ? womenPct.toFixed(2) : womenPct) + '%' : 'Data pending';
+      document.getElementById('rSC').textContent       = (scPop !== undefined && scPop !== null)
+        ? (typeof scPop === 'number' ? scPop.toLocaleString('en-IN') : scPop) : 'Data pending';
+      document.getElementById('dashBtn').href          = `ward-dashboard.html?ward=${wardNo}`;
+
+      resultEl.classList.add('show');
+    } else {
+      document.getElementById('searchedTerm').textContent = query;
+      noResultEl.classList.add('show');
+    }
+  }
+</script>
+
+<!-- ════════════════════════════════════════════
+     LOGIN MODAL
+════════════════════════════════════════════ -->
+<div class="login-modal" id="loginModal">
+  <div class="login-card">
+    <button class="login-modal-close" onclick="closeLoginModal()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="card-glow"></div>
+
+    <div class="login-logo-wrap">
+      <div class="login-logo-ring">🏛️</div>
+      <div class="portal-badge"><span class="portal-badge-dot"></span> Secure Access</div>
+      <div class="login-title">Officer Portal Login</div>
+      <div class="login-subtitle">Greater Visakhapatnam Municipal Corporation</div>
+    </div>
+
+    <form class="login-form" id="modalLoginForm" onsubmit="handleModalLogin(event)" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="modalRoleSelect">🛡️ &nbsp;Select Role</label>
+        <div class="input-icon-wrap">
+          <span class="icon">▾</span>
+          <select class="form-control" id="modalRoleSelect" style="padding-left:2.4rem;">
+            <option value="">— Choose Your Role —</option>
+            <option value="Admin">Admin</option>
+            <option value="Ward Officer">Ward Officer</option>
+            <option value="Data Entry Operator">Data Entry Operator</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="modalUsernameInput">👤 &nbsp;Username</label>
+        <div class="input-icon-wrap">
+          <span class="icon">@</span>
+          <input class="form-control" type="text" id="modalUsernameInput" placeholder="Enter your username" autocomplete="username" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="modalPasswordInput">🔒 &nbsp;Password</label>
+        <div class="input-icon-wrap">
+          <span class="icon">🔑</span>
+          <input class="form-control" type="password" id="modalPasswordInput" placeholder="Enter your password" autocomplete="current-password" />
+          <span class="pwd-toggle" id="modalPwdToggle" onclick="toggleModalPwd()" title="Show/Hide">👁️</span>
+        </div>
+      </div>
+
+      <div class="form-error" id="modalFormError">
+        <span>⚠️</span> <span id="modalErrorMsg">Invalid credentials. Please try again.</span>
+      </div>
+
+      <button type="submit" class="btn-login" id="modalLoginBtn">
+        <span>🚀 Sign In to Portal</span>
+      </button>
+    </form>
+
+    <div class="login-divider"><span>Demo Credentials</span></div>
+    <div class="demo-creds">
+      <div class="demo-creds-title">🔐 Test Access Credentials</div>
+      <div class="demo-row">
+        <div class="demo-item">
+          <span class="demo-lbl">Username</span>
+          <span class="demo-val">admin</span>
+        </div>
+        <div class="demo-item">
+          <span class="demo-lbl">Password</span>
+          <span class="demo-val">admin123</span>
+        </div>
+        <button type="button" class="btn-autofill" onclick="autofillModal()">↗ Autofill</button>
+      </div>
+    </div>
+
+    <div class="login-footer-note">
+      Need help? Contact <a href="mailto:support@gvmc.gov.in">support@gvmc.gov.in</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

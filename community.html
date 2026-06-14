@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Events & Community Hub | GVMC – Smart Ward Portal</title>
+  <meta name="description" content="GVMC Smart Ward Management Portal – Stay updated with ward meetings, cleanliness drives, and local announcements." />
+  <link rel="icon" href="assets/gvmc-logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .comm-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+    .page-title-wrap {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    .page-title-wrap h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: var(--gradient-btn);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .page-title-wrap p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-top: 0.5rem;
+    }
+    .tabs-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 3rem;
+    }
+    .tab-btn {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-glass);
+      color: var(--text-muted);
+      padding: 0.6rem 1.5rem;
+      border-radius: 50px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--gradient-btn);
+      color: white;
+      border-color: transparent;
+      box-shadow: var(--shadow-glow);
+    }
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+    .event-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-card);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .event-card:hover {
+      border-color: rgba(26,86,219,0.3);
+      transform: translateY(-4px);
+    }
+    .event-badge {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 1rem;
+      width: fit-content;
+    }
+    .badge-env   { background: rgba(16,185,129,0.15); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+    .badge-gov   { background: rgba(26,86,219,0.15); color: var(--primary-light); border: 1px solid rgba(26,86,219,0.3); }
+    .badge-health{ background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+    
+    .event-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+    .event-meta {
+      display: flex;
+      gap: 15px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding-bottom: 0.75rem;
+    }
+    .event-meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .event-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    .event-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-rsvp {
+      flex: 1;
+      background: var(--gradient-btn);
+      color: white;
+      padding: 0.6rem;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .btn-rsvp:hover {
+      box-shadow: var(--shadow-glow);
+    }
+    .btn-volunteer {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-glass);
+      color: var(--text-primary);
+      padding: 0.6rem;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .btn-volunteer:hover {
+      background: rgba(255,255,255,0.1);
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP UTILITY BAR -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div class="top-bar-left">
+      <a href="tel:18000425000009"><i class="fa-solid fa-phone"></i> 18000425000009</a>
+      <span><i class="fa-solid fa-envelope"></i> commissioner@gvmc.gov.in</span>
+    </div>
+    <div class="top-bar-right">
+      <button class="lang-btn"><i class="fa-solid fa-language"></i> Telugu</button>
+      <div class="font-controls">
+        <button title="Small text" onclick="document.documentElement.style.fontSize='14px'">A</button>
+        <button title="Normal text" class="active" onclick="document.documentElement.style.fontSize='16px'">A</button>
+        <button title="Large text" onclick="document.documentElement.style.fontSize='18px'">A<sup>+</sup></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN HEADER -->
+<header class="main-header">
+  <div class="main-header-inner">
+    <a href="index.html" class="header-brand">
+      <img src="assets/gvmc-logo.png" alt="GVMC Emblem" class="gvmc-logo" />
+      <div class="brand-text">
+        <div class="brand-title"><span>G</span>reater <span>V</span>isakhapatnam <span>M</span>unicipal <span>C</span>orporation</div>
+      </div>
+    </a>
+    <div class="header-cm">
+      <img src="assets/cm-photo.png" alt="Hon'ble Chief Minister" class="cm-photo" />
+      <div class="cm-info">
+        <div class="cm-name">Sri Nara Chandrababu Naidu</div>
+        <div class="cm-title">HON'BLE CHIEF MINISTER</div>
+      </div>
+    </div>
+    <button class="header-login-btn" onclick="openLoginModal()">
+      <i class="fa-solid fa-right-to-bracket"></i> Login / Register
+    </button>
+  </div>
+</header>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="ward-search.html">Ward Search</a></li>
+    <li><a href="ward-comparison.html">Compare</a></li>
+    <li><a href="complaints.html">Complaints</a></li>
+    <li><a href="community.html" class="active">Community</a></li>
+    
+    <li class="emergency-link"><a href="emergency.html"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;font-size:.75rem"></i>Emergency</a></li>
+  </ul>
+
+  <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html">🏠 Home</a>
+  <a href="ward-search.html">🔍 Ward Search</a>
+  <a href="ward-comparison.html">⚖️ Compare</a>
+  <a href="complaints.html">📢 Complaints</a>
+  <a href="community.html" class="active">🤝 Community</a>
+  
+  <a href="emergency.html">🚨 Emergency</a>
+</div>
+
+<!-- MAIN HUB -->
+<div class="comm-container">
+  <div class="page-title-wrap">
+    <h1>Events & Announcements</h1>
+    <p>Get involved in local ward initiatives, attend public town halls, and help make Vizag cleaner and greener.</p>
+  </div>
+
+  <div class="tabs-wrap">
+    <button class="tab-btn active" onclick="filterEvents('all')">All Events</button>
+    <button class="tab-btn" onclick="filterEvents('env')">Environment</button>
+    <button class="tab-btn" onclick="filterEvents('gov')">Town Halls</button>
+    <button class="tab-btn" onclick="filterEvents('health')">Health Camps</button>
+  </div>
+
+  <div class="events-grid" id="eventsGrid">
+    <!-- Event 1 -->
+    <div class="event-card" data-cat="env">
+      <div>
+        <span class="event-badge badge-env">Environment</span>
+        <h3 class="event-title">Swachh Ward Cleanliness Drive</h3>
+        <div class="event-meta">
+          <span><i class="fa-solid fa-calendar"></i> 20 Jun 2026</span>
+          <span><i class="fa-solid fa-clock"></i> 07:00 AM</span>
+        </div>
+        <p class="event-desc">Join your local ward officers and volunteers for a community cleanup and waste segregation awareness campaign in MVP Colony sectors.</p>
+      </div>
+      <div class="event-actions">
+        <button class="btn-rsvp" onclick="joinEvent('Swachh Ward Cleanliness Drive', 'RSVP')">RSVP</button>
+        <button class="btn-volunteer" onclick="joinEvent('Swachh Ward Cleanliness Drive', 'Volunteer')">Volunteer</button>
+      </div>
+    </div>
+
+    <!-- Event 2 -->
+    <div class="event-card" data-cat="gov">
+      <div>
+        <span class="event-badge badge-gov">Governance</span>
+        <h3 class="event-title">Ward Grievance Redressal Meeting</h3>
+        <div class="event-meta">
+          <span><i class="fa-solid fa-calendar"></i> 24 Jun 2026</span>
+          <span><i class="fa-solid fa-clock"></i> 10:30 AM</span>
+        </div>
+        <p class="event-desc">Direct interaction town hall meeting with the Ward Officer and engineers to resolve pending local complaints and review active ward budgets.</p>
+      </div>
+      <div class="event-actions">
+        <button class="btn-rsvp" onclick="joinEvent('Ward Grievance Redressal Meeting', 'RSVP')">RSVP</button>
+        <button class="btn-volunteer" onclick="joinEvent('Ward Grievance Redressal Meeting', 'Volunteer')">Volunteer</button>
+      </div>
+    </div>
+
+    <!-- Event 3 -->
+    <div class="event-card" data-cat="health">
+      <div>
+        <span class="event-badge badge-health">Health Camp</span>
+        <h3 class="event-title">Free Citizen Wellness & Health Camp</h3>
+        <div class="event-meta">
+          <span><i class="fa-solid fa-calendar"></i> 28 Jun 2026</span>
+          <span><i class="fa-solid fa-clock"></i> 09:00 AM</span>
+        </div>
+        <p class="event-desc">GVMC sponsored free health screening, diagnostic checks, and vaccination drive for families. Held at the Ward 17 Secretariat Community Hall.</p>
+      </div>
+      <div class="event-actions">
+        <button class="btn-rsvp" onclick="joinEvent('Free Citizen Wellness & Health Camp', 'RSVP')">RSVP</button>
+        <button class="btn-volunteer" onclick="joinEvent('Free Citizen Wellness & Health Camp', 'Volunteer')">Volunteer</button>
+      </div>
+    </div>
+
+    <!-- Event 4 -->
+    <div class="event-card" data-cat="env">
+      <div>
+        <span class="event-badge badge-env">Environment</span>
+        <h3 class="event-title">Mega Tree Plantation Drive</h3>
+        <div class="event-meta">
+          <span><i class="fa-solid fa-calendar"></i> 02 Jul 2026</span>
+          <span><i class="fa-solid fa-clock"></i> 08:00 AM</span>
+        </div>
+        <p class="event-desc">Help improve green cover and visual aesthetics in Ward 17. Seedlings and tree guards will be provided by the GVMC horticulture wing.</p>
+      </div>
+      <div class="event-actions">
+        <button class="btn-rsvp" onclick="joinEvent('Mega Tree Plantation Drive', 'RSVP')">RSVP</button>
+        <button class="btn-volunteer" onclick="joinEvent('Mega Tree Plantation Drive', 'Volunteer')">Volunteer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-bottom">
+    <p>© 2025 Greater Visakhapatnam Municipal Corporation · All rights reserved · Built for citizens of Vizag</p>
+    <div style="margin-top:8px;">
+      <span class="sdg-badge">🌿 SDG-11 Aligned</span>
+      <span class="sdg-badge" style="color:var(--primary-light);border-color:rgba(26,86,219,0.2);background:rgba(26,86,219,0.1)">🔒 Gov Secure</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- SCRIPTS -->
+<script src="js/main.js"></script>
+<script>
+  // Navbar scroll & Hamburger
+  const navEl = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navEl.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  const hamburger = document.getElementById('hamburgerBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileNav.classList.toggle('open');
+  });
+  document.addEventListener('click', (e) => {
+    if (!navEl.contains(e.target) && !mobileNav.contains(e.target)) {
+      hamburger.classList.remove('open');
+      mobileNav.classList.remove('open');
+    }
+  });
+
+  // Tab Filtering
+  function filterEvents(category) {
+    const cards = document.querySelectorAll('.event-card');
+    
+    // Set active tab styling
+    const btns = document.querySelectorAll('.tab-btn');
+    btns.forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+
+    cards.forEach(c => {
+      if (category === 'all' || c.dataset.cat === category) {
+        c.style.display = 'flex';
+      } else {
+        c.style.display = 'none';
+      }
+    });
+  }
+
+  function joinEvent(name, type) {
+    showToast(`Successfully registered as a ${type === 'Volunteer' ? 'Volunteer' : 'Participant'} for "${name}"!`, 'success');
+  }
+
+  function showToast(msg, type = 'info') {
+    if (typeof window.showToast === 'function') {
+      window.showToast(msg, type);
+      return;
+    }
+    const c = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = `<span>${type === 'info' ? 'ℹ️' : type === 'success' ? '✅' : '❌'}</span><span style="font-size:0.85rem">${msg}</span>`;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 3500);
+  }
+</script>
+
+<!-- ════════════════════════════════════════════
+     LOGIN MODAL
+════════════════════════════════════════════ -->
+<div class="login-modal" id="loginModal">
+  <div class="login-card">
+    <button class="login-modal-close" onclick="closeLoginModal()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="card-glow"></div>
+
+    <div class="login-logo-wrap">
+      <div class="login-logo-ring">🏛️</div>
+      <div class="portal-badge"><span class="portal-badge-dot"></span> Secure Access</div>
+      <div class="login-title">Officer Portal Login</div>
+      <div class="login-subtitle">Greater Visakhapatnam Municipal Corporation</div>
+    </div>
+
+    <form class="login-form" id="modalLoginForm" onsubmit="handleModalLogin(event)" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="modalRoleSelect">🛡️ &nbsp;Select Role</label>
+        <div class="input-icon-wrap">
+          <span class="icon">▾</span>
+          <select class="form-control" id="modalRoleSelect" style="padding-left:2.4rem;">
+            <option value="">— Choose Your Role —</option>
+            <option value="Admin">Admin</option>
+            <option value="Ward Officer">Ward Officer</option>
+            <option value="Data Entry Operator">Data Entry Operator</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="modalUsernameInput">👤 &nbsp;Username</label>
+        <div class="input-icon-wrap">
+          <span class="icon">@</span>
+          <input class="form-control" type="text" id="modalUsernameInput" placeholder="Enter your username" autocomplete="username" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="modalPasswordInput">🔒 &nbsp;Password</label>
+        <div class="input-icon-wrap">
+          <span class="icon">🔑</span>
+          <input class="form-control" type="password" id="modalPasswordInput" placeholder="Enter your password" autocomplete="current-password" />
+          <span class="pwd-toggle" id="modalPwdToggle" onclick="toggleModalPwd()" title="Show/Hide">👁️</span>
+        </div>
+      </div>
+
+      <div class="form-error" id="modalFormError">
+        <span>⚠️</span> <span id="modalErrorMsg">Invalid credentials. Please try again.</span>
+      </div>
+
+      <button type="submit" class="btn-login" id="modalLoginBtn">
+        <span>🚀 Sign In to Portal</span>
+      </button>
+    </form>
+
+    <div class="login-divider"><span>Demo Credentials</span></div>
+    <div class="demo-creds">
+      <div class="demo-creds-title">🔐 Test Access Credentials</div>
+      <div class="demo-row">
+        <div class="demo-item">
+          <span class="demo-lbl">Username</span>
+          <span class="demo-val">admin</span>
+        </div>
+        <div class="demo-item">
+          <span class="demo-lbl">Password</span>
+          <span class="demo-val">admin123</span>
+        </div>
+        <button type="button" class="btn-autofill" onclick="autofillModal()">↗ Autofill</button>
+      </div>
+    </div>
+
+    <div class="login-footer-note">
+      Need help? Contact <a href="mailto:support@gvmc.gov.in">support@gvmc.gov.in</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

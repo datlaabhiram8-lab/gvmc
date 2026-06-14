@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sustainability Scores | GVMC – Smart Ward Portal</title>
+  <meta name="description" content="GVMC Smart Ward Management Portal – Green indexes, waste recycling indicators, and SDG-11 compliance tracking." />
+  <link rel="icon" href="assets/gvmc-logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .sus-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+    .page-title-wrap {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .page-title-wrap h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: var(--gradient-green);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .page-title-wrap p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-top: 0.5rem;
+    }
+    .sus-selector-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      text-align: center;
+      margin-bottom: 3rem;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-card);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .sus-selector-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--success);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .sus-select {
+      width: 100%;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border-glass);
+      color: var(--text-primary);
+      padding: 0.8rem 1.2rem;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      transition: var(--transition);
+    }
+    .sus-select:focus {
+      border-color: var(--success);
+    }
+    .sus-dashboard {
+      display: none;
+      animation: fadeInUp 0.45s ease-out both;
+    }
+    .sus-dashboard.show {
+      display: block;
+    }
+    .sus-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    .radial-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      text-align: center;
+      box-shadow: var(--shadow-card);
+    }
+    .score-ring {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      margin: 0 auto 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .score-ring::before {
+      content: '';
+      position: absolute;
+      inset: 14px;
+      background: #0d1126;
+      border-radius: 50%;
+    }
+    .score-inner {
+      position: relative;
+      z-index: 1;
+    }
+    .score-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .score-denom {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .rating-badge {
+      display: inline-block;
+      padding: 0.4rem 1.25rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .rating-excellent { background: rgba(16,185,129,0.2); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+    .rating-good      { background: rgba(26,86,219,0.2);  color: var(--primary-light); border: 1px solid rgba(26,86,219,0.3); }
+    .rating-average   { background: rgba(245,158,11,0.2); color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
+    .rating-poor      { background: rgba(239,68,68,0.2);  color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+
+    .breakdown-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      box-shadow: var(--shadow-card);
+    }
+    .breakdown-card h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+    }
+    .breakdown-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .breakdown-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+    .breakdown-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .breakdown-score {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+    .breakdown-bar {
+      height: 8px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50px;
+      overflow: hidden;
+    }
+    .breakdown-fill {
+      height: 100%;
+      border-radius: 50px;
+      width: 0%;
+      transition: width 1s ease;
+    }
+    @media (max-width: 992px) {
+      .sus-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP UTILITY BAR -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div class="top-bar-left">
+      <a href="tel:18000425000009"><i class="fa-solid fa-phone"></i> 18000425000009</a>
+      <span><i class="fa-solid fa-envelope"></i> commissioner@gvmc.gov.in</span>
+    </div>
+    <div class="top-bar-right">
+      <button class="lang-btn"><i class="fa-solid fa-language"></i> Telugu</button>
+      <div class="font-controls">
+        <button title="Small text" onclick="document.documentElement.style.fontSize='14px'">A</button>
+        <button title="Normal text" class="active" onclick="document.documentElement.style.fontSize='16px'">A</button>
+        <button title="Large text" onclick="document.documentElement.style.fontSize='18px'">A<sup>+</sup></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN HEADER -->
+<header class="main-header">
+  <div class="main-header-inner">
+    <a href="index.html" class="header-brand">
+      <img src="assets/gvmc-logo.png" alt="GVMC Emblem" class="gvmc-logo" />
+      <div class="brand-text">
+        <div class="brand-title"><span>G</span>reater <span>V</span>isakhapatnam <span>M</span>unicipal <span>C</span>orporation</div>
+      </div>
+    </a>
+    <div class="header-cm">
+      <img src="assets/cm-photo.png" alt="Hon'ble Chief Minister" class="cm-photo" />
+      <div class="cm-info">
+        <div class="cm-name">Sri Nara Chandrababu Naidu</div>
+        <div class="cm-title">HON'BLE CHIEF MINISTER</div>
+      </div>
+    </div>
+    <button class="header-login-btn" onclick="openLoginModal()">
+      <i class="fa-solid fa-right-to-bracket"></i> Login / Register
+    </button>
+  </div>
+</header>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="ward-search.html">Ward Search</a></li>
+    <li><a href="ward-comparison.html">Compare</a></li>
+    <li><a href="complaints.html">Complaints</a></li>
+    <li><a href="community.html">Community</a></li>
+    
+    <li class="emergency-link"><a href="emergency.html"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;font-size:.75rem"></i>Emergency</a></li>
+  </ul>
+
+  <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html">🏠 Home</a>
+  <a href="ward-search.html">🔍 Ward Search</a>
+  <a href="ward-comparison.html">⚖️ Compare</a>
+  <a href="complaints.html">📢 Complaints</a>
+  <a href="community.html">🤝 Community</a>
+  
+  <a href="emergency.html">🚨 Emergency</a>
+</div>
+
+<!-- SUSTAINABILITY MAIN -->
+<div class="sus-container">
+  <div class="page-title-wrap">
+    <h1>Green Sustainability Scores</h1>
+    <p>Monitor your ward's air quality, green cover ratios, and progress towards SDG-11 targets.</p>
+  </div>
+
+  <div class="sus-selector-card">
+    <h3>Select Ward to View Metrics</h3>
+    <select class="sus-select" id="wardSelect" onchange="renderSustainability()">
+      <option value="">— Choose Ward —</option>
+    </select>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="sus-dashboard" id="susDashboard">
+    <div class="sus-grid">
+      <!-- Radial Card -->
+      <div class="radial-card">
+        <h2 id="susWardName" style="font-family:'Outfit',sans-serif;font-size:1.4rem;margin-bottom:1.5rem;">Ward —</h2>
+        <div class="score-ring" id="scoreRing">
+          <div class="score-inner">
+            <div class="score-num" id="scoreVal">—</div>
+            <div class="score-denom">Green Index</div>
+          </div>
+        </div>
+        <div class="rating-badge" id="ratingLabel">Loading…</div>
+      </div>
+
+      <!-- Breakdown Card -->
+      <div class="breakdown-card">
+        <h2>Indicator Breakdown</h2>
+        <div class="breakdown-list">
+          <!-- Item 1 -->
+          <div class="breakdown-item">
+            <div class="breakdown-header">
+              <span class="breakdown-label">🏢 Public Infrastructure & Sanitation Facilities</span>
+              <span class="breakdown-score" id="bdFacilities">—</span>
+            </div>
+            <div class="breakdown-bar">
+              <div class="breakdown-fill" id="bfFacilities" style="background:var(--gradient-btn)"></div>
+            </div>
+          </div>
+          <!-- Item 2 -->
+          <div class="breakdown-item">
+            <div class="breakdown-header">
+              <span class="breakdown-label">🧹 Cleanliness & Waste Management Index</span>
+              <span class="breakdown-score" id="bdCleanliness">—</span>
+            </div>
+            <div class="breakdown-bar">
+              <div class="breakdown-fill" id="bfCleanliness" style="background:var(--gradient-purple)"></div>
+            </div>
+          </div>
+          <!-- Item 3 -->
+          <div class="breakdown-item">
+            <div class="breakdown-header">
+              <span class="breakdown-label">🌳 Parks & Green Canopy Coverage</span>
+              <span class="breakdown-score" id="bdGreen">—</span>
+            </div>
+            <div class="breakdown-bar">
+              <div class="breakdown-fill" id="bfGreen" style="background:var(--gradient-green)"></div>
+            </div>
+          </div>
+          <!-- Item 4 -->
+          <div class="breakdown-item">
+            <div class="breakdown-header">
+              <span class="breakdown-label">😊 Citizen Feedback Satisfaction</span>
+              <span class="breakdown-score" id="bdSatisfaction">—</span>
+            </div>
+            <div class="breakdown-bar">
+              <div class="breakdown-fill" id="bfSatisfaction" style="background:var(--gradient-gold)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-bottom">
+    <p>© 2025 Greater Visakhapatnam Municipal Corporation · All rights reserved · Built for citizens of Vizag</p>
+    <div style="margin-top:8px;">
+      <span class="sdg-badge">🌿 SDG-11 Aligned</span>
+      <span class="sdg-badge" style="color:var(--primary-light);border-color:rgba(26,86,219,0.2);background:rgba(26,86,219,0.1)">🔒 Gov Secure</span>
+    </div>
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="js/main.js"></script>
+<script src="js/ward_data.js"></script>
+<script src="js/demographics.js"></script>
+<script>
+  // Navbar scroll & Hamburger
+  const navEl = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navEl.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  const hamburger = document.getElementById('hamburgerBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileNav.classList.toggle('open');
+  });
+  document.addEventListener('click', (e) => {
+    if (!navEl.contains(e.target) && !mobileNav.contains(e.target)) {
+      hamburger.classList.remove('open');
+      mobileNav.classList.remove('open');
+    }
+  });
+
+  // Load Wards options
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof WARD_DEMOGRAPHICS !== 'undefined') {
+      const select = document.getElementById('wardSelect');
+      const keys = Object.keys(WARD_DEMOGRAPHICS).sort((a,b) => parseInt(a) - parseInt(b));
+      keys.forEach(k => {
+        const option = new Option(`Ward ${k} - ${WARD_DEMOGRAPHICS[k].name || ''}`, k);
+        select.add(option);
+      });
+    }
+  });
+
+  function renderSustainability() {
+    const val = document.getElementById('wardSelect').value;
+    const dash = document.getElementById('susDashboard');
+
+    if (!val) {
+      dash.classList.remove('show');
+      return;
+    }
+
+    const ward = WARD_DEMOGRAPHICS[val];
+    const score = ward.sustainability || 70;
+
+    document.getElementById('susWardName').textContent = `Ward ${val} - ${ward.name || ''}`;
+    document.getElementById('scoreVal').textContent = score;
+
+    // Conic gradient ring
+    const ring = document.getElementById('scoreRing');
+    let ringColor = '#10b981';
+    let ratingCls = 'rating-excellent';
+    let ratingTxt = 'Excellent';
+
+    if (score < 55) {
+      ringColor = '#ef4444';
+      ratingCls = 'rating-poor';
+      ratingTxt = 'Needs Improvement';
+    } else if (score < 70) {
+      ringColor = '#f59e0b';
+      ratingCls = 'rating-average';
+      ratingTxt = 'Average';
+    } else if (score < 85) {
+      ringColor = '#3b82f6';
+      ratingCls = 'rating-good';
+      ratingTxt = 'Good';
+    }
+
+    ring.style.background = `conic-gradient(${ringColor} ${score * 3.6}deg, rgba(255,255,255,0.07) 0)`;
+    
+    const label = document.getElementById('ratingLabel');
+    label.className = `rating-badge ${ratingCls}`;
+    label.textContent = ratingTxt;
+
+    // Breakdown components (calculated based on demographics)
+    const pop = ward.population || 20000;
+    
+    // Deterministic mock breakdown values based on pop, sc to keep it stable
+    const facScore = Math.min(Math.round(45 + (pop % 45)), 98);
+    const cleanScore = Math.min(Math.round(50 + (score % 35) + (pop % 15)), 99);
+    const greenScore = Math.min(Math.round(40 + (score % 45) + (pop % 10)), 95);
+    const satScore = Math.min(Math.round(55 + (score % 30) + (pop % 12)), 96);
+
+    document.getElementById('bdFacilities').textContent = facScore + '/100';
+    document.getElementById('bdCleanliness').textContent = cleanScore + '/100';
+    document.getElementById('bdGreen').textContent = greenScore + '/100';
+    document.getElementById('bdSatisfaction').textContent = satScore + '/100';
+
+    document.getElementById('bfFacilities').style.width = facScore + '%';
+    document.getElementById('bfCleanliness').style.width = cleanScore + '%';
+    document.getElementById('bfGreen').style.width = greenScore + '%';
+    document.getElementById('bfSatisfaction').style.width = satScore + '%';
+
+    dash.classList.add('show');
+  }
+</script>
+
+<!-- ════════════════════════════════════════════
+     LOGIN MODAL
+════════════════════════════════════════════ -->
+<div class="login-modal" id="loginModal">
+  <div class="login-card">
+    <button class="login-modal-close" onclick="closeLoginModal()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="card-glow"></div>
+
+    <div class="login-logo-wrap">
+      <div class="login-logo-ring">🏛️</div>
+      <div class="portal-badge"><span class="portal-badge-dot"></span> Secure Access</div>
+      <div class="login-title">Officer Portal Login</div>
+      <div class="login-subtitle">Greater Visakhapatnam Municipal Corporation</div>
+    </div>
+
+    <form class="login-form" id="modalLoginForm" onsubmit="handleModalLogin(event)" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="modalRoleSelect">🛡️ &nbsp;Select Role</label>
+        <div class="input-icon-wrap">
+          <span class="icon">▾</span>
+          <select class="form-control" id="modalRoleSelect" style="padding-left:2.4rem;">
+            <option value="">— Choose Your Role —</option>
+            <option value="Admin">Admin</option>
+            <option value="Ward Officer">Ward Officer</option>
+            <option value="Data Entry Operator">Data Entry Operator</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="modalUsernameInput">👤 &nbsp;Username</label>
+        <div class="input-icon-wrap">
+          <span class="icon">@</span>
+          <input class="form-control" type="text" id="modalUsernameInput" placeholder="Enter your username" autocomplete="username" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="modalPasswordInput">🔒 &nbsp;Password</label>
+        <div class="input-icon-wrap">
+          <span class="icon">🔑</span>
+          <input class="form-control" type="password" id="modalPasswordInput" placeholder="Enter your password" autocomplete="current-password" />
+          <span class="pwd-toggle" id="modalPwdToggle" onclick="toggleModalPwd()" title="Show/Hide">👁️</span>
+        </div>
+      </div>
+
+      <div class="form-error" id="modalFormError">
+        <span>⚠️</span> <span id="modalErrorMsg">Invalid credentials. Please try again.</span>
+      </div>
+
+      <button type="submit" class="btn-login" id="modalLoginBtn">
+        <span>🚀 Sign In to Portal</span>
+      </button>
+    </form>
+
+    <div class="login-divider"><span>Demo Credentials</span></div>
+    <div class="demo-creds">
+      <div class="demo-creds-title">🔐 Test Access Credentials</div>
+      <div class="demo-row">
+        <div class="demo-item">
+          <span class="demo-lbl">Username</span>
+          <span class="demo-val">admin</span>
+        </div>
+        <div class="demo-item">
+          <span class="demo-lbl">Password</span>
+          <span class="demo-val">admin123</span>
+        </div>
+        <button type="button" class="btn-autofill" onclick="autofillModal()">↗ Autofill</button>
+      </div>
+    </div>
+
+    <div class="login-footer-note">
+      Need help? Contact <a href="mailto:support@gvmc.gov.in">support@gvmc.gov.in</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

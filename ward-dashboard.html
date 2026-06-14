@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ward Dashboard – GVMC Smart Ward Management Portal</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+
+  <!-- ── AUTH GUARD: runs before any paint — unauthenticated users are redirected instantly ── -->
+  <script>
+    if (localStorage.getItem('gvmc_officer_logged_in') !== 'true') {
+      window.location.replace('officer-login.html');
+    }
+  </script>
+
+  <!-- Project stylesheet -->
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Leaflet.js -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* ───── PAGE-SPECIFIC OVERRIDES / ADDITIONS ───── */
+
+    /* Animated background for dashboard body */
+    body { background: var(--bg-dark); }
+
+    /* ── Page wrapper ── */
+    .dash-body {
+      padding-top: 0; /* navbar height handled by document flow */
+      min-height: 100vh;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      padding: 3.5rem 2rem 2.5rem;
+      background: var(--gradient-hero);
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(26,86,219,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(26,86,219,0.06) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+    .header-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.18;
+      pointer-events: none;
+    }
+    .header-orb-1 { width: 400px; height: 400px; background: #1a56db; top: -120px; right: -80px; }
+    .header-orb-2 { width: 250px; height: 250px; background: #06b6d4; bottom: -80px; left: 20%; }
+
+    .page-header-content {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    /* ── Ward Selector ── */
+    .ward-selector-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .ward-selector-wrap label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    #wardSelect {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border-glass);
+      color: var(--text-primary);
+      padding: 0.55rem 2.2rem 0.55rem 0.9rem;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      transition: var(--transition);
+    }
+    #wardSelect:focus { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(26,86,219,0.2); outline: none; }
+    #wardSelect option { background: #1a1f3d; }
+
+    /* ── Main Content Area ── */
+    .dash-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    /* ── Section label ── */
+    .section-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.25rem;
+    }
+    .section-eyebrow .tag {
+      background: rgba(26,86,219,0.12);
+      border: 1px solid rgba(26,86,219,0.25);
+      color: var(--accent);
+      padding: 0.25rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .section-eyebrow h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    /* ── KPI Cards ── */
+    .kpi-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+    }
+    .kpi-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .kpi-card.blue::after   { background: var(--gradient-btn); }
+    .kpi-card.green::after  { background: var(--gradient-green); }
+    .kpi-card.purple::after { background: var(--gradient-purple); }
+    .kpi-card.gold::after   { background: var(--gradient-gold); }
+    .kpi-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card); border-color: rgba(26,86,219,0.35); }
+    .kpi-card .kpi-icon { font-size: 2rem; margin-bottom: 0.6rem; }
+    .kpi-card .kpi-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+    .kpi-card.blue   .kpi-value { color: var(--primary-light); }
+    .kpi-card.green  .kpi-value { color: var(--success); }
+    .kpi-card.purple .kpi-value { color: var(--accent2); }
+    .kpi-card.gold   .kpi-value { color: var(--gold); }
+    .kpi-card .kpi-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .kpi-card .kpi-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.35rem; }
+
+    /* ── Chart Grid ── */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .chart-wrapper {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      transition: var(--transition);
+    }
+    .chart-wrapper:hover { border-color: rgba(26,86,219,0.3); }
+    .chart-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chart-canvas-wrap { position: relative; height: 280px; }
+
+    /* ── Sustainability Score Card ── */
+    .sustain-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      transition: var(--transition);
+    }
+    .sustain-card:hover { border-color: rgba(16,185,129,0.3); box-shadow: 0 0 30px rgba(16,185,129,0.12); }
+    .sustain-inner {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    /* Circular ring – uses CSS conic-gradient driven by --pct custom property */
+    .score-ring-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .score-ring {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: conic-gradient(
+        var(--ring-color, #10b981) calc(var(--pct, 0) * 3.6deg),
+        rgba(255,255,255,0.07) 0
+      );
+      position: relative;
+    }
+    .score-ring::before {
+      content: '';
+      position: absolute;
+      inset: 12px;
+      background: #0d1126;
+      border-radius: 50%;
+    }
+    .score-inner { position: relative; text-align: center; z-index: 1; }
+    .score-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .score-denom { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+    .score-rating-badge {
+      padding: 0.35rem 1rem;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .rating-excellent { background: rgba(16,185,129,0.2); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+    .rating-good      { background: rgba(26,86,219,0.2);  color: var(--primary-light); border: 1px solid rgba(26,86,219,0.3); }
+    .rating-average   { background: rgba(245,158,11,0.2); color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
+    .rating-poor      { background: rgba(239,68,68,0.2);  color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+
+    /* Score breakdown bars */
+    .breakdown-list { display: flex; flex-direction: column; gap: 1rem; }
+    .breakdown-item {}
+    .breakdown-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+    .breakdown-label { font-size: 0.83rem; font-weight: 500; }
+    .breakdown-score { font-size: 0.83rem; font-weight: 700; }
+    .breakdown-bar {
+      height: 7px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50px;
+      overflow: hidden;
+    }
+    .breakdown-fill {
+      height: 100%;
+      border-radius: 50px;
+      transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ── Area Chips ── */
+    .areas-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+    }
+    .area-chips-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .area-chip {
+      background: rgba(6,182,212,0.1);
+      border: 1px solid rgba(6,182,212,0.22);
+      color: var(--accent);
+      padding: 0.3rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: default;
+      transition: var(--transition);
+    }
+    .area-chip:hover {
+      background: rgba(6,182,212,0.22);
+      transform: translateY(-1px);
+    }
+    .area-count-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(26,86,219,0.15);
+      border: 1px solid rgba(26,86,219,0.25);
+      color: var(--primary-light);
+      padding: 0.25rem 0.65rem;
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-left: 0.5rem;
+    }
+
+    /* ── Compare Banner ── */
+    .compare-banner {
+      background: linear-gradient(135deg, rgba(26,86,219,0.15) 0%, rgba(6,182,212,0.1) 100%);
+      border: 1px solid rgba(26,86,219,0.25);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .compare-banner-text { display: flex; align-items: center; gap: 12px; }
+    .compare-icon { font-size: 1.8rem; }
+    .compare-banner h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .compare-banner p  { font-size: 0.83rem; color: var(--text-muted); }
+    .btn-compare {
+      background: var(--gradient-btn);
+      color: white;
+      padding: 0.65rem 1.5rem;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 0.88rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .btn-compare:hover { transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+
+    /* ── Recent Complaints Table ── */
+    .table-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .table-card-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-glass);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .table-card-title { font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .data-table th {
+      background: rgba(26,86,219,0.1);
+      padding: 0.85rem 1.25rem;
+      text-align: left;
+      font-size: 0.73rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .data-table td {
+      padding: 0.85rem 1.25rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .data-table tr:hover td { background: rgba(255,255,255,0.03); color: var(--text-primary); }
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 0.22rem 0.65rem;
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .status-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+    .s-pending  { background: rgba(245,158,11,0.15); color: var(--warning); }
+    .s-pending::before  { background: var(--warning); }
+    .s-progress { background: rgba(26,86,219,0.15); color: var(--primary-light); }
+    .s-progress::before { background: var(--primary-light); }
+    .s-resolved { background: rgba(16,185,129,0.15); color: var(--success); }
+    .s-resolved::before { background: var(--success); }
+
+    /* ── Citizen Feedback ── */
+    .feedback-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+    }
+    .feedback-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .feedback-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius);
+      padding: 1rem;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .feedback-item:hover { border-color: rgba(246,201,14,0.3); transform: translateY(-2px); }
+    .feedback-category { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .feedback-icon { font-size: 1.6rem; margin-bottom: 0.4rem; }
+    .stars-wrap { display: flex; justify-content: center; gap: 3px; font-size: 1.1rem; margin-bottom: 0.3rem; }
+    .star-filled { color: #f6c90e; }
+    .star-half   { color: #f6c90e; opacity: 0.6; }
+    .star-empty  { color: rgba(255,255,255,0.2); }
+    .feedback-score { font-size: 0.85rem; font-weight: 700; color: var(--gold); }
+
+    /* ── Active Projects ── */
+    .projects-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+    }
+    .project-list { display: flex; flex-direction: column; gap: 1.25rem; margin-top: 1rem; }
+    .project-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      transition: var(--transition);
+    }
+    .project-item:hover { border-color: rgba(26,86,219,0.35); }
+    .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.85rem; gap: 1rem; }
+    .project-name { font-weight: 700; font-size: 0.9rem; }
+    .project-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.25rem; }
+    .project-tag {
+      font-size: 0.7rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 50px;
+      font-weight: 600;
+    }
+    .tag-infra   { background: rgba(26,86,219,0.2); color: var(--primary-light); }
+    .tag-green   { background: rgba(16,185,129,0.2); color: var(--success); }
+    .tag-health  { background: rgba(239,68,68,0.2); color: #f87171; }
+    .tag-water   { background: rgba(6,182,212,0.2); color: var(--accent); }
+    .project-pct { font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 800; white-space: nowrap; }
+    .proj-bar-wrap { margin-bottom: 0.5rem; }
+    .proj-bar {
+      height: 8px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50px;
+      overflow: hidden;
+    }
+    .proj-fill {
+      height: 100%;
+      border-radius: 50px;
+      transition: width 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .proj-dates { display: flex; justify-content: space-between; font-size: 0.73rem; color: var(--text-muted); margin-top: 0.4rem; }
+
+    /* ── Map ── */
+    .map-section-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .map-section-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-glass);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+    }
+    #wardMap {
+      width: 100%;
+      height: 420px;
+      display: block;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .kpi-grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .sustain-inner { grid-template-columns: 1fr; }
+      .score-ring-wrap { flex-direction: row; align-items: center; gap: 1.5rem; }
+    }
+    @media (max-width: 768px) {
+      .charts-grid { grid-template-columns: 1fr; }
+      .kpi-grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .page-header-content { flex-direction: column; }
+      .feedback-grid { grid-template-columns: repeat(2, 1fr); }
+      .dash-content { padding: 1.5rem 1rem 3rem; }
+      .compare-banner { flex-direction: column; }
+      .data-table { font-size: 0.78rem; }
+      .data-table th, .data-table td { padding: 0.7rem 0.85rem; }
+    }
+    @media (max-width: 480px) {
+      .kpi-grid-4 { grid-template-columns: 1fr 1fr; }
+      .score-ring { width: 110px; height: 110px; }
+      .score-ring-wrap { flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+<!-- ════════════════════════════════════════════
+     TOP UTILITY BAR
+════════════════════════════════════════════ -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div class="top-bar-left">
+      <a href="tel:18000425000009"><i class="fa-solid fa-phone"></i> 18000425000009</a>
+      <span><i class="fa-solid fa-envelope"></i> commissioner@gvmc.gov.in</span>
+    </div>
+    <div class="top-bar-right">
+      <button class="lang-btn"><i class="fa-solid fa-language"></i> Telugu</button>
+      <div class="font-controls">
+        <button title="Small text" onclick="document.documentElement.style.fontSize='14px'">A</button>
+        <button title="Normal text" class="active" onclick="document.documentElement.style.fontSize='16px'">A</button>
+        <button title="Large text" onclick="document.documentElement.style.fontSize='18px'">A<sup>+</sup></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     MAIN HEADER
+════════════════════════════════════════════ -->
+<header class="main-header">
+  <div class="main-header-inner">
+    <a href="index.html" class="header-brand">
+      <img src="assets/gvmc-logo.png" alt="GVMC Emblem" class="gvmc-logo" />
+      <div class="brand-text">
+        <div class="brand-title"><span>G</span>reater <span>V</span>isakhapatnam <span>M</span>unicipal <span>C</span>orporation</div>
+      </div>
+    </a>
+    <div class="header-cm">
+      <img src="assets/cm-photo.png" alt="Hon'ble Chief Minister" class="cm-photo" />
+      <div class="cm-info">
+        <div class="cm-name">Sri Nara Chandrababu Naidu</div>
+        <div class="cm-title">HON'BLE CHIEF MINISTER</div>
+      </div>
+    </div>
+    <!-- Officer session info (populated by JS) -->
+    <div id="headerSessionArea">
+      <button class="header-login-btn" onclick="openLoginModal()">
+      <i class="fa-solid fa-right-to-bracket"></i> Login / Register
+    </button>
+    </div>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="ward-search.html">Ward Search</a></li>
+    <li><a href="ward-comparison.html">Compare</a></li>
+    <li><a href="complaints.html">Complaints</a></li>
+    <li><a href="community.html">Community</a></li>
+    
+    <li class="emergency-link"><a href="emergency.html"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;font-size:.75rem"></i>Emergency</a></li>
+  </ul>
+
+  <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html">🏠 Home</a>
+  <a href="ward-search.html">🔍 Ward Search</a>
+  <a href="ward-comparison.html">⚖️ Compare</a>
+  <a href="complaints.html">📢 Complaints</a>
+  <a href="community.html">🤝 Community</a>
+  
+  <a href="emergency.html">🚨 Emergency</a>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     DASHBOARD BODY
+     ═══════════════════════════════════════════════ -->
+<div class="dash-body">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="header-orb header-orb-1"></div>
+    <div class="header-orb header-orb-2"></div>
+    <div class="page-header-content">
+      <div>
+        <nav class="breadcrumb">
+          <a href="index.html">🏠 Home</a>
+          <span>›</span>
+          <span>Ward Dashboard</span>
+          <span>›</span>
+          <span id="breadcrumbWard">Ward 17</span>
+        </nav>
+        <h1 class="page-title" id="pageTitle">
+          Ward <span id="wardNumDisplay" style="background:var(--gradient-btn);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">17</span> Dashboard
+        </h1>
+        <p class="page-subtitle" id="wardNameDisplay" style="font-size:1rem;margin-top:0.35rem;">
+          MVP Colony North &nbsp;·&nbsp; <span style="color:var(--accent);">MVP Colony Secretariat</span>
+        </p>
+      </div>
+
+      <!-- Ward Selector -->
+      <div class="ward-selector-wrap">
+        <label for="wardSelect">Switch Ward</label>
+        <select id="wardSelect"></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="dash-content">
+
+    <!-- ── 1. KPI CARDS ── -->
+    <div>
+      <div class="section-eyebrow">
+        <span class="tag">📊 Overview</span>
+        <h2>Key Metrics</h2>
+      </div>
+      <div class="kpi-grid-4">
+        <div class="kpi-card blue">
+          <div class="kpi-icon">👥</div>
+          <span class="kpi-value" id="kpiPop">0</span>
+          <div class="kpi-label">Total Population</div>
+          <div class="kpi-sub" id="kpiPopSub">–</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-icon">👩</div>
+          <span class="kpi-value" id="kpiWomen">0%</span>
+          <div class="kpi-label">Women %</div>
+          <div class="kpi-sub" id="kpiWomenSub">–</div>
+        </div>
+        <div class="kpi-card purple">
+          <div class="kpi-icon">🏷️</div>
+          <span class="kpi-value" id="kpiSC">0%</span>
+          <div class="kpi-label">SC Population %</div>
+          <div class="kpi-sub" id="kpiSCSub">–</div>
+        </div>
+        <div class="kpi-card gold">
+          <div class="kpi-icon">🌿</div>
+          <span class="kpi-value" id="kpiSustain">0</span>
+          <div class="kpi-label">Sustainability Score</div>
+          <div class="kpi-sub" id="kpiSustainSub">out of 100</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 2. DEMOGRAPHICS CHARTS ── -->
+    <div>
+      <div class="section-eyebrow">
+        <span class="tag">📈 Demographics</span>
+        <h2>Population Breakdown</h2>
+      </div>
+      <div class="charts-grid">
+        <!-- Doughnut -->
+        <div class="chart-wrapper">
+          <div class="chart-title">🔵 Gender Distribution</div>
+          <div class="chart-canvas-wrap">
+            <canvas id="genderChart"></canvas>
+          </div>
+        </div>
+        <!-- Bar -->
+        <div class="chart-wrapper">
+          <div class="chart-title">📊 Population vs SC vs ST</div>
+          <div class="chart-canvas-wrap">
+            <canvas id="popBarChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 3. SUSTAINABILITY SCORE CARD ── -->
+    <div>
+      <div class="section-eyebrow">
+        <span class="tag">🌿 Sustainability</span>
+        <h2>Sustainability Score Breakdown</h2>
+      </div>
+      <div class="sustain-card">
+        <div class="sustain-inner">
+          <!-- Circular Ring -->
+          <div class="score-ring-wrap">
+            <div class="score-ring" id="scoreRing">
+              <div class="score-inner">
+                <div class="score-num" id="sustainNum">–</div>
+                <div class="score-denom">out of 100</div>
+              </div>
+            </div>
+            <div class="score-rating-badge" id="ratingBadge">Loading…</div>
+          </div>
+
+          <!-- Breakdown Bars -->
+          <div class="breakdown-list">
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🏢 Public Facilities</span>
+                <span class="breakdown-score" id="bdFacilities">–</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfFacilities" style="width:0%;background:var(--gradient-btn)"></div>
+              </div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">😊 Citizen Satisfaction</span>
+                <span class="breakdown-score" id="bdSatisfaction">–</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfSatisfaction" style="width:0%;background:var(--gradient-green)"></div>
+              </div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🔨 Projects Completed</span>
+                <span class="breakdown-score" id="bdProjects">–</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfProjects" style="width:0%;background:var(--gradient-purple)"></div>
+              </div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🧹 Cleanliness</span>
+                <span class="breakdown-score" id="bdCleanliness">–</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfCleanliness" style="width:0%;background:var(--gradient-gold)"></div>
+              </div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🌳 Green Coverage</span>
+                <span class="breakdown-score" id="bdGreen">–</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfGreen" style="width:0%;background:var(--gradient-green)"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 4. AREAS IN THIS WARD ── -->
+    <div class="areas-card">
+      <div class="section-eyebrow" style="margin-bottom:0">
+        <span class="tag">📍 Areas</span>
+        <h2>Areas in this Ward
+          <span class="area-count-badge" id="areaCount">0 areas</span>
+        </h2>
+      </div>
+      <div class="area-chips-wrap" id="areaChips">
+        <span style="color:var(--text-muted);font-size:0.85rem;">Loading areas…</span>
+      </div>
+    </div>
+
+    <!-- ── 5. COMPARE BANNER ── -->
+    <div class="compare-banner">
+      <div class="compare-banner-text">
+        <div class="compare-icon">⚖️</div>
+        <div>
+          <h3>Compare with Another Ward</h3>
+          <p>Analyse ward metrics side by side to spot trends and gaps.</p>
+        </div>
+      </div>
+      <a href="#" id="compareLink" class="btn-compare">Compare Wards →</a>
+    </div>
+
+    <!-- ── 6. RECENT COMPLAINTS TABLE ── -->
+    <div class="table-card">
+      <div class="table-card-header">
+        <div class="table-card-title">🚨 Recent Complaints</div>
+        <a href="complaints.html" style="font-size:0.82rem;color:var(--accent);">View all →</a>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table" id="complaintsTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Complaint</th>
+              <th>Category</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody id="complaintsTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── 7. CITIZEN FEEDBACK RATINGS ── -->
+    <div class="feedback-card">
+      <div class="section-eyebrow">
+        <span class="tag">⭐ Feedback</span>
+        <h2>Citizen Feedback Ratings</h2>
+      </div>
+      <div class="feedback-grid" id="feedbackGrid"></div>
+    </div>
+
+    <!-- ── 8. ACTIVE PROJECTS ── -->
+    <div class="projects-card">
+      <div class="section-eyebrow">
+        <span class="tag">🔨 Projects</span>
+        <h2>Active Projects</h2>
+      </div>
+      <div class="project-list" id="projectList"></div>
+    </div>
+
+    <!-- ── 9. MAP ── -->
+    <div class="map-section-card">
+      <div class="map-section-header">
+        🗺️ Ward Location Map &nbsp;
+        <span style="font-size:0.78rem;color:var(--text-muted);font-weight:400;">Centred on Visakhapatnam</span>
+      </div>
+      <div id="wardMap"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     DATA SCRIPTS
+     ═══════════════════════════════════════════════ -->
+<script src="js/main.js"></script>
+<script src="js/ward_data.js"></script>
+<script src="js/demographics.js"></script>
+
+<!-- ═══════════════════════════════════════════════
+     DASHBOARD LOGIC
+     ═══════════════════════════════════════════════ -->
+<script>
+// ────────────────────────────────────────────────
+// -0. SESSION UI — show officer name + logout button
+// ────────────────────────────────────────────────
+(function sessionUI() {
+  const role    = localStorage.getItem('gvmc_officer_role')  || 'Officer';
+  const name    = localStorage.getItem('gvmc_officer_name') || 'Admin';
+  const area    = document.getElementById('headerSessionArea');
+  if (!area) return;
+  area.innerHTML = `
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <div style="
+        display:flex;flex-direction:column;align-items:flex-end;
+        font-family:'Inter',sans-serif;
+      ">
+        <span style="font-size:0.75rem;font-weight:700;color:var(--text-primary);">${name}</span>
+        <span style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">${role}</span>
+      </div>
+      <div style="
+        width:36px;height:36px;border-radius:50%;
+        background:linear-gradient(135deg,#1a56db,#06b6d4);
+        display:flex;align-items:center;justify-content:center;
+        font-size:1rem;font-weight:700;color:white;
+        box-shadow:0 0 14px rgba(26,86,219,0.4);
+        flex-shrink:0;
+      ">${name.charAt(0).toUpperCase()}</div>
+      <a href="#" onclick="logoutOfficer(); return false;" style="
+        display:inline-flex;align-items:center;gap:5px;
+        background:rgba(239,68,68,0.12);
+        border:1px solid rgba(239,68,68,0.28);
+        color:#f87171;
+        padding:0.4rem 0.85rem;
+        border-radius:8px;
+        font-size:0.75rem;
+        font-weight:600;
+        text-decoration:none;
+        transition:all 0.25s;
+        white-space:nowrap;
+        cursor:pointer;
+      " onmouseover="this.style.background='rgba(239,68,68,0.22)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </a>
+    </div>
+  `;
+})();
+
+// ────────────────────────────────────────────────
+// 0. HELPERS
+// ────────────────────────────────────────────────
+function getParam(key) {
+  return new URLSearchParams(window.location.search).get(key);
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function animateCounter(el, target, suffix, duration, decimals) {
+  suffix  = suffix  || '';
+  duration= duration|| 1200;
+  decimals= decimals|| 0;
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - t, 3);
+    const val  = lerp(0, target, ease);
+    el.textContent = decimals
+      ? val.toFixed(decimals) + suffix
+      : Math.round(val).toLocaleString('en-IN') + suffix;
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ────────────────────────────────────────────────
+// 1. READ WARD FROM URL  (default 17)
+// ────────────────────────────────────────────────
+const wardNum = parseInt(getParam('ward')) || 17;
+
+// ────────────────────────────────────────────────
+// 2. BUILD WARD SELECTOR DROPDOWN
+// ────────────────────────────────────────────────
+(function buildSelector() {
+  const sel = document.getElementById('wardSelect');
+  for (let w = 1; w <= 72; w++) {
+    const name = WARD_DEMOGRAPHICS[w] ? WARD_DEMOGRAPHICS[w].name : '';
+    const opt  = document.createElement('option');
+    opt.value = w;
+    opt.textContent = `Ward ${w}${name ? ' – ' + name : ''}`;
+    if (w === wardNum) opt.selected = true;
+    sel.appendChild(opt);
+  }
+  sel.addEventListener('change', function() {
+    window.location.href = 'ward-dashboard.html?ward=' + this.value;
+  });
+})();
+
+// ────────────────────────────────────────────────
+// 3. LOAD WARD DEMOGRAPHICS
+// ────────────────────────────────────────────────
+const D = WARD_DEMOGRAPHICS[wardNum];
+
+if (!D) {
+  document.getElementById('pageTitle').textContent = 'Ward Not Found';
+} else {
+
+  // Deterministic sustainability sub-scores seeded from ward number
+  function seededScore(seed, max) {
+    const x = Math.sin(seed * 9301 + 49297) * 233280;
+    const rand = x - Math.floor(x);
+    return Math.round(rand * max * 0.6 + max * 0.4); // 40%–100% range
+  }
+
+  const sustainTotal = D.sustainability;
+  const breakdown = {
+    facilities:   Math.min(seededScore(wardNum + 1, 25), Math.round(sustainTotal * 0.27)),
+    satisfaction: Math.min(seededScore(wardNum + 2, 20), Math.round(sustainTotal * 0.22)),
+    projects:     Math.min(seededScore(wardNum + 3, 20), Math.round(sustainTotal * 0.21)),
+    cleanliness:  Math.min(seededScore(wardNum + 4, 20), Math.round(sustainTotal * 0.20)),
+    green:        Math.min(seededScore(wardNum + 5, 15), Math.round(sustainTotal * 0.15))
+  };
+
+  // Clamp to max
+  breakdown.facilities   = Math.max(0, Math.min(25, breakdown.facilities));
+  breakdown.satisfaction = Math.max(0, Math.min(20, breakdown.satisfaction));
+  breakdown.projects     = Math.max(0, Math.min(20, breakdown.projects));
+  breakdown.cleanliness  = Math.max(0, Math.min(20, breakdown.cleanliness));
+  breakdown.green        = Math.max(0, Math.min(15, breakdown.green));
+
+  // ── 3a. Update page headings ──
+  document.getElementById('wardNumDisplay').textContent = wardNum;
+  document.getElementById('breadcrumbWard').textContent = `Ward ${wardNum}`;
+  document.getElementById('wardNameDisplay').innerHTML =
+    `${D.name} &nbsp;·&nbsp; <span style="color:var(--accent);">${D.secretariat}</span>`;
+  document.title = `Ward ${wardNum} Dashboard – GVMC Portal`;
+
+  // ── 3b. Animate KPI counters ──
+  window.addEventListener('load', () => {
+    animateCounter(document.getElementById('kpiPop'), D.population, '', 1500);
+    document.getElementById('kpiPopSub').textContent =
+      `♂ ${D.male.toLocaleString('en-IN')} · ♀ ${D.female.toLocaleString('en-IN')}`;
+
+    animateCounter(document.getElementById('kpiWomen'), D.womenPct, '%', 1200, 1);
+    document.getElementById('kpiWomenSub').textContent =
+      `${D.female.toLocaleString('en-IN')} women`;
+
+    animateCounter(document.getElementById('kpiSC'), D.scPct, '%', 1200, 1);
+    document.getElementById('kpiSCSub').textContent =
+      `${D.sc.toLocaleString('en-IN')} SC residents`;
+
+    animateCounter(document.getElementById('kpiSustain'), sustainTotal, '', 1400);
+    document.getElementById('kpiSustainSub').textContent = 'out of 100';
+  });
+
+  // ── 3c. Demographics Charts ──
+  Chart.defaults.color = '#94a3b8';
+  Chart.defaults.font.family = 'Inter, sans-serif';
+
+  // Doughnut – Gender
+  (function renderGenderChart() {
+    const ctx = document.getElementById('genderChart').getContext('2d');
+    const gMale   = ctx.createLinearGradient(0, 0, 0, 300);
+    gMale.addColorStop(0, '#1a56db');
+    gMale.addColorStop(1, '#06b6d4');
+    const gFemale = ctx.createLinearGradient(0, 0, 0, 300);
+    gFemale.addColorStop(0, '#8b5cf6');
+    gFemale.addColorStop(1, '#ec4899');
+
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Male', 'Female'],
+        datasets: [{
+          data: [D.male, D.female],
+          backgroundColor: [gMale, gFemale],
+          borderColor: 'transparent',
+          borderWidth: 0,
+          hoverOffset: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { padding: 16, usePointStyle: true, pointStyleWidth: 10, font: { size: 12 } }
+          },
+          tooltip: {
+            callbacks: {
+              label: ctx => ` ${ctx.label}: ${ctx.raw.toLocaleString('en-IN')} (${((ctx.raw/D.population)*100).toFixed(1)}%)`
+            }
+          }
+        },
+        animation: { animateRotate: true, duration: 1200 }
+      }
+    });
+  })();
+
+  // Bar – Population, SC, ST
+  (function renderBarChart() {
+    const ctx = document.getElementById('popBarChart').getContext('2d');
+    const gPop = ctx.createLinearGradient(0, 0, 0, 280);
+    gPop.addColorStop(0, '#1a56db'); gPop.addColorStop(1, '#06b6d4');
+    const gSC  = ctx.createLinearGradient(0, 0, 0, 280);
+    gSC.addColorStop(0, '#8b5cf6');  gSC.addColorStop(1, '#6d28d9');
+    const gST  = ctx.createLinearGradient(0, 0, 0, 280);
+    gST.addColorStop(0, '#10b981');  gST.addColorStop(1, '#059669');
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Total Population', 'SC Population', 'ST Population'],
+        datasets: [{
+          label: 'Count',
+          data: [D.population, D.sc, D.st],
+          backgroundColor: [gPop, gSC, gST],
+          borderRadius: 8,
+          borderSkipped: false,
+          barPercentage: 0.55
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => ` ${ctx.raw.toLocaleString('en-IN')}`
+            }
+          }
+        },
+        scales: {
+          x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 11 } } },
+          y: {
+            grid: { color: 'rgba(255,255,255,0.04)' },
+            ticks: {
+              font: { size: 11 },
+              callback: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v
+            }
+          }
+        },
+        animation: { duration: 1200 }
+      }
+    });
+  })();
+
+  // ── 3d. Sustainability Score Ring ──
+  (function renderSustainScore() {
+    const ring  = document.getElementById('scoreRing');
+    const numEl = document.getElementById('sustainNum');
+    const badge = document.getElementById('ratingBadge');
+
+    let ringColor, ratingClass, ratingText;
+    if (sustainTotal >= 80) {
+      ringColor = '#10b981'; ratingClass = 'rating-excellent'; ratingText = '✨ Excellent';
+    } else if (sustainTotal >= 65) {
+      ringColor = '#3b82f6'; ratingClass = 'rating-good';      ratingText = '👍 Good';
+    } else if (sustainTotal >= 50) {
+      ringColor = '#f59e0b'; ratingClass = 'rating-average';   ratingText = '⚡ Average';
+    } else {
+      ringColor = '#ef4444'; ratingClass = 'rating-poor';      ratingText = '🔴 Needs Improvement';
+    }
+
+    ring.style.setProperty('--ring-color', ringColor);
+    numEl.style.color = ringColor;
+    badge.className   = 'score-rating-badge ' + ratingClass;
+    badge.textContent = ratingText;
+
+    // Animate ring and number
+    let current = 0;
+    const interval = setInterval(() => {
+      current = Math.min(current + 1, sustainTotal);
+      ring.style.setProperty('--pct', current);
+      numEl.textContent = current;
+      if (current >= sustainTotal) clearInterval(interval);
+    }, 16);
+
+    // Breakdown bars (animate after a short delay)
+    setTimeout(() => {
+      function setBar(fillId, scoreId, score, max) {
+        document.getElementById(scoreId).textContent = `${score} / ${max}`;
+        document.getElementById(fillId).style.width = `${(score / max) * 100}%`;
+      }
+      setBar('bfFacilities',  'bdFacilities',   breakdown.facilities,   25);
+      setBar('bfSatisfaction','bdSatisfaction',  breakdown.satisfaction, 20);
+      setBar('bfProjects',    'bdProjects',      breakdown.projects,     20);
+      setBar('bfCleanliness', 'bdCleanliness',   breakdown.cleanliness,  20);
+      setBar('bfGreen',       'bdGreen',         breakdown.green,        15);
+    }, 400);
+  })();
+
+  // ── 3e. Area Chips ──
+  (function renderAreaChips() {
+    const areas  = (typeof WARD_AREAS !== 'undefined' && WARD_AREAS[String(wardNum)]) || [];
+    const wrap   = document.getElementById('areaChips');
+    const cntEl  = document.getElementById('areaCount');
+    cntEl.textContent = `${areas.length} area${areas.length !== 1 ? 's' : ''}`;
+
+    if (areas.length === 0) {
+      wrap.innerHTML = '<span style="color:var(--text-muted);font-size:0.85rem;">No area data available for this ward.</span>';
+      return;
+    }
+    wrap.innerHTML = '';
+    areas.forEach(a => {
+      if (!a || !a.trim()) return;
+      const chip = document.createElement('span');
+      chip.className   = 'area-chip';
+      chip.textContent = a.trim();
+      wrap.appendChild(chip);
+    });
+  })();
+
+  // ── 3f. Compare link ──
+  document.getElementById('compareLink').href = `ward-comparison.html?ward1=${wardNum}`;
+
+  // ── 3g. Complaints Table (sample data) ──
+  (function renderComplaints() {
+    const complaints = [
+      { id:'CMP-2024-'+(wardNum*11+1), text:'Pothole on main approach road causing accidents', cat:'Roads & Infrastructure', date:'10 Jun 2026', status:'s-progress', priority:'High' },
+      { id:'CMP-2024-'+(wardNum*11+2), text:'Street lights not working near community park', cat:'Electricity', date:'08 Jun 2026', status:'s-pending',  priority:'Medium' },
+      { id:'CMP-2024-'+(wardNum*11+3), text:'Garbage not collected for 3 days in sector area', cat:'Sanitation', date:'06 Jun 2026', status:'s-resolved', priority:'Low' },
+    ];
+    const tbody = document.getElementById('complaintsTbody');
+    complaints.forEach((c, i) => {
+      const statusLabel = c.status === 's-pending' ? 'Pending' : c.status === 's-progress' ? 'In Progress' : 'Resolved';
+      const prioColor = c.priority === 'High' ? '#f87171' : c.priority === 'Medium' ? '#f59e0b' : '#10b981';
+      tbody.innerHTML += `
+        <tr>
+          <td style="color:var(--accent);font-weight:600;">${c.id}</td>
+          <td style="max-width:220px;white-space:normal;color:var(--text-primary);">${c.text}</td>
+          <td><span class="status-badge badge-cyan">${c.cat}</span></td>
+          <td>${c.date}</td>
+          <td><span class="status-badge ${c.status}">${statusLabel}</span></td>
+          <td style="color:${prioColor};font-weight:600;">${c.priority}</td>
+        </tr>`;
+    });
+  })();
+
+  // ── 3h. Citizen Feedback Ratings ──
+  (function renderFeedback() {
+    const categories = [
+      { icon:'🛣️', name:'Roads',        rating: +(2 + (Math.sin(wardNum * 1.3) * 1.5 + 1.5)).toFixed(1) },
+      { icon:'🌳', name:'Parks',        rating: +(2 + (Math.sin(wardNum * 2.1) * 1.5 + 1.5)).toFixed(1) },
+      { icon:'🏥', name:'Hospitals',    rating: +(2 + (Math.sin(wardNum * 3.7) * 1.5 + 1.5)).toFixed(1) },
+      { icon:'🧹', name:'Cleanliness',  rating: +(2 + (Math.sin(wardNum * 4.5) * 1.5 + 1.5)).toFixed(1) },
+      { icon:'💧', name:'Water Supply', rating: +(2 + (Math.sin(wardNum * 5.2) * 1.5 + 1.5)).toFixed(1) },
+    ];
+
+    function starsHTML(r) {
+      let html = '';
+      for (let i = 1; i <= 5; i++) {
+        if (r >= i)          html += '<span class="star-filled">★</span>';
+        else if (r >= i-0.5) html += '<span class="star-half">★</span>';
+        else                 html += '<span class="star-empty">★</span>';
+      }
+      return html;
+    }
+
+    const grid = document.getElementById('feedbackGrid');
+    categories.forEach(c => {
+      grid.innerHTML += `
+        <div class="feedback-item">
+          <div class="feedback-icon">${c.icon}</div>
+          <div class="feedback-category">${c.name}</div>
+          <div class="stars-wrap">${starsHTML(c.rating)}</div>
+          <div class="feedback-score">${c.rating} / 5.0</div>
+        </div>`;
+    });
+  })();
+
+  // ── 3i. Active Projects ──
+  (function renderProjects() {
+    const projects = [
+      {
+        name: `Ward ${wardNum} Road Widening & Resurfacing Project`,
+        tags: [{ cls:'tag-infra', label:'Infrastructure' }],
+        pct: 72,
+        color: 'linear-gradient(135deg,#1a56db,#06b6d4)',
+        start: 'Jan 2026', end: 'Sep 2026',
+        budget: '₹ 42.5 L'
+      },
+      {
+        name: 'Community Green Park Development & Beautification',
+        tags: [{ cls:'tag-green', label:'Environment' }],
+        pct: 45,
+        color: 'linear-gradient(135deg,#10b981,#059669)',
+        start: 'Mar 2026', end: 'Dec 2026',
+        budget: '₹ 18.2 L'
+      },
+      {
+        name: 'Underground Drainage & Sewage Renovation',
+        tags: [{ cls:'tag-water', label:'Water & Drainage' }],
+        pct: 28,
+        color: 'linear-gradient(135deg,#06b6d4,#0284c7)',
+        start: 'Apr 2026', end: 'Mar 2027',
+        budget: '₹ 67.8 L'
+      }
+    ];
+
+    const list = document.getElementById('projectList');
+    projects.forEach(p => {
+      const tagsHTML = p.tags.map(t => `<span class="project-tag ${t.cls}">${t.label}</span>`).join('');
+      list.innerHTML += `
+        <div class="project-item">
+          <div class="project-header">
+            <div>
+              <div class="project-name">${p.name}</div>
+              <div class="project-meta">${tagsHTML}</div>
+            </div>
+            <div class="project-pct" style="color:${p.pct >= 60 ? 'var(--success)' : p.pct >= 35 ? 'var(--warning)' : 'var(--accent)'}">
+              ${p.pct}%
+            </div>
+          </div>
+          <div class="proj-bar-wrap">
+            <div class="proj-bar">
+              <div class="proj-fill" style="width:${p.pct}%;background:${p.color}"></div>
+            </div>
+          </div>
+          <div class="proj-dates">
+            <span>📅 Start: ${p.start}</span>
+            <span>Budget: ${p.budget}</span>
+            <span>🏁 End: ${p.end}</span>
+          </div>
+        </div>`;
+    });
+  })();
+
+} // end if (D)
+
+// ────────────────────────────────────────────────
+// 4. LEAFLET MAP
+// ────────────────────────────────────────────────
+(function initMap() {
+  // Slight offset per ward to differentiate positions
+  const baseLat = 17.6868;
+  const baseLng = 83.2185;
+  const offset  = (wardNum - 36) * 0.008; // spread wards around Vizag
+
+  const map = L.map('wardMap', {
+    center: [baseLat + offset * 0.3, baseLng + offset * 0.6],
+    zoom: 14,
+    zoomControl: true,
+    scrollWheelZoom: false
+  });
+
+  // Dark tile layer
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(map);
+
+  // Custom marker icon
+  const wardIcon = L.divIcon({
+    className: '',
+    html: `<div style="
+      background: linear-gradient(135deg,#1a56db,#06b6d4);
+      width:38px;height:38px;border-radius:50% 50% 50% 0;
+      transform:rotate(-45deg);
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 4px 20px rgba(26,86,219,0.5);
+      border:2px solid rgba(255,255,255,0.3);
+    ">
+      <span style="transform:rotate(45deg);font-size:0.85rem;font-weight:800;color:white;">${wardNum}</span>
+    </div>`,
+    iconSize: [38, 38],
+    iconAnchor: [19, 38],
+    popupAnchor: [0, -42]
+  });
+
+  const wardName = (D && D.name) ? D.name : `Ward ${wardNum}`;
+  const popHtml = `
+    <div style="font-family:Inter,sans-serif;min-width:170px">
+      <div style="font-weight:700;font-size:0.95rem;margin-bottom:4px;">Ward ${wardNum} – ${wardName}</div>
+      ${D ? `<div style="font-size:0.8rem;color:#888;">Population: ${D.population.toLocaleString('en-IN')}</div>
+      <div style="font-size:0.8rem;color:#888;">Sustainability: ${D.sustainability}/100</div>` : ''}
+      <div style="margin-top:8px;font-size:0.78rem;color:#1a56db;font-weight:600;">📍 Visakhapatnam, AP</div>
+    </div>`;
+
+  L.marker([baseLat + offset * 0.3, baseLng + offset * 0.6], { icon: wardIcon })
+    .addTo(map)
+    .bindPopup(popHtml, { maxWidth: 220, className: 'ward-popup' })
+    .openPopup();
+})();
+
+// ────────────────────────────────────────────────
+// 5. NAV SCROLL EFFECT & HAMBURGER
+// ────────────────────────────────────────────────
+const navEl = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navEl.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+const hamburger = document.getElementById('hamburgerBtn');
+const mobileNav = document.getElementById('mobileNav');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  mobileNav.classList.toggle('open');
+});
+document.addEventListener('click', (e) => {
+  if (!navEl.contains(e.target) && !mobileNav.contains(e.target)) {
+    hamburger.classList.remove('open');
+    mobileNav.classList.remove('open');
+  }
+});
+</script>
+
+<!-- Leaflet popup dark theme fix -->
+<style>
+  .ward-popup .leaflet-popup-content-wrapper {
+    background: #131829;
+    color: #f1f5f9;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  .ward-popup .leaflet-popup-tip { background: #131829; }
+  .leaflet-popup-close-button { color: #94a3b8 !important; }
+  .leaflet-control-zoom a {
+    background: #131829 !important;
+    color: #f1f5f9 !important;
+    border-color: rgba(255,255,255,0.15) !important;
+  }
+  .leaflet-control-zoom a:hover { background: #1a1f3d !important; }
+</style>
+
+<!-- ════════════════════════════════════════════
+     LOGIN MODAL
+════════════════════════════════════════════ -->
+<div class="login-modal" id="loginModal">
+  <div class="login-card">
+    <button class="login-modal-close" onclick="closeLoginModal()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="card-glow"></div>
+
+    <div class="login-logo-wrap">
+      <div class="login-logo-ring">🏛️</div>
+      <div class="portal-badge"><span class="portal-badge-dot"></span> Secure Access</div>
+      <div class="login-title">Officer Portal Login</div>
+      <div class="login-subtitle">Greater Visakhapatnam Municipal Corporation</div>
+    </div>
+
+    <form class="login-form" id="modalLoginForm" onsubmit="handleModalLogin(event)" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="modalRoleSelect">🛡️ &nbsp;Select Role</label>
+        <div class="input-icon-wrap">
+          <span class="icon">▾</span>
+          <select class="form-control" id="modalRoleSelect" style="padding-left:2.4rem;">
+            <option value="">— Choose Your Role —</option>
+            <option value="Admin">Admin</option>
+            <option value="Ward Officer">Ward Officer</option>
+            <option value="Data Entry Operator">Data Entry Operator</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="modalUsernameInput">👤 &nbsp;Username</label>
+        <div class="input-icon-wrap">
+          <span class="icon">@</span>
+          <input class="form-control" type="text" id="modalUsernameInput" placeholder="Enter your username" autocomplete="username" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="modalPasswordInput">🔒 &nbsp;Password</label>
+        <div class="input-icon-wrap">
+          <span class="icon">🔑</span>
+          <input class="form-control" type="password" id="modalPasswordInput" placeholder="Enter your password" autocomplete="current-password" />
+          <span class="pwd-toggle" id="modalPwdToggle" onclick="toggleModalPwd()" title="Show/Hide">👁️</span>
+        </div>
+      </div>
+
+      <div class="form-error" id="modalFormError">
+        <span>⚠️</span> <span id="modalErrorMsg">Invalid credentials. Please try again.</span>
+      </div>
+
+      <button type="submit" class="btn-login" id="modalLoginBtn">
+        <span>🚀 Sign In to Portal</span>
+      </button>
+    </form>
+
+    <div class="login-divider"><span>Demo Credentials</span></div>
+    <div class="demo-creds">
+      <div class="demo-creds-title">🔐 Test Access Credentials</div>
+      <div class="demo-row">
+        <div class="demo-item">
+          <span class="demo-lbl">Username</span>
+          <span class="demo-val">admin</span>
+        </div>
+        <div class="demo-item">
+          <span class="demo-lbl">Password</span>
+          <span class="demo-val">admin123</span>
+        </div>
+        <button type="button" class="btn-autofill" onclick="autofillModal()">↗ Autofill</button>
+      </div>
+    </div>
+
+    <div class="login-footer-note">
+      Need help? Contact <a href="mailto:support@gvmc.gov.in">support@gvmc.gov.in</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

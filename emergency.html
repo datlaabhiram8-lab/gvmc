@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emergency Hub | GVMC – Smart Ward Portal</title>
+  <meta name="description" content="GVMC Smart Ward Management Portal – Emergency hotlines, flood relief, police and medical services contacts." />
+  <link rel="icon" href="assets/gvmc-logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .emer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+    .page-title-wrap {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .page-title-wrap h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #ef4444;
+      background: var(--gradient-red);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .page-title-wrap p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-top: 0.5rem;
+    }
+    .sos-panel {
+      background: rgba(239,68,68,0.08);
+      border: 2px dashed rgba(239,68,68,0.3);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      text-align: center;
+      margin-bottom: 3rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 10px 40px rgba(239,68,68,0.1);
+    }
+    .sos-panel h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fca5a5;
+      margin-bottom: 0.75rem;
+    }
+    .btn-sos {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      padding: 1.1rem 3rem;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 30px rgba(239,68,68,0.45);
+      transition: var(--transition);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 1rem;
+    }
+    .btn-sos:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 12px 40px rgba(239,68,68,0.65);
+    }
+    .hotline-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+    }
+    .hotline-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      text-align: center;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-card);
+      transition: var(--transition);
+    }
+    .hotline-card:hover {
+      border-color: rgba(239,68,68,0.3);
+      transform: translateY(-3px);
+    }
+    .hl-icon {
+      font-size: 2.2rem;
+      color: #fca5a5;
+      margin-bottom: 1rem;
+    }
+    .hl-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+    .hl-num {
+      display: block;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #ef4444;
+      margin-bottom: 1rem;
+    }
+    .btn-call {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #fca5a5;
+      padding: 0.5rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+    .btn-call:hover {
+      background: rgba(239,68,68,0.3);
+      color: white;
+    }
+    .info-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+    }
+    .info-card h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border-glass);
+      padding-bottom: 0.5rem;
+    }
+    .info-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .info-item h4 {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+    .info-item p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    @media (max-width: 768px) {
+      .info-list { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP UTILITY BAR -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div class="top-bar-left">
+      <a href="tel:18000425000009"><i class="fa-solid fa-phone"></i> 18000425000009</a>
+      <span><i class="fa-solid fa-envelope"></i> commissioner@gvmc.gov.in</span>
+    </div>
+    <div class="top-bar-right">
+      <button class="lang-btn"><i class="fa-solid fa-language"></i> Telugu</button>
+      <div class="font-controls">
+        <button title="Small text" onclick="document.documentElement.style.fontSize='14px'">A</button>
+        <button title="Normal text" class="active" onclick="document.documentElement.style.fontSize='16px'">A</button>
+        <button title="Large text" onclick="document.documentElement.style.fontSize='18px'">A<sup>+</sup></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN HEADER -->
+<header class="main-header">
+  <div class="main-header-inner">
+    <a href="index.html" class="header-brand">
+      <img src="assets/gvmc-logo.png" alt="GVMC Emblem" class="gvmc-logo" />
+      <div class="brand-text">
+        <div class="brand-title"><span>G</span>reater <span>V</span>isakhapatnam <span>M</span>unicipal <span>C</span>orporation</div>
+      </div>
+    </a>
+    <div class="header-cm">
+      <img src="assets/cm-photo.png" alt="Hon'ble Chief Minister" class="cm-photo" />
+      <div class="cm-info">
+        <div class="cm-name">Sri Nara Chandrababu Naidu</div>
+        <div class="cm-title">HON'BLE CHIEF MINISTER</div>
+      </div>
+    </div>
+    <button class="header-login-btn" onclick="openLoginModal()">
+      <i class="fa-solid fa-right-to-bracket"></i> Login / Register
+    </button>
+  </div>
+</header>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="ward-search.html">Ward Search</a></li>
+    <li><a href="ward-comparison.html">Compare</a></li>
+    <li><a href="complaints.html">Complaints</a></li>
+    <li><a href="community.html">Community</a></li>
+    
+    <li class="emergency-link"><a href="emergency.html" class="active"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;font-size:.75rem"></i>Emergency</a></li>
+  </ul>
+
+  <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html">🏠 Home</a>
+  <a href="ward-search.html">🔍 Ward Search</a>
+  <a href="ward-comparison.html">⚖️ Compare</a>
+  <a href="complaints.html">📢 Complaints</a>
+  <a href="community.html">🤝 Community</a>
+  
+  <a href="emergency.html" class="active">🚨 Emergency</a>
+</div>
+
+<!-- EMERGENCY HUB -->
+<div class="emer-container">
+  <div class="page-title-wrap">
+    <h1>Emergency Response Hub</h1>
+    <p>Get instant assistance from disaster relief, medical, fire, and local ward emergency secretariats.</p>
+  </div>
+
+  <!-- Panic SOS -->
+  <div class="sos-panel">
+    <h2>🚨 Immediate Danger / Panic Alert</h2>
+    <p>Clicking the button below sends an instant alert to the Ward 17 Secretariat emergency officer with your location.</p>
+    <button class="btn-sos" onclick="triggerSOS()">Trigger SOS Alert</button>
+  </div>
+
+  <!-- Hotline Grid -->
+  <div class="hotline-grid">
+    <!-- Card 1 -->
+    <div class="hotline-card">
+      <div class="hl-icon"><i class="fa-solid fa-phone-slash"></i></div>
+      <h3 class="hl-title">GVMC Disaster Management</h3>
+      <span class="hl-num">1800042500</span>
+      <a href="tel:1800042500" class="btn-call"><i class="fa-solid fa-phone"></i> Call Now</a>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="hotline-card">
+      <div class="hl-icon"><i class="fa-solid fa-house-medical"></i></div>
+      <h3 class="hl-title">Medical / Ambulance</h3>
+      <span class="hl-num">108</span>
+      <a href="tel:108" class="btn-call"><i class="fa-solid fa-phone"></i> Call Now</a>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="hotline-card">
+      <div class="hl-icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <h3 class="hl-title">Vizag City Police</h3>
+      <span class="hl-num">100</span>
+      <a href="tel:100" class="btn-call"><i class="fa-solid fa-phone"></i> Call Now</a>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="hotline-card">
+      <div class="hl-icon"><i class="fa-solid fa-fire-extinguisher"></i></div>
+      <h3 class="hl-title">Fire Emergency</h3>
+      <span class="hl-num">101</span>
+      <a href="tel:101" class="btn-call"><i class="fa-solid fa-phone"></i> Call Now</a>
+    </div>
+  </div>
+
+  <!-- Safety Guidelines -->
+  <div class="info-card">
+    <h2>📌 Vizag Coastal Safety & Flood Guidelines</h2>
+    <div class="info-list">
+      <div class="info-item">
+        <h4>🌊 Flood & Inundation Warning</h4>
+        <p>If low-lying areas (such as portions of Gajuwaka or MVP Colony) experience flood warnings, move valuable goods to elevated surfaces and contact the ward control room.</p>
+      </div>
+      <div class="info-item">
+        <h4>⚡ Power Outage Protocols</h4>
+        <p>Avoid touching loose electrical lines or streetpoles during monsoon showers. Report snapped power cables immediately to GVMC helpline or APEPDCL at 1912.</p>
+      </div>
+      <div class="info-item">
+        <h4>📞 Ward Secretariats Support</h4>
+        <p>For drinking water tanker requests during outages, contact your ward representative or lodge a request on the GVMC Grievances Portal.</p>
+      </div>
+      <div class="info-item">
+        <h4>🚨 Medical Evacuation</h4>
+        <p>Ambulance stations are localized at key urban health centers in each ward zone. Call 108 or the local ward health secretary for evacuation assistance.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-bottom">
+    <p>© 2025 Greater Visakhapatnam Municipal Corporation · All rights reserved · Built for citizens of Vizag</p>
+    <div style="margin-top:8px;">
+      <span class="sdg-badge">🌿 SDG-11 Aligned</span>
+      <span class="sdg-badge" style="color:var(--primary-light);border-color:rgba(26,86,219,0.2);background:rgba(26,86,219,0.1)">🔒 Gov Secure</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- SCRIPTS -->
+<script src="js/main.js"></script>
+<script>
+  // Navbar scroll & Hamburger
+  const navEl = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navEl.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  const hamburger = document.getElementById('hamburgerBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileNav.classList.toggle('open');
+  });
+  document.addEventListener('click', (e) => {
+    if (!navEl.contains(e.target) && !mobileNav.contains(e.target)) {
+      hamburger.classList.remove('open');
+      mobileNav.classList.remove('open');
+    }
+  });
+
+  function triggerSOS() {
+    showToast('🚨 SOS Alert Triggered! Evacuation request and GPS coords sent to Ward control room.', 'error');
+  }
+
+  function showToast(msg, type = 'info') {
+    if (typeof window.showToast === 'function') {
+      window.showToast(msg, type);
+      return;
+    }
+    const c = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = `<span>${type === 'info' ? 'ℹ️' : type === 'success' ? '✅' : '❌'}</span><span style="font-size:0.85rem">${msg}</span>`;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 3500);
+  }
+</script>
+
+<!-- ════════════════════════════════════════════
+     LOGIN MODAL
+════════════════════════════════════════════ -->
+<div class="login-modal" id="loginModal">
+  <div class="login-card">
+    <button class="login-modal-close" onclick="closeLoginModal()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="card-glow"></div>
+
+    <div class="login-logo-wrap">
+      <div class="login-logo-ring">🏛️</div>
+      <div class="portal-badge"><span class="portal-badge-dot"></span> Secure Access</div>
+      <div class="login-title">Officer Portal Login</div>
+      <div class="login-subtitle">Greater Visakhapatnam Municipal Corporation</div>
+    </div>
+
+    <form class="login-form" id="modalLoginForm" onsubmit="handleModalLogin(event)" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="modalRoleSelect">🛡️ &nbsp;Select Role</label>
+        <div class="input-icon-wrap">
+          <span class="icon">▾</span>
+          <select class="form-control" id="modalRoleSelect" style="padding-left:2.4rem;">
+            <option value="">— Choose Your Role —</option>
+            <option value="Admin">Admin</option>
+            <option value="Ward Officer">Ward Officer</option>
+            <option value="Data Entry Operator">Data Entry Operator</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="modalUsernameInput">👤 &nbsp;Username</label>
+        <div class="input-icon-wrap">
+          <span class="icon">@</span>
+          <input class="form-control" type="text" id="modalUsernameInput" placeholder="Enter your username" autocomplete="username" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="modalPasswordInput">🔒 &nbsp;Password</label>
+        <div class="input-icon-wrap">
+          <span class="icon">🔑</span>
+          <input class="form-control" type="password" id="modalPasswordInput" placeholder="Enter your password" autocomplete="current-password" />
+          <span class="pwd-toggle" id="modalPwdToggle" onclick="toggleModalPwd()" title="Show/Hide">👁️</span>
+        </div>
+      </div>
+
+      <div class="form-error" id="modalFormError">
+        <span>⚠️</span> <span id="modalErrorMsg">Invalid credentials. Please try again.</span>
+      </div>
+
+      <button type="submit" class="btn-login" id="modalLoginBtn">
+        <span>🚀 Sign In to Portal</span>
+      </button>
+    </form>
+
+    <div class="login-divider"><span>Demo Credentials</span></div>
+    <div class="demo-creds">
+      <div class="demo-creds-title">🔐 Test Access Credentials</div>
+      <div class="demo-row">
+        <div class="demo-item">
+          <span class="demo-lbl">Username</span>
+          <span class="demo-val">admin</span>
+        </div>
+        <div class="demo-item">
+          <span class="demo-lbl">Password</span>
+          <span class="demo-val">admin123</span>
+        </div>
+        <button type="button" class="btn-autofill" onclick="autofillModal()">↗ Autofill</button>
+      </div>
+    </div>
+
+    <div class="login-footer-note">
+      Need help? Contact <a href="mailto:support@gvmc.gov.in">support@gvmc.gov.in</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

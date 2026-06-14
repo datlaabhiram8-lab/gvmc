@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Citizen Complaint System | GVMC – Smart Ward Portal</title>
+  <meta name="description" content="GVMC Smart Ward Management Portal – File civic complaints, track resolutions, and view active ward issues." />
+  <link rel="icon" href="assets/gvmc-logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .complaints-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+    .page-title-wrap {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .page-title-wrap h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: var(--gradient-btn);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .page-title-wrap p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-top: 0.5rem;
+    }
+    .complaints-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1.8fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    .form-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-card);
+    }
+    .form-card h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      outline: none;
+      transition: var(--transition);
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--primary-light);
+    }
+    .form-textarea {
+      height: 100px;
+      resize: vertical;
+    }
+    .btn-submit {
+      width: 100%;
+      background: var(--gradient-btn);
+      color: white;
+      padding: 0.88rem;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      transition: var(--transition);
+      margin-top: 0.5rem;
+    }
+    .btn-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-glow);
+    }
+    .tracking-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-card);
+      margin-bottom: 2rem;
+    }
+    .tracking-card h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+    }
+    .track-search {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-track {
+      background: var(--gradient-purple);
+      color: white;
+      padding: 0 1.5rem;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+    }
+    .track-result-box {
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius);
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .track-result-box.show {
+      display: block;
+    }
+    .list-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-card);
+    }
+    .list-card h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 0.25rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .status-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .s-pending  { background: rgba(245,158,11,0.15); color: var(--warning); }
+    .s-pending::before  { background: var(--warning); }
+    .s-progress { background: rgba(26,86,219,0.15); color: var(--primary-light); }
+    .s-progress::before { background: var(--primary-light); }
+    .s-resolved { background: rgba(16,185,129,0.15); color: var(--success); }
+    .s-resolved::before { background: var(--success); }
+    
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+    }
+    .data-table th {
+      background: rgba(26,86,219,0.1);
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--accent);
+    }
+    .data-table td {
+      padding: 0.75rem 1rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      color: var(--text-muted);
+    }
+    .data-table tr:hover td {
+      background: rgba(255,255,255,0.02);
+      color: var(--text-primary);
+    }
+    @media (max-width: 992px) {
+      .complaints-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP UTILITY BAR -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div class="top-bar-left">
+      <a href="tel:18000425000009"><i class="fa-solid fa-phone"></i> 18000425000009</a>
+      <span><i class="fa-solid fa-envelope"></i> commissioner@gvmc.gov.in</span>
+    </div>
+    <div class="top-bar-right">
+      <button class="lang-btn"><i class="fa-solid fa-language"></i> Telugu</button>
+      <div class="font-controls">
+        <button title="Small text" onclick="document.documentElement.style.fontSize='14px'">A</button>
+        <button title="Normal text" class="active" onclick="document.documentElement.style.fontSize='16px'">A</button>
+        <button title="Large text" onclick="document.documentElement.style.fontSize='18px'">A<sup>+</sup></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN HEADER -->
+<header class="main-header">
+  <div class="main-header-inner">
+    <a href="index.html" class="header-brand">
+      <img src="assets/gvmc-logo.png" alt="GVMC Emblem" class="gvmc-logo" />
+      <div class="brand-text">
+        <div class="brand-title"><span>G</span>reater <span>V</span>isakhapatnam <span>M</span>unicipal <span>C</span>orporation</div>
+      </div>
+    </a>
+    <div class="header-cm">
+      <img src="assets/cm-photo.png" alt="Hon'ble Chief Minister" class="cm-photo" />
+      <div class="cm-info">
+        <div class="cm-name">Sri Nara Chandrababu Naidu</div>
+        <div class="cm-title">HON'BLE CHIEF MINISTER</div>
+      </div>
+    </div>
+    <button class="header-login-btn" onclick="openLoginModal()">
+      <i class="fa-solid fa-right-to-bracket"></i> Login / Register
+    </button>
+  </div>
+</header>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="ward-search.html">Ward Search</a></li>
+    <li><a href="ward-comparison.html">Compare</a></li>
+    <li><a href="complaints.html" class="active">Complaints</a></li>
+    <li><a href="community.html">Community</a></li>
+    
+    <li class="emergency-link"><a href="emergency.html"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;font-size:.75rem"></i>Emergency</a></li>
+  </ul>
+
+  <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html">🏠 Home</a>
+  <a href="ward-search.html">🔍 Ward Search</a>
+  <a href="ward-comparison.html">⚖️ Compare</a>
+  <a href="complaints.html" class="active">📢 Complaints</a>
+  <a href="community.html">🤝 Community</a>
+  
+  <a href="emergency.html">🚨 Emergency</a>
+</div>
+
+<!-- COMPLAINTS MAIN -->
+<div class="complaints-container">
+  <div class="page-title-wrap">
+    <h1>Civic Grievance Redressal Portal</h1>
+    <p>File municipal issues directly with your ward secretariat and track resolution timelines.</p>
+  </div>
+
+  <div class="complaints-grid">
+    <!-- Lodge Form -->
+    <div class="form-card">
+      <h2><i class="fa-solid fa-file-pen" style="color:var(--accent);"></i> Lodge Complaint</h2>
+      <form id="complaintForm" onsubmit="submitComplaint(event)">
+        <div class="form-group">
+          <label class="form-label" for="compWard">Select Ward</label>
+          <select class="form-select" id="compWard" required>
+            <option value="">— Choose Ward —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="compCategory">Category</label>
+          <select class="form-select" id="compCategory" required>
+            <option value="">— Select Category —</option>
+            <option value="Garbage Issue">Garbage / Waste Collection</option>
+            <option value="Water Leakage">Water Leakage / Shortage</option>
+            <option value="Road Damage">Road Damage / Potholes</option>
+            <option value="Streetlight Failure">Streetlight Maintenance</option>
+            <option value="Drainage Issue">Sewage / Drainage Leakage</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="compColony">Colony / Area / Secretariat</label>
+          <input type="text" class="form-input" id="compColony" placeholder="e.g. Sector-4, MVP Colony" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="compDesc">Grievance Details</label>
+          <textarea class="form-textarea" id="compDesc" placeholder="Describe the issue in detail..." required></textarea>
+        </div>
+        <button type="submit" class="btn-submit">🚀 Submit Complaint</button>
+      </form>
+    </div>
+
+    <!-- Tracking & List -->
+    <div>
+      <!-- Tracking Box -->
+      <div class="tracking-card">
+        <h2>🔍 Track Grievance Status</h2>
+        <div class="track-search">
+          <input type="text" class="form-input" id="trackInput" placeholder="Enter Complaint ID (e.g. GVMC-KVJ9L)" />
+          <button class="btn-track" onclick="trackComplaint()">Track</button>
+        </div>
+        <div class="track-result-box" id="trackResult">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Recent Table -->
+      <div class="list-card">
+        <h2>📢 Recent Registered Grievances</h2>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Complaint ID</th>
+                <th>Ward</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Submitted On</th>
+              </tr>
+            </thead>
+            <tbody id="recentComplaintsBody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-bottom">
+    <p>© 2025 Greater Visakhapatnam Municipal Corporation · All rights reserved · Built for citizens of Vizag</p>
+    <div style="margin-top:8px;">
+      <span class="sdg-badge">🌿 SDG-11 Aligned</span>
+      <span class="sdg-badge" style="color:var(--primary-light);border-color:rgba(26,86,219,0.2);background:rgba(26,86,219,0.1)">🔒 Gov Secure</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- SCRIPTS -->
+<script src="js/main.js"></script>
+<script src="js/ward_data.js"></script>
+<script src="js/demographics.js"></script>
+<script>
+  // Navbar scroll & Hamburger
+  const navEl = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navEl.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  const hamburger = document.getElementById('hamburgerBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileNav.classList.toggle('open');
+  });
+  document.addEventListener('click', (e) => {
+    if (!navEl.contains(e.target) && !mobileNav.contains(e.target)) {
+      hamburger.classList.remove('open');
+      mobileNav.classList.remove('open');
+    }
+  });
+
+  // LocalStorage initialization
+  let storedComplaints = [];
+  const LOCAL_STORAGE_KEY = 'gvmc_portal_complaints';
+
+  // Seed sample complaints if empty
+  function initComplaintsData() {
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (raw) {
+      storedComplaints = JSON.parse(raw);
+    } else {
+      if (typeof sampleComplaints === 'function') {
+        storedComplaints = sampleComplaints(5);
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(storedComplaints));
+      }
+    }
+  }
+
+  // Load Wards options
+  document.addEventListener('DOMContentLoaded', () => {
+    initComplaintsData();
+    renderRecentComplaints();
+
+    if (typeof WARD_DEMOGRAPHICS !== 'undefined') {
+      const select = document.getElementById('compWard');
+      const keys = Object.keys(WARD_DEMOGRAPHICS).sort((a,b) => parseInt(a) - parseInt(b));
+      keys.forEach(k => {
+        const option = new Option(`Ward ${k} - ${WARD_DEMOGRAPHICS[k].name || ''}`, k);
+        select.add(option);
+      });
+    }
+  });
+
+  function renderRecentComplaints() {
+    const tbody = document.getElementById('recentComplaintsBody');
+    tbody.innerHTML = '';
+    
+    // Show last 6 complaints
+    const list = [...storedComplaints].reverse().slice(0, 6);
+    
+    if (list.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted)">No complaints filed yet.</td></tr>`;
+      return;
+    }
+
+    list.forEach(c => {
+      const badgeClass = c.status === 'Resolved' ? 's-resolved' : c.status === 'In Progress' ? 's-progress' : 's-pending';
+      tbody.innerHTML += `
+        <tr>
+          <td style="color:var(--accent);font-weight:700;">${c.id}</td>
+          <td>Ward ${c.ward}</td>
+          <td>${c.category}</td>
+          <td><span class="status-badge ${badgeClass}">${c.status}</span></td>
+          <td>${c.date || new Date().toLocaleDateString('en-IN')}</td>
+        </tr>
+      `;
+    });
+  }
+
+  function submitComplaint(e) {
+    e.preventDefault();
+    const ward = document.getElementById('compWard').value;
+    const cat = document.getElementById('compCategory').value;
+    const colony = document.getElementById('compColony').value.trim();
+    const desc = document.getElementById('compDesc').value.trim();
+
+    if (typeof generateId !== 'function') return;
+
+    const newId = generateId('GVMC');
+    const newComplaint = {
+      id: newId,
+      ward: parseInt(ward),
+      category: cat,
+      colony: colony,
+      desc: desc,
+      status: 'Pending',
+      date: new Date().toLocaleDateString('en-IN')
+    };
+
+    storedComplaints.push(newComplaint);
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(storedComplaints));
+
+    // Toast & Reset
+    showToast(`Complaint lodged successfully! ID: ${newId}`, 'success');
+    document.getElementById('complaintForm').reset();
+    renderRecentComplaints();
+  }
+
+  function trackComplaint() {
+    const id = document.getElementById('trackInput').value.trim().toUpperCase();
+    const resBox = document.getElementById('trackResult');
+
+    if (!id) {
+      resBox.classList.remove('show');
+      return;
+    }
+
+    const match = storedComplaints.find(c => c.id.toUpperCase() === id);
+
+    if (match) {
+      const badgeClass = match.status === 'Resolved' ? 's-resolved' : match.status === 'In Progress' ? 's-progress' : 's-pending';
+      resBox.innerHTML = `
+        <div style="display:flex;justify-content:between;align-items:center;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:8px;">
+          <span style="font-weight:700;color:var(--accent)">ID: ${match.id}</span>
+          <span class="status-badge ${badgeClass}">${match.status}</span>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;">
+          <div><strong>Category:</strong> ${match.category}</div>
+          <div><strong>Ward / Locality:</strong> Ward ${match.ward} (${match.colony || 'N/A'})</div>
+          <div><strong>Details:</strong> ${match.desc}</div>
+          <div style="margin-top:4px;font-style:italic;"><strong>Filed on:</strong> ${match.date}</div>
+        </div>
+      `;
+      resBox.classList.add('show');
+    } else {
+      resBox.innerHTML = `<span style="color:#f87171;font-size:0.83rem;">❌ Complaint ID not found. Verify and try again.</span>`;
+      resBox.classList.add('show');
+    }
+  }
+
+  // Toast notifier if not available
+  function showToast(msg, type = 'info') {
+    if (typeof window.showToast === 'function') {
+      window.showToast(msg, type);
+      return;
+    }
+    const c = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = `<span>${type === 'info' ? 'ℹ️' : type === 'success' ? '✅' : '❌'}</span><span style="font-size:0.85rem">${msg}</span>`;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 3500);
+  }
+</script>
+
+<!-- ════════════════════════════════════════════
+     LOGIN MODAL
+════════════════════════════════════════════ -->
+<div class="login-modal" id="loginModal">
+  <div class="login-card">
+    <button class="login-modal-close" onclick="closeLoginModal()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="card-glow"></div>
+
+    <div class="login-logo-wrap">
+      <div class="login-logo-ring">🏛️</div>
+      <div class="portal-badge"><span class="portal-badge-dot"></span> Secure Access</div>
+      <div class="login-title">Officer Portal Login</div>
+      <div class="login-subtitle">Greater Visakhapatnam Municipal Corporation</div>
+    </div>
+
+    <form class="login-form" id="modalLoginForm" onsubmit="handleModalLogin(event)" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="modalRoleSelect">🛡️ &nbsp;Select Role</label>
+        <div class="input-icon-wrap">
+          <span class="icon">▾</span>
+          <select class="form-control" id="modalRoleSelect" style="padding-left:2.4rem;">
+            <option value="">— Choose Your Role —</option>
+            <option value="Admin">Admin</option>
+            <option value="Ward Officer">Ward Officer</option>
+            <option value="Data Entry Operator">Data Entry Operator</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="modalUsernameInput">👤 &nbsp;Username</label>
+        <div class="input-icon-wrap">
+          <span class="icon">@</span>
+          <input class="form-control" type="text" id="modalUsernameInput" placeholder="Enter your username" autocomplete="username" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="modalPasswordInput">🔒 &nbsp;Password</label>
+        <div class="input-icon-wrap">
+          <span class="icon">🔑</span>
+          <input class="form-control" type="password" id="modalPasswordInput" placeholder="Enter your password" autocomplete="current-password" />
+          <span class="pwd-toggle" id="modalPwdToggle" onclick="toggleModalPwd()" title="Show/Hide">👁️</span>
+        </div>
+      </div>
+
+      <div class="form-error" id="modalFormError">
+        <span>⚠️</span> <span id="modalErrorMsg">Invalid credentials. Please try again.</span>
+      </div>
+
+      <button type="submit" class="btn-login" id="modalLoginBtn">
+        <span>🚀 Sign In to Portal</span>
+      </button>
+    </form>
+
+    <div class="login-divider"><span>Demo Credentials</span></div>
+    <div class="demo-creds">
+      <div class="demo-creds-title">🔐 Test Access Credentials</div>
+      <div class="demo-row">
+        <div class="demo-item">
+          <span class="demo-lbl">Username</span>
+          <span class="demo-val">admin</span>
+        </div>
+        <div class="demo-item">
+          <span class="demo-lbl">Password</span>
+          <span class="demo-val">admin123</span>
+        </div>
+        <button type="button" class="btn-autofill" onclick="autofillModal()">↗ Autofill</button>
+      </div>
+    </div>
+
+    <div class="login-footer-note">
+      Need help? Contact <a href="mailto:support@gvmc.gov.in">support@gvmc.gov.in</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

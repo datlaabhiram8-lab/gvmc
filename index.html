@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MY AREA | GVMC – Smart Ward Management Portal</title>
+  <meta name="description" content="GVMC Smart Ward Management Portal – Search your area, track complaints, view ward demographics, and access civic services for all 72 wards of Greater Visakhapatnam Municipal Corporation." />
+  <link rel="icon" href="assets/gvmc-logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    /* ══════════════════════════════════════════════════════════════
+       ROOT & RESET
+    ══════════════════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-dark:       #050b18;
+      --bg-card:       rgba(255,255,255,0.04);
+      --bg-card-hover: rgba(255,255,255,0.08);
+      --border-glass:  rgba(255,255,255,0.10);
+      --border-glow:   rgba(99,179,237,0.35);
+      --blue:          #3b82f6;
+      --blue-light:    #60a5fa;
+      --cyan:          #06b6d4;
+      --purple:        #8b5cf6;
+      --green:         #10b981;
+      --gold:          #f59e0b;
+      --red:           #ef4444;
+      --text-primary:  #f0f4ff;
+      --text-secondary:#94a3b8;
+      --text-muted:    #64748b;
+      --grad-hero:     linear-gradient(135deg, #0f172a 0%, #0c1a3a 40%, #0d1f3c 100%);
+      --grad-blue:     linear-gradient(135deg, #1d4ed8, #3b82f6);
+      --grad-cyan:     linear-gradient(135deg, #0891b2, #06b6d4);
+      --grad-purple:   linear-gradient(135deg, #6d28d9, #8b5cf6);
+      --grad-green:    linear-gradient(135deg, #059669, #10b981);
+      --grad-gold:     linear-gradient(135deg, #d97706, #f59e0b);
+      --grad-red:      linear-gradient(135deg, #b91c1c, #ef4444);
+      --grad-text:     linear-gradient(90deg, #60a5fa, #818cf8, #c084fc);
+      --shadow-glow:   0 0 40px rgba(59,130,246,0.15);
+      --radius-card:   16px;
+      --radius-lg:     24px;
+      --transition:    all 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       SCROLLBAR
+    ══════════════════════════════════════════════════════════════ */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0a0f1e; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#3b82f6,#8b5cf6); border-radius: 3px; }
+
+    /* ══════════════════════════════════════════════════════════════
+       TOP UTILITY BAR
+    ══════════════════════════════════════════════════════════════ */
+    .top-bar {
+      background: #f8f9fa;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 6px 2rem;
+      font-size: 0.78rem;
+      color: #475569;
+      z-index: 1001;
+    }
+    .top-bar-inner {
+      max-width: 1300px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .top-bar-left { display: flex; align-items: center; gap: 16px; }
+    .top-bar-left a, .top-bar-left span {
+      color: #475569; text-decoration: none; display: flex; align-items: center; gap: 5px;
+      transition: color 0.2s;
+    }
+    .top-bar-left a:hover { color: #1d4ed8; }
+    .top-bar-right { display: flex; align-items: center; gap: 14px; }
+    .top-bar-right .lang-btn {
+      display: flex; align-items: center; gap: 4px;
+      background: none; border: none; color: #475569; font-size: 0.78rem;
+      cursor: pointer; font-family: inherit;
+    }
+    .font-controls { display: flex; gap: 4px; }
+    .font-controls button {
+      width: 26px; height: 26px; border-radius: 4px;
+      border: 1px solid #cbd5e1; background: #fff; color: #334155;
+      font-weight: 700; font-size: 0.72rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .font-controls button:hover { background: #1d4ed8; color: #fff; border-color: #1d4ed8; }
+    .font-controls button.active { background: #ef4444; color: #fff; border-color: #ef4444; }
+
+    /* ══════════════════════════════════════════════════════════════
+       MAIN HEADER
+    ══════════════════════════════════════════════════════════════ */
+    .main-header {
+      background: #ffffff;
+      padding: 12px 2rem;
+      border-bottom: 3px solid #1d4ed8;
+      z-index: 1001;
+    }
+    .main-header-inner {
+      max-width: 1300px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 20px;
+    }
+    .header-brand {
+      display: flex; align-items: center; gap: 14px;
+      text-decoration: none;
+    }
+    .header-brand .gvmc-logo {
+      width: 68px; height: 68px;
+      border-radius: 50%;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    .header-brand .brand-text {
+      line-height: 1.3;
+    }
+    .header-brand .brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem; font-weight: 800;
+      color: #1e293b;
+      letter-spacing: 0.3px;
+    }
+    .header-brand .brand-title span {
+      color: #1d4ed8;
+    }
+    .header-cm {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .header-cm .cm-photo {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .header-cm .cm-info { line-height: 1.3; }
+    .header-cm .cm-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem; font-weight: 700;
+      color: #1e293b; text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .header-cm .cm-title {
+      font-size: 0.7rem; color: #64748b;
+      font-style: italic;
+    }
+    .header-login-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 24px; border-radius: 8px;
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #fff; font-size: 0.88rem; font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      text-decoration: none;
+      border: none; cursor: pointer;
+      box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+    .header-login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16,185,129,0.45);
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       NAVBAR
+    ══════════════════════════════════════════════════════════════ */
+    .navbar {
+      position: sticky; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 0 2rem;
+      height: 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(5,11,24,0.95);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border-bottom: 1px solid var(--border-glass);
+      transition: var(--transition);
+    }
+    .navbar.scrolled {
+      background: rgba(5,11,24,0.98);
+      box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+    }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 2px; list-style: none;
+      margin: 0 auto;
+    }
+    .nav-links a {
+      display: block; padding: 6px 12px; border-radius: 6px;
+      font-size: 0.8rem; font-weight: 500; color: var(--text-secondary);
+      text-decoration: none; transition: var(--transition);
+      white-space: nowrap;
+    }
+    .nav-links a:hover { color: var(--text-primary); background: rgba(255,255,255,0.06); }
+    .nav-links a.active { color: var(--blue-light); }
+    .nav-links .emergency-link a {
+      background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3);
+    }
+    .nav-links .emergency-link a:hover { background: rgba(239,68,68,0.25); }
+
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px; cursor: pointer;
+      background: none; border: none; padding: 6px;
+    }
+    .hamburger span {
+      display: block; width: 24px; height: 2px; background: var(--text-secondary);
+      border-radius: 2px; transition: var(--transition);
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-nav {
+      display: none; position: fixed; top: 48px; left: 0; right: 0; z-index: 999;
+      background: rgba(5,11,24,0.97); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-glass);
+      padding: 1rem; flex-direction: column; gap: 4px;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a {
+      padding: 10px 14px; border-radius: 8px; color: var(--text-secondary);
+      text-decoration: none; font-size: 0.9rem; font-weight: 500;
+      transition: var(--transition); border: 1px solid transparent;
+    }
+    .mobile-nav a:hover { color: var(--text-primary); background: rgba(255,255,255,0.06); }
+
+    /* ══════════════════════════════════════════════════════════════
+       HERO
+    ══════════════════════════════════════════════════════════════ */
+    .hero {
+      position: relative; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 80px 1.5rem 80px;
+      overflow: hidden;
+      background: var(--grad-hero);
+    }
+
+    /* grid lines */
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(59,130,246,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,0.06) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridShift 20s linear infinite;
+    }
+    @keyframes gridShift {
+      0%   { background-position: 0 0; }
+      100% { background-position: 60px 60px; }
+    }
+
+    /* ambient glow */
+    .hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 30%, rgba(59,130,246,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* orbs */
+    .orb {
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.25;
+      animation: floatOrb var(--dur, 12s) ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    .orb-1 { width: 520px; height: 520px; background: radial-gradient(circle, #1d4ed8, transparent); top: -15%; left: -12%; --dur: 14s; }
+    .orb-2 { width: 380px; height: 380px; background: radial-gradient(circle, #7c3aed, transparent); top: 10%; right: -10%; --dur: 18s; animation-delay: -4s; }
+    .orb-3 { width: 300px; height: 300px; background: radial-gradient(circle, #0891b2, transparent); bottom: 5%; left: 20%; --dur: 22s; animation-delay: -8s; }
+    .orb-4 { width: 220px; height: 220px; background: radial-gradient(circle, #059669, transparent); bottom: 15%; right: 15%; --dur: 16s; animation-delay: -2s; }
+    @keyframes floatOrb {
+      0%   { transform: translate(0, 0) scale(1); }
+      50%  { transform: translate(30px, -20px) scale(1.05); }
+      100% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+
+    .hero-content { position: relative; z-index: 2; max-width: 860px; margin: 0 auto; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 20px; border-radius: 100px;
+      background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.3);
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--blue-light); margin-bottom: 28px;
+      animation: badgePulse 3s ease-in-out infinite;
+    }
+    .hero-badge .dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan); animation: blink 1.5s ease-in-out infinite;
+    }
+    @keyframes badgePulse { 0%,100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.2); } 50% { box-shadow: 0 0 20px 4px rgba(59,130,246,0.15); } }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 900;
+      line-height: 1.15; margin-bottom: 22px;
+      letter-spacing: -0.5px;
+    }
+    .hero-title .grad-text {
+      background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-tagline {
+      font-size: clamp(1rem, 2.5vw, 1.2rem); color: var(--text-secondary);
+      max-width: 580px; margin: 0 auto 44px; font-weight: 400; line-height: 1.7;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       SEARCH BOX
+    ══════════════════════════════════════════════════════════════ */
+    .search-wrap {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 6px 6px 6px 20px;
+      display: flex; align-items: center; gap: 10px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+      transition: var(--transition);
+      max-width: 620px; margin: 0 auto;
+    }
+    .search-wrap:focus-within {
+      border-color: var(--border-glow);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.3), 0 0 0 3px rgba(59,130,246,0.15), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .search-wrap i { color: var(--text-muted); font-size: 1rem; flex-shrink: 0; }
+    .search-wrap input {
+      flex: 1; background: none; border: none; outline: none;
+      font-size: 0.95rem; color: var(--text-primary); font-family: 'Inter', sans-serif;
+    }
+    .search-wrap input::placeholder { color: var(--text-muted); }
+    .search-btn {
+      padding: 11px 26px; border-radius: 14px; border: none; cursor: pointer;
+      background: linear-gradient(135deg, #1d4ed8, #7c3aed);
+      color: #fff; font-size: 0.88rem; font-weight: 700;
+      font-family: 'Outfit', sans-serif; letter-spacing: 0.5px;
+      transition: var(--transition); white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(59,130,246,0.3);
+    }
+    .search-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(59,130,246,0.45); }
+    .search-btn:active { transform: translateY(0); }
+
+    .chips {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+      margin-top: 16px;
+    }
+    .chip {
+      padding: 5px 14px; border-radius: 100px; cursor: pointer;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass);
+      font-size: 0.78rem; color: var(--text-secondary); transition: var(--transition);
+    }
+    .chip:hover { background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.3); color: var(--blue-light); }
+
+    /* Search Result Card */
+    .search-result {
+      display: none; max-width: 620px; margin: 22px auto 0;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(59,130,246,0.25);
+      border-radius: var(--radius-card); padding: 22px 24px;
+      backdrop-filter: blur(16px); animation: slideUp 0.4s cubic-bezier(0.4,0,0.2,1);
+      text-align: left;
+    }
+    .search-result.show { display: block; }
+    @keyframes slideUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
+
+    .result-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+    .result-ward-num { font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 600; color: var(--cyan); text-transform: uppercase; letter-spacing: 1px; }
+    .result-area-name { font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin-top: 2px; }
+    .result-badge { padding: 4px 12px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34d399; white-space: nowrap; }
+
+    .result-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+    .stat-pill { background: rgba(255,255,255,0.04); border: 1px solid var(--border-glass); border-radius: 10px; padding: 10px 12px; text-align: center; }
+    .stat-pill .sp-val { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--blue-light); }
+    .stat-pill .sp-lbl { font-size: 0.68rem; color: var(--text-muted); margin-top: 2px; }
+
+    .view-dash-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 24px; border-radius: 10px; text-decoration: none;
+      background: linear-gradient(135deg,#1d4ed8,#7c3aed);
+      color: #fff; font-size: 0.88rem; font-weight: 700; font-family: 'Outfit', sans-serif;
+      transition: var(--transition); box-shadow: 0 4px 20px rgba(59,130,246,0.3);
+    }
+    .view-dash-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(59,130,246,0.5); }
+
+    .no-result {
+      display: none; max-width: 620px; margin: 18px auto 0;
+      background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
+      border-radius: var(--radius-card); padding: 16px 20px;
+      text-align: center; color: #fca5a5; font-size: 0.9rem;
+      animation: slideUp 0.3s ease;
+    }
+    .no-result.show { display: block; }
+
+    /* ══════════════════════════════════════════════════════════════
+       STATS BAR
+    ══════════════════════════════════════════════════════════════ */
+    .stats-bar {
+      background: rgba(255,255,255,0.025);
+      border-top: 1px solid var(--border-glass);
+      border-bottom: 1px solid var(--border-glass);
+      padding: 28px 2rem;
+    }
+    .stats-bar-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 0;
+    }
+    .stat-item {
+      flex: 1; min-width: 200px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 16px 24px; position: relative; text-align: center;
+    }
+    .stat-item:not(:last-child)::after {
+      content: ''; position: absolute; right: 0; top: 20%; bottom: 20%;
+      width: 1px; background: var(--border-glass);
+    }
+    .stat-item .sv { font-family: 'Outfit', sans-serif; font-size: 2.2rem; font-weight: 900; line-height: 1; }
+    .stat-item .sl { font-size: 0.78rem; color: var(--text-muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 1px; }
+    .sv-blue   { background: linear-gradient(90deg,#60a5fa,#818cf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .sv-cyan   { background: linear-gradient(90deg,#22d3ee,#67e8f9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .sv-purple { background: linear-gradient(90deg,#a78bfa,#c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .sv-green  { background: linear-gradient(90deg,#34d399,#6ee7b7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+    /* ══════════════════════════════════════════════════════════════
+       SECTIONS COMMON
+    ══════════════════════════════════════════════════════════════ */
+    section { padding: 90px 2rem; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--cyan); margin-bottom: 10px; display: block;
+    }
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(1.7rem, 3.5vw, 2.5rem); font-weight: 800; margin-bottom: 14px;
+      line-height: 1.2;
+    }
+    .section-sub { font-size: 0.98rem; color: var(--text-secondary); max-width: 540px; line-height: 1.7; }
+
+    /* ══════════════════════════════════════════════════════════════
+       FEATURES / SERVICES GRID
+    ══════════════════════════════════════════════════════════════ */
+    #services { background: linear-gradient(180deg, #060c1a 0%, #080f1e 100%); }
+
+    .services-header { text-align: center; margin-bottom: 56px; }
+    .services-header .section-sub { margin: 0 auto; }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .service-card {
+      position: relative; overflow: hidden;
+      background: var(--bg-card); border: 1px solid var(--border-glass);
+      border-radius: var(--radius-card); padding: 30px 26px;
+      text-decoration: none; color: var(--text-primary);
+      transition: var(--transition); cursor: pointer;
+      display: block;
+    }
+    .service-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--card-grad, linear-gradient(135deg, rgba(59,130,246,0.06), transparent));
+      opacity: 0; transition: var(--transition);
+    }
+    .service-card:hover { transform: translateY(-6px); border-color: var(--card-color, var(--blue)); background: var(--bg-card-hover); box-shadow: 0 20px 50px rgba(0,0,0,0.35), 0 0 0 1px var(--card-color, var(--blue)) inset; }
+    .service-card:hover::before { opacity: 1; }
+
+    .card-icon-wrap {
+      width: 54px; height: 54px; border-radius: 14px; margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; background: var(--card-icon-bg, rgba(59,130,246,0.15));
+      border: 1px solid var(--card-icon-border, rgba(59,130,246,0.25));
+      transition: var(--transition);
+    }
+    .service-card:hover .card-icon-wrap { transform: scale(1.1); }
+
+    .card-title { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .card-desc  { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; }
+    .card-arrow {
+      position: absolute; bottom: 22px; right: 22px;
+      width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; color: var(--text-muted); transition: var(--transition);
+    }
+    .service-card:hover .card-arrow { background: var(--card-color, var(--blue)); border-color: transparent; color: #fff; transform: translateX(3px); }
+
+    /* ══════════════════════════════════════════════════════════════
+       INSIGHTS SECTION
+    ══════════════════════════════════════════════════════════════ */
+    #insights { background: linear-gradient(180deg, #080f1e 0%, #060c1a 100%); }
+
+    .insights-header { margin-bottom: 48px; }
+    .insights-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 18px;
+    }
+
+    .insight-card {
+      background: var(--bg-card); border: 1px solid var(--border-glass);
+      border-radius: var(--radius-card); padding: 22px 22px 18px;
+      transition: var(--transition); display: flex; flex-direction: column; gap: 12px;
+    }
+    .insight-card:hover { background: var(--bg-card-hover); transform: translateY(-3px); border-color: rgba(99,179,237,0.2); }
+
+    .insight-top { display: flex; align-items: center; gap: 12px; }
+    .insight-icon {
+      width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 1rem;
+    }
+    .insight-meta { flex: 1; }
+    .insight-type { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 600; }
+    .insight-ward { font-family: 'Outfit', sans-serif; font-size: 0.92rem; font-weight: 700; color: var(--text-primary); }
+    .insight-text { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+    .insight-metric {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 6px;
+      font-size: 0.78rem; font-weight: 700; font-family: 'Outfit', sans-serif;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       SDG BANNER
+    ══════════════════════════════════════════════════════════════ */
+    .sdg-banner {
+      margin: 0 2rem; border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, #064e3b 0%, #065f46 40%, #047857 100%);
+      border: 1px solid rgba(16,185,129,0.25);
+      padding: 50px 3rem; text-align: center;
+      position: relative; overflow: hidden;
+      box-shadow: 0 20px 60px rgba(5,150,105,0.2);
+    }
+    .sdg-banner::before {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(16,185,129,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16,185,129,0.06) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .sdg-banner-inner { position: relative; z-index: 1; }
+    .sdg-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 18px; border-radius: 100px;
+      background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3);
+      font-size: 0.7rem; color: #34d399; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .sdg-title {
+      font-family: 'Outfit', sans-serif; font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 900;
+      color: #fff; margin-bottom: 14px; line-height: 1.25;
+    }
+    .sdg-sub { font-size: 0.95rem; color: rgba(255,255,255,0.7); max-width: 560px; margin: 0 auto 28px; line-height: 1.7; }
+    .sdg-goals { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .sdg-goal {
+      padding: 8px 16px; border-radius: 8px;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+      font-size: 0.78rem; color: rgba(255,255,255,0.8); font-weight: 600;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════════════════════════ */
+    footer {
+      background: linear-gradient(180deg, #040810 0%, #020508 100%);
+      border-top: 1px solid var(--border-glass);
+      padding: 64px 2rem 30px;
+      margin-top: 90px;
+    }
+    .footer-grid {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1.4fr; gap: 40px;
+      margin-bottom: 48px;
+    }
+    .footer-brand .fb-logo {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 18px;
+    }
+    .footer-brand .fb-logo-icon {
+      width: 38px; height: 38px; border-radius: 9px;
+      background: linear-gradient(135deg,#1d4ed8,#7c3aed);
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+    .footer-brand .fb-name { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 800; }
+    .footer-brand p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; max-width: 280px; margin-bottom: 22px; }
+    .social-links { display: flex; gap: 10px; }
+    .social-links a {
+      width: 36px; height: 36px; border-radius: 9px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; color: var(--text-muted); text-decoration: none;
+      transition: var(--transition);
+    }
+    .social-links a:hover { color: var(--blue-light); border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.1); }
+
+    .footer-col h4 { font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 18px; color: var(--text-primary); }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a { font-size: 0.83rem; color: var(--text-muted); text-decoration: none; transition: var(--transition); display: flex; align-items: center; gap: 7px; }
+    .footer-col ul li a:hover { color: var(--blue-light); padding-left: 4px; }
+    .footer-col ul li a i { width: 14px; }
+
+    .contact-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+    .contact-item i { margin-top: 2px; color: var(--cyan); font-size: 0.85rem; }
+    .contact-item span { font-size: 0.83rem; color: var(--text-muted); line-height: 1.5; }
+
+    .footer-bottom {
+      max-width: 1200px; margin: 0 auto;
+      border-top: 1px solid var(--border-glass);
+      padding-top: 24px;
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;
+    }
+    .footer-bottom p { font-size: 0.78rem; color: var(--text-muted); }
+    .footer-bottom .fb-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .fb-badge {
+      padding: 3px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 600;
+      border: 1px solid;
+    }
+    .fb-badge.green { color: #34d399; border-color: rgba(52,211,153,0.25); background: rgba(52,211,153,0.06); }
+    .fb-badge.blue  { color: var(--blue-light); border-color: rgba(96,165,250,0.25); background: rgba(96,165,250,0.06); }
+
+    /* ══════════════════════════════════════════════════════════════
+       REVEAL ANIMATION
+    ══════════════════════════════════════════════════════════════ */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ══════════════════════════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+      .insights-grid { grid-template-columns: 1fr; }
+      .result-stats { grid-template-columns: repeat(3,1fr); }
+      .stats-bar-inner { flex-direction: column; gap: 0; }
+      .stat-item:not(:last-child)::after { display: none; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .sdg-banner { margin: 0; border-radius: 0; }
+      section { padding: 64px 1.2rem; }
+      .top-bar-left span:not(:first-child) { display: none; }
+      .main-header-inner { flex-wrap: wrap; gap: 12px; }
+      .header-cm { display: none; }
+      .header-brand .gvmc-logo { width: 50px; height: 50px; }
+      .header-brand .brand-title { font-size: 1rem; }
+    }
+    @media (max-width: 480px) {
+      .services-grid { grid-template-columns: 1fr; }
+      .result-stats { grid-template-columns: 1fr; }
+      .hero-title { font-size: 1.8rem; }
+      .search-wrap { flex-wrap: wrap; padding: 10px 14px; gap: 8px; }
+      .search-btn { width: 100%; justify-content: center; padding: 12px; border-radius: 10px; }
+      .top-bar { padding: 6px 1rem; font-size: 0.7rem; }
+      .main-header { padding: 10px 1rem; }
+      .header-brand .gvmc-logo { width: 40px; height: 40px; }
+      .header-brand .brand-title { font-size: 0.85rem; }
+      .header-login-btn { padding: 8px 16px; font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     TOP UTILITY BAR
+════════════════════════════════════════════ -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div class="top-bar-left">
+      <a href="tel:18000425000009"><i class="fa-solid fa-phone"></i> 18000425000009</a>
+      <span><i class="fa-solid fa-envelope"></i> commissioner@gvmc.gov.in</span>
+    </div>
+    <div class="top-bar-right">
+      <button class="lang-btn"><i class="fa-solid fa-language"></i> Telugu</button>
+      <div class="font-controls">
+        <button title="Small text" onclick="document.documentElement.style.fontSize='14px'">A</button>
+        <button title="Normal text" class="active" onclick="document.documentElement.style.fontSize='16px'">A</button>
+        <button title="Large text" onclick="document.documentElement.style.fontSize='18px'">A<sup>+</sup></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     MAIN HEADER
+════════════════════════════════════════════ -->
+<header class="main-header">
+  <div class="main-header-inner">
+    <a href="index.html" class="header-brand">
+      <img src="assets/gvmc-logo.png" alt="GVMC Emblem" class="gvmc-logo" />
+      <div class="brand-text">
+        <div class="brand-title"><span>G</span>reater <span>V</span>isakhapatnam <span>M</span>unicipal <span>C</span>orporation</div>
+      </div>
+    </a>
+    <div class="header-cm">
+      <img src="assets/cm-photo.png" alt="Hon'ble Chief Minister" class="cm-photo" />
+      <div class="cm-info">
+        <div class="cm-name">Sri Nara Chandrababu Naidu</div>
+        <div class="cm-title">HON'BLE CHIEF MINISTER</div>
+      </div>
+    </div>
+    <button class="header-login-btn" onclick="openLoginModal()">
+      <i class="fa-solid fa-right-to-bracket"></i> Login / Register
+    </button>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="ward-search.html">Ward Search</a></li>
+    <li><a href="ward-comparison.html">Compare</a></li>
+    <li><a href="complaints.html">Complaints</a></li>
+    <li><a href="community.html">Community</a></li>
+    
+    <li class="emergency-link"><a href="emergency.html"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;font-size:.75rem"></i>Emergency</a></li>
+  </ul>
+
+  <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html">🏠 Home</a>
+  <a href="ward-search.html">🔍 Ward Search</a>
+  <a href="ward-comparison.html">⚖️ Compare</a>
+  <a href="complaints.html">📢 Complaints</a>
+  <a href="community.html">🤝 Community</a>
+  
+  <a href="emergency.html">🚨 Emergency</a>
+</div>
+
+<!-- ════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════ -->
+<section class="hero" id="home">
+  <!-- Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      GVMC Smart Governance
+      <span class="dot"></span>
+    </div>
+
+    <h1 class="hero-title">
+      Welcome to<br />
+      <span class="grad-text">GVMC Smart Ward</span><br />
+      Management Portal
+    </h1>
+
+    <p class="hero-tagline">
+      Search Your Area. Know Your Services. Build a Better Community.
+    </p>
+
+    <!-- Search -->
+    <div class="search-wrap" id="searchBox">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search area, colony, locality..."
+        autocomplete="off"
+      />
+      <button class="search-btn" id="searchBtn">
+        <i class="fa-solid fa-location-crosshairs" style="margin-right:6px"></i>Find
+      </button>
+    </div>
+
+    <!-- Suggestion Chips -->
+    <div class="chips">
+      <span class="chip" onclick="chipSearch('MVP Colony')">📍 MVP Colony</span>
+      <span class="chip" onclick="chipSearch('Sagarnagar')">📍 Sagarnagar</span>
+      <span class="chip" onclick="chipSearch('Maddilapalem')">📍 Maddilapalem</span>
+      <span class="chip" onclick="chipSearch('Arilova')">📍 Arilova</span>
+      <span class="chip" onclick="chipSearch('Gajuwaka')">📍 Gajuwaka</span>
+    </div>
+
+    <!-- Result Card -->
+    <div class="search-result" id="searchResult">
+      <div class="result-header">
+        <div>
+          <div class="result-ward-num" id="rWardNum">Ward --</div>
+          <div class="result-area-name" id="rAreaName">--</div>
+        </div>
+        <div class="result-badge">✓ Active Ward</div>
+      </div>
+      <div class="result-stats">
+        <div class="stat-pill">
+          <div class="sp-val" id="rPop">--</div>
+          <div class="sp-lbl">Population</div>
+        </div>
+        <div class="stat-pill">
+          <div class="sp-val" id="rWomen">--%</div>
+          <div class="sp-lbl">Women</div>
+        </div>
+        <div class="stat-pill">
+          <div class="sp-val" id="rSC">--</div>
+          <div class="sp-lbl">SC Population</div>
+        </div>
+      </div>
+      <a href="#" id="dashBtn" class="view-dash-btn">
+        <i class="fa-solid fa-chart-line"></i>View Ward Dashboard
+      </a>
+    </div>
+
+    <!-- No Result -->
+    <div class="no-result" id="noResult">
+      <i class="fa-solid fa-circle-exclamation" style="margin-right:6px"></i>
+      No ward found for "<span id="searchedTerm"></span>". Try MVP Colony, Sagarnagar, or another locality.
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     STATS BAR
+════════════════════════════════════════════ -->
+<div class="stats-bar" id="statsBar">
+  <div class="stats-bar-inner">
+    <div class="stat-item">
+      <div class="sv sv-blue counter" data-target="72">0</div>
+      <div class="sl">Total Wards</div>
+    </div>
+    <div class="stat-item">
+      <div class="sv sv-cyan counter" data-target="1435099">0</div>
+      <div class="sl">Total Population</div>
+    </div>
+    <div class="stat-item">
+      <div class="sv sv-purple" id="womenPct">49.11%</div>
+      <div class="sl">Women Population</div>
+    </div>
+    <div class="stat-item">
+      <div class="sv sv-green counter" data-target="118427">0</div>
+      <div class="sl">SC Population</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     CITIZEN SERVICES
+════════════════════════════════════════════ -->
+<section id="services">
+  <div class="container">
+    <div class="services-header reveal">
+      <span class="section-label">Quick Access</span>
+      <h2 class="section-title">Citizen Services</h2>
+      <p class="section-sub">Everything you need to engage with your ward — from searching to reporting issues and tracking sustainability.</p>
+    </div>
+
+    <div class="services-grid">
+
+      <a href="ward-search.html" class="service-card reveal"
+        style="--card-color:#3b82f6;--card-grad:linear-gradient(135deg,rgba(59,130,246,0.1),transparent);--card-icon-bg:rgba(59,130,246,0.12);--card-icon-border:rgba(59,130,246,0.25)">
+        <div class="card-icon-wrap">🔍</div>
+        <div class="card-title">Ward Finder</div>
+        <div class="card-desc">Search any locality, colony or area to instantly find your GVMC ward details.</div>
+        <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      </a>
+
+      <a href="ward-dashboard.html" class="service-card reveal"
+        style="--card-color:#06b6d4;--card-grad:linear-gradient(135deg,rgba(6,182,212,0.1),transparent);--card-icon-bg:rgba(6,182,212,0.12);--card-icon-border:rgba(6,182,212,0.25)">
+        <div class="card-icon-wrap">📊</div>
+        <div class="card-title">Ward Dashboard</div>
+        <div class="card-desc">Interactive charts and deep analytics for every ward's demographics and services.</div>
+        <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      </a>
+
+      <a href="ward-comparison.html" class="service-card reveal"
+        style="--card-color:#8b5cf6;--card-grad:linear-gradient(135deg,rgba(139,92,246,0.1),transparent);--card-icon-bg:rgba(139,92,246,0.12);--card-icon-border:rgba(139,92,246,0.25)">
+        <div class="card-icon-wrap">⚖️</div>
+        <div class="card-title">Ward Comparison</div>
+        <div class="card-desc">Compare multiple wards side-by-side across population, facilities and performance.</div>
+        <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      </a>
+
+      <a href="sustainability.html" class="service-card reveal"
+        style="--card-color:#10b981;--card-grad:linear-gradient(135deg,rgba(16,185,129,0.1),transparent);--card-icon-bg:rgba(16,185,129,0.12);--card-icon-border:rgba(16,185,129,0.25)">
+        <div class="card-icon-wrap">🌿</div>
+        <div class="card-title">Sustainability Score</div>
+        <div class="card-desc">Green index, waste management metrics and SDG-11 compliance for every ward.</div>
+        <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      </a>
+
+      <a href="complaints.html" class="service-card reveal"
+        style="--card-color:#ef4444;--card-grad:linear-gradient(135deg,rgba(239,68,68,0.1),transparent);--card-icon-bg:rgba(239,68,68,0.12);--card-icon-border:rgba(239,68,68,0.25)">
+        <div class="card-icon-wrap">🔔</div>
+        <div class="card-title">Complaint System</div>
+        <div class="card-desc">File, track and resolve civic complaints with real-time status updates.</div>
+        <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      </a>
+
+      <a href="community.html" class="service-card reveal"
+        style="--card-color:#f59e0b;--card-grad:linear-gradient(135deg,rgba(245,158,11,0.1),transparent);--card-icon-bg:rgba(245,158,11,0.12);--card-icon-border:rgba(245,158,11,0.25)">
+        <div class="card-icon-wrap">📅</div>
+        <div class="card-title">Events & Community</div>
+        <div class="card-desc">Stay informed about ward events, community drives and local announcements.</div>
+        <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      </a>
+
+      <a href="emergency.html" class="service-card reveal"
+        style="--card-color:#ef4444;--card-grad:linear-gradient(135deg,rgba(239,68,68,0.12),transparent);--card-icon-bg:rgba(239,68,68,0.15);--card-icon-border:rgba(239,68,68,0.3)">
+        <div class="card-icon-wrap">🚨</div>
+        <div class="card-title">Emergency Hub</div>
+        <div class="card-desc">One-touch access to police, fire, ambulance and flood relief for your ward.</div>
+        <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      </a>
+
+      <a href="officer-login.html" class="service-card reveal"
+        style="--card-color:#3b82f6;--card-grad:linear-gradient(135deg,rgba(59,130,246,0.1),transparent);--card-icon-bg:rgba(59,130,246,0.12);--card-icon-border:rgba(59,130,246,0.25)">
+        <div class="card-icon-wrap">🛡️</div>
+        <div class="card-title">Officer Portal</div>
+        <div class="card-desc">Secure login for ward officers to manage tasks, reports and civic data.</div>
+        <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SMART INSIGHTS
+════════════════════════════════════════════ -->
+<section id="insights">
+  <div class="container">
+    <div class="insights-header reveal">
+      <span class="section-label">Data Intelligence</span>
+      <h2 class="section-title">Smart Insights</h2>
+      <p class="section-sub">AI-powered observations derived from real ward demographics — helping citizens and officers make informed decisions.</p>
+    </div>
+    <div class="insights-grid" id="insightsGrid">
+      <!-- Populated by JS -->
+      <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;margin-bottom:12px;display:block"></i>
+        Loading insights…
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     SDG BANNER
+════════════════════════════════════════════ -->
+<section style="padding:0 0 90px">
+  <div class="sdg-banner reveal">
+    <div class="sdg-banner-inner">
+      <div class="sdg-label">
+        <span>🌍</span> United Nations SDG 11
+      </div>
+      <h2 class="sdg-title">Supporting UN Sustainable Development Goal 11<br/>Sustainable Cities &amp; Communities</h2>
+      <p class="sdg-sub">
+        GVMC is committed to making Visakhapatnam inclusive, safe, resilient and sustainable — aligning every ward initiative with the global SDG framework.
+      </p>
+      <div class="sdg-goals">
+        <div class="sdg-goal"><span>🏙️</span> Inclusive Urbanisation</div>
+        <div class="sdg-goal"><span>♻️</span> Waste Management</div>
+        <div class="sdg-goal"><span>🌳</span> Green Spaces</div>
+        <div class="sdg-goal"><span>🚌</span> Sustainable Transport</div>
+        <div class="sdg-goal"><span>💧</span> Water Conservation</div>
+        <div class="sdg-goal"><span>🏗️</span> Resilient Infrastructure</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-grid">
+
+    <!-- Brand -->
+    <div class="footer-brand">
+      <div class="fb-logo">
+        <div class="fb-logo-icon">🏛️</div>
+        <div class="fb-name">MY AREA | GVMC</div>
+      </div>
+      <p>Greater Visakhapatnam Municipal Corporation's Smart Ward Management & Sustainability Portal — empowering citizens with real-time data and digital governance tools.</p>
+      <div class="social-links">
+        <a href="#" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        <a href="#" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="index.html"><i class="fa-solid fa-house"></i>Home</a></li>
+        <li><a href="ward-search.html"><i class="fa-solid fa-magnifying-glass"></i>Ward Search</a></li>
+        <li><a href="ward-dashboard.html"><i class="fa-solid fa-chart-pie"></i>Ward Dashboard</a></li>
+        <li><a href="ward-comparison.html"><i class="fa-solid fa-scale-balanced"></i>Compare Wards</a></li>
+        <li><a href="sustainability.html"><i class="fa-solid fa-leaf"></i>Sustainability</a></li>
+      </ul>
+    </div>
+
+    <!-- Services -->
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="complaints.html"><i class="fa-solid fa-bell"></i>Complaints</a></li>
+        <li><a href="community.html"><i class="fa-solid fa-people-group"></i>Community</a></li>
+        <li><a href="emergency.html"><i class="fa-solid fa-triangle-exclamation"></i>Emergency</a></li>
+        
+        <li><a href="#"><i class="fa-solid fa-file-lines"></i>RTI Portal</a></li>
+      </ul>
+    </div>
+
+    <!-- Contact -->
+    <div class="footer-col">
+      <h4>Contact GVMC</h4>
+      <div class="contact-item"><i class="fa-solid fa-location-dot"></i><span>GVMC Complex, Dr. M.V.P. Colony, Visakhapatnam – 530 017, Andhra Pradesh</span></div>
+      <div class="contact-item"><i class="fa-solid fa-phone"></i><span>1800-599-4977 (Toll Free)</span></div>
+      <div class="contact-item"><i class="fa-solid fa-envelope"></i><span>commissioner@gvmc.gov.in</span></div>
+      <div class="contact-item"><i class="fa-solid fa-clock"></i><span>Mon–Sat · 10:00 AM – 5:00 PM</span></div>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2025 Greater Visakhapatnam Municipal Corporation · All rights reserved · Built for citizens of Vizag</p>
+    <div class="fb-badges">
+      <span class="fb-badge green">🌿 SDG-11 Aligned</span>
+      <span class="fb-badge blue">🔒 Gov Secure</span>
+      <span class="fb-badge green">📱 Mobile Ready</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ════════════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════════ -->
+<script src="js/main.js"></script>
+<script src="js/ward_data.js"></script>
+<script src="js/demographics.js"></script>
+
+<script>
+/* ────────────────────────────────────
+   NAVBAR SCROLL EFFECT
+──────────────────────────────────── */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+/* ────────────────────────────────────
+   HAMBURGER
+──────────────────────────────────── */
+const hamburger = document.getElementById('hamburgerBtn');
+const mobileNav = document.getElementById('mobileNav');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  mobileNav.classList.toggle('open');
+});
+document.addEventListener('click', (e) => {
+  if (!navbar.contains(e.target) && !mobileNav.contains(e.target)) {
+    hamburger.classList.remove('open');
+    mobileNav.classList.remove('open');
+  }
+});
+
+/* ────────────────────────────────────
+   SEARCH
+──────────────────────────────────── */
+function chipSearch(term) {
+  document.getElementById('searchInput').value = term;
+  runSearch(term);
+}
+
+document.getElementById('searchBtn').addEventListener('click', () => {
+  runSearch(document.getElementById('searchInput').value.trim());
+});
+document.getElementById('searchInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') runSearch(document.getElementById('searchInput').value.trim());
+});
+
+function runSearch(query) {
+  if (!query) return;
+  const resultEl  = document.getElementById('searchResult');
+  const noResultEl= document.getElementById('noResult');
+  resultEl.classList.remove('show');
+  noResultEl.classList.remove('show');
+
+  let ward = null;
+
+  // Try findWardByArea from ward_data.js
+  if (typeof findWardByArea === 'function') {
+    const wardNum = findWardByArea(query);
+    if (wardNum && typeof WARD_DEMOGRAPHICS !== 'undefined' && WARD_DEMOGRAPHICS[wardNum]) {
+      ward = { wardNo: wardNum, ...WARD_DEMOGRAPHICS[wardNum] };
+    }
+  }
+
+  // Fallback: search WARD_DEMOGRAPHICS directly
+  if (!ward && typeof WARD_DEMOGRAPHICS !== 'undefined') {
+    const q = query.toLowerCase();
+    for (const [key, val] of Object.entries(WARD_DEMOGRAPHICS)) {
+      const areas = (val.areas || val.localities || []).map(a => a.toLowerCase());
+      const name  = (val.name || val.wardName || '').toLowerCase();
+      if (name.includes(q) || areas.some(a => a.includes(q))) {
+        ward = { wardNo: key, ...val };
+        break;
+      }
+    }
+    // Final fuzzy: ward name / number contains query
+    if (!ward) {
+      for (const [key, val] of Object.entries(WARD_DEMOGRAPHICS)) {
+        const combined = JSON.stringify(val).toLowerCase();
+        if (combined.includes(q)) {
+          ward = { wardNo: key, ...val };
+          break;
+        }
+      }
+    }
+  }
+
+  if (ward) {
+    const wardNo   = ward.wardNo || ward.ward_no || ward.wardNumber || '—';
+    const wardName = ward.name || ward.wardName || ward.area || query;
+    const pop      = ward.population || ward.total_population || '—';
+    const womenPct = ward.women_pct || ward.women_percent || ward.womenPct || '—';
+    const scPop    = ward.sc_population || ward.scPopulation || ward.sc || '—';
+
+    document.getElementById('rWardNum').textContent     = `Ward ${wardNo}`;
+    document.getElementById('rAreaName').textContent    = wardName;
+    document.getElementById('rPop').textContent         = typeof pop === 'number' ? pop.toLocaleString('en-IN') : pop;
+    document.getElementById('rWomen').textContent       = typeof womenPct === 'number' ? womenPct.toFixed(2) + '%' : womenPct + '%';
+    document.getElementById('rSC').textContent         = typeof scPop === 'number' ? scPop.toLocaleString('en-IN') : scPop;
+    document.getElementById('dashBtn').href             = `ward-dashboard.html?ward=${wardNo}`;
+
+    resultEl.classList.add('show');
+  } else {
+    document.getElementById('searchedTerm').textContent = query;
+    noResultEl.classList.add('show');
+  }
+}
+
+/* ────────────────────────────────────
+   ANIMATED COUNTERS
+──────────────────────────────────── */
+function animateCounter(el, target, duration = 1800) {
+  const start   = performance.now();
+  const isFloat = target % 1 !== 0;
+  function tick(now) {
+    const pct  = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - pct, 3);
+    const val  = Math.round(ease * target);
+    el.textContent = val.toLocaleString('en-IN');
+    if (pct < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+const counterObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && !entry.target.dataset.counted) {
+      entry.target.dataset.counted = 'true';
+      animateCounter(entry.target, +entry.target.dataset.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.counter').forEach(el => counterObs.observe(el));
+
+/* ────────────────────────────────────
+   REVEAL ON SCROLL
+──────────────────────────────────── */
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+/* ────────────────────────────────────
+   SMART INSIGHTS
+──────────────────────────────────── */
+function buildInsights() {
+  const grid = document.getElementById('insightsGrid');
+  grid.innerHTML = '';
+
+  // Use generateInsights() if available
+  let insights = [];
+  if (typeof generateInsights === 'function') {
+    try { insights = generateInsights(); } catch(e) {}
+  }
+
+  // Fallback: build insights from WARD_DEMOGRAPHICS
+  if (!insights || insights.length === 0) {
+    insights = buildFallbackInsights();
+  }
+
+  if (!insights || insights.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">No insight data available. Ensure demographics.js is loaded.</div>`;
+    return;
+  }
+
+  const configs = [
+    { color: '#3b82f6', bg: 'rgba(59,130,246,0.12)', icon: '📈' },
+    { color: '#10b981', bg: 'rgba(16,185,129,0.12)', icon: '🌿' },
+    { color: '#8b5cf6', bg: 'rgba(139,92,246,0.12)', icon: '👥' },
+    { color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', icon: '⚡' },
+    { color: '#06b6d4', bg: 'rgba(6,182,212,0.12)',  icon: '💡' },
+    { color: '#ef4444', bg: 'rgba(239,68,68,0.12)',  icon: '🔴' },
+  ];
+
+  insights.slice(0, 6).forEach((ins, idx) => {
+    const cfg = configs[idx % configs.length];
+    const card = document.createElement('div');
+    card.className = 'insight-card reveal';
+
+    const wardLabel = ins.ward || ins.wardName || ins.name || (ins.text ? ins.text.match(/Ward \d+/)?.[0] : null) || `Insight ${idx + 1}`;
+    const typeLabel = (ins.type && !['info','warning','success','error'].includes(ins.type)) ? ins.type : (ins.category || 'Demographic Insight');
+    const text      = ins.text  || ins.insight  || ins.description || 'Notable observation from ward data.';
+    const metric    = ins.metric || ins.value || '';
+
+    card.innerHTML = `
+      <div class="insight-top">
+        <div class="insight-icon" style="background:${cfg.bg};border:1px solid ${cfg.color}33">${cfg.icon}</div>
+        <div class="insight-meta">
+          <div class="insight-type">${typeLabel}</div>
+          <div class="insight-ward">${wardLabel}</div>
+        </div>
+        ${metric ? `<div class="insight-metric" style="background:${cfg.bg};color:${cfg.color};border:1px solid ${cfg.color}33">${metric}</div>` : ''}
+      </div>
+      <div class="insight-text">${text}</div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // Re-observe new cards
+  document.querySelectorAll('#insightsGrid .reveal').forEach(el => revealObs.observe(el));
+}
+
+function buildFallbackInsights() {
+  if (typeof WARD_DEMOGRAPHICS === 'undefined') return [];
+  const entries = Object.entries(WARD_DEMOGRAPHICS);
+  if (entries.length === 0) return [];
+
+  const insights = [];
+  let maxPop = 0, minPop = Infinity, maxWomen = 0, maxSC = 0;
+  let maxPopWard, minPopWard, maxWomenWard, maxSCWard;
+
+  entries.forEach(([key, val]) => {
+    const pop     = val.population || val.total_population || 0;
+    const women   = val.women_pct  || val.women_percent || val.womenPct || 0;
+    const sc      = val.sc_population || val.scPopulation || val.sc || 0;
+    const name    = val.name || val.wardName || `Ward ${key}`;
+
+    if (pop > maxPop)   { maxPop = pop; maxPopWard = { key, name, pop }; }
+    if (pop < minPop && pop > 0) { minPop = pop; minPopWard = { key, name, pop }; }
+    if (women > maxWomen) { maxWomen = women; maxWomenWard = { key, name, women }; }
+    if (sc > maxSC)     { maxSC = sc; maxSCWard = { key, name, sc }; }
+  });
+
+  const total = entries.reduce((s,[,v]) => s + (v.population || v.total_population || 0), 0);
+  const avg   = total / entries.length;
+
+  if (maxPopWard) insights.push({ ward: maxPopWard.name, type: 'Highest Population', text: `Ward ${maxPopWard.key} has the highest population in GVMC with ${(maxPopWard.pop).toLocaleString('en-IN')} residents, requiring prioritised service delivery.`, metric: `${(maxPopWard.pop).toLocaleString('en-IN')} pop` });
+  if (minPopWard) insights.push({ ward: minPopWard.name, type: 'Lowest Population', text: `Ward ${minPopWard.key} has the smallest ward population of ${(minPopWard.pop).toLocaleString('en-IN')}, indicating scope for new residential development.`, metric: `${(minPopWard.pop).toLocaleString('en-IN')} pop` });
+  if (maxWomenWard) insights.push({ ward: maxWomenWard.name, type: 'Women Representation', text: `Ward ${maxWomenWard.key} leads with ${typeof maxWomenWard.women === 'number' ? maxWomenWard.women.toFixed(2) : maxWomenWard.women}% women population — highest women representation across all 72 wards.`, metric: `${typeof maxWomenWard.women === 'number' ? maxWomenWard.women.toFixed(1) : maxWomenWard.women}%` });
+  if (maxSCWard)   insights.push({ ward: maxSCWard.name,   type: 'SC Population Focus', text: `Ward ${maxSCWard.key} has the largest SC community with ${(maxSCWard.sc).toLocaleString('en-IN')} residents — welfare schemes should be prioritised here.`, metric: `${(maxSCWard.sc).toLocaleString('en-IN')} SC` });
+  insights.push({ ward: 'All 72 Wards', type: 'City Overview', text: `GVMC manages 72 wards with an average ward population of ${Math.round(avg).toLocaleString('en-IN')} residents, totalling over 14.3 lakh citizens across Visakhapatnam.`, metric: `Avg ${Math.round(avg).toLocaleString('en-IN')}` });
+  insights.push({ ward: 'GVMC City', type: 'SDG-11 Status', text: `Visakhapatnam is actively aligning its 72 wards with SDG Goal 11 targets — improving green spaces, waste management and sustainable infrastructure.`, metric: '🌿 SDG-11' });
+
+  return insights;
+}
+
+// Build insights after scripts load
+window.addEventListener('DOMContentLoaded', buildInsights);
+</script>
+
+<!-- ════════════════════════════════════════════
+     LOGIN MODAL
+════════════════════════════════════════════ -->
+<div class="login-modal" id="loginModal">
+  <div class="login-card">
+    <button class="login-modal-close" onclick="closeLoginModal()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="card-glow"></div>
+
+    <div class="login-logo-wrap">
+      <div class="login-logo-ring">🏛️</div>
+      <div class="portal-badge"><span class="portal-badge-dot"></span> Secure Access</div>
+      <div class="login-title">Officer Portal Login</div>
+      <div class="login-subtitle">Greater Visakhapatnam Municipal Corporation</div>
+    </div>
+
+    <form class="login-form" id="modalLoginForm" onsubmit="handleModalLogin(event)" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="modalRoleSelect">🛡️ &nbsp;Select Role</label>
+        <div class="input-icon-wrap">
+          <span class="icon">▾</span>
+          <select class="form-control" id="modalRoleSelect" style="padding-left:2.4rem;">
+            <option value="">— Choose Your Role —</option>
+            <option value="Admin">Admin</option>
+            <option value="Ward Officer">Ward Officer</option>
+            <option value="Data Entry Operator">Data Entry Operator</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="modalUsernameInput">👤 &nbsp;Username</label>
+        <div class="input-icon-wrap">
+          <span class="icon">@</span>
+          <input class="form-control" type="text" id="modalUsernameInput" placeholder="Enter your username" autocomplete="username" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="modalPasswordInput">🔒 &nbsp;Password</label>
+        <div class="input-icon-wrap">
+          <span class="icon">🔑</span>
+          <input class="form-control" type="password" id="modalPasswordInput" placeholder="Enter your password" autocomplete="current-password" />
+          <span class="pwd-toggle" id="modalPwdToggle" onclick="toggleModalPwd()" title="Show/Hide">👁️</span>
+        </div>
+      </div>
+
+      <div class="form-error" id="modalFormError">
+        <span>⚠️</span> <span id="modalErrorMsg">Invalid credentials. Please try again.</span>
+      </div>
+
+      <button type="submit" class="btn-login" id="modalLoginBtn">
+        <span>🚀 Sign In to Portal</span>
+      </button>
+    </form>
+
+    <div class="login-divider"><span>Demo Credentials</span></div>
+    <div class="demo-creds">
+      <div class="demo-creds-title">🔐 Test Access Credentials</div>
+      <div class="demo-row">
+        <div class="demo-item">
+          <span class="demo-lbl">Username</span>
+          <span class="demo-val">admin</span>
+        </div>
+        <div class="demo-item">
+          <span class="demo-lbl">Password</span>
+          <span class="demo-val">admin123</span>
+        </div>
+        <button type="button" class="btn-autofill" onclick="autofillModal()">↗ Autofill</button>
+      </div>
+    </div>
+
+    <div class="login-footer-note">
+      Need help? Contact <a href="mailto:support@gvmc.gov.in">support@gvmc.gov.in</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
