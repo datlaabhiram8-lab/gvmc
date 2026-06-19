@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -318,22 +318,7 @@
       </div>
     </div>
 
-    <!-- Row 4: SC population -->
-    <div class="comp-row">
-      <div>
-        <div class="comp-val-left" id="scA">--</div>
-      </div>
-      <div class="center-col">
-        <div class="comp-lbl">SC Population</div>
-        <div class="visual-bar-wrap">
-          <div class="visual-bar-left" id="barScA" style="width: 50%;"></div>
-          <div class="visual-bar-right" id="barScB" style="width: 50%;"></div>
-        </div>
-      </div>
-      <div>
-        <div class="comp-val-right" id="scB">--</div>
-      </div>
-    </div>
+
 
     <!-- Row 5: Sustainability Score -->
     <div class="comp-row">
@@ -472,12 +457,7 @@
     document.getElementById('womenB').textContent = womenB.toFixed(2) + '%';
     compareValues(womenA, womenB, 'womenA', 'womenB', 'barWomenA', 'barWomenB');
 
-    // SC Comparison
-    const scA = wardA.sc || wardA.sc_population || 0;
-    const scB = wardB.sc || wardB.sc_population || 0;
-    document.getElementById('scA').textContent = scA.toLocaleString('en-IN');
-    document.getElementById('scB').textContent = scB.toLocaleString('en-IN');
-    compareValues(scA, scB, 'scA', 'scB', 'barScA', 'barScB');
+
 
     // Sustain Comparison
     const susA = wardA.sustainability || 0;

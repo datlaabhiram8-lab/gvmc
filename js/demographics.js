@@ -104,14 +104,12 @@ function generateInsights() {
 
   const maxWomen = wards.reduce((a,b) => a.womenPct > b.womenPct ? a : b);
   const minWomen = wards.reduce((a,b) => a.womenPct < b.womenPct ? a : b);
-  const maxSC    = wards.reduce((a,b) => a.scPct > b.scPct ? a : b);
-  const maxST    = wards.reduce((a,b) => a.stPct > b.stPct ? a : b);
+  const maxSustain = wards.reduce((a,b) => a.sustainability > b.sustainability ? a : b);
   const maxPop   = wards.reduce((a,b) => a.population > b.population ? a : b);
   const minPop   = wards.reduce((a,b) => a.population < b.population ? a : b);
 
   insights.push({ icon:"👩", text:`Ward ${maxWomen.ward} (${maxWomen.name}) has the highest women percentage at ${maxWomen.womenPct}%.`, type:"info" });
-  insights.push({ icon:"📊", text:`Ward ${maxSC.ward} (${maxSC.name}) has the highest SC concentration at ${maxSC.scPct}%.`, type:"warning" });
-  insights.push({ icon:"🌿", text:`Ward ${maxST.ward} (${maxST.name}) has the highest ST population percentage at ${maxST.stPct}%.`, type:"success" });
+  insights.push({ icon:"🌿", text:`Ward ${maxSustain.ward} (${maxSustain.name}) is the Sustainability Leader with a score of ${maxSustain.sustainability}/100.`, type:"success" });
   insights.push({ icon:"🏘️", text:`Ward ${maxPop.ward} (${maxPop.name}) is the most populated ward with ${maxPop.population.toLocaleString()} residents.`, type:"info" });
   insights.push({ icon:"🔍", text:`Ward ${minPop.ward} (${minPop.name}) has the smallest population at ${minPop.population.toLocaleString()}.`, type:"warning" });
   insights.push({ icon:"🌆", text:`GVMC manages ${GVMC_SUMMARY.totalWards} wards with a total population of ${GVMC_SUMMARY.totalPopulation.toLocaleString()}.`, type:"success" });

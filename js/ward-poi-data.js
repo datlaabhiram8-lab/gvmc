@@ -30,11 +30,6 @@ const GVMC_POI_DATA = {
       "name": "Jyothi Nursing Home"
     },
     {
-      "lat": 17.725136,
-      "lng": 83.333594,
-      "name": "Hospital"
-    },
-    {
       "lat": 17.736227,
       "lng": 83.271332,
       "name": "Durga Nursing Home"
@@ -78,36 +73,6 @@ const GVMC_POI_DATA = {
       "lat": 17.728852,
       "lng": 83.305685,
       "name": "Kala Hospital"
-    },
-    {
-      "lat": 17.68982,
-      "lng": 83.238127,
-      "name": "Hospital"
-    },
-    {
-      "lat": 17.689486,
-      "lng": 83.238106,
-      "name": "Hospital"
-    },
-    {
-      "lat": 17.689539,
-      "lng": 83.237706,
-      "name": "Hospital"
-    },
-    {
-      "lat": 17.689496,
-      "lng": 83.236982,
-      "name": "Hospital"
-    },
-    {
-      "lat": 17.689023,
-      "lng": 83.236341,
-      "name": "Hospital"
-    },
-    {
-      "lat": 17.689629,
-      "lng": 83.236405,
-      "name": "Hospital"
     },
     {
       "lat": 17.723604,
@@ -503,11 +468,6 @@ const GVMC_POI_DATA = {
       "lat": 17.710924,
       "lng": 83.302368,
       "name": "MyCure Hospital"
-    },
-    {
-      "lat": 17.823109,
-      "lng": 83.206491,
-      "name": "Hospital"
     },
     {
       "lat": 17.887759,
@@ -1005,7 +965,109 @@ const GVMC_POI_DATA = {
       "name": "Hymavathi Hospital"
     }
   ],
-  "park": [],
+  "park": [
+    {
+      "lat": 17.7691,
+      "lng": 83.3500,
+      "name": "Indira Gandhi Zoological Park"
+    },
+    {
+      "lat": 17.7241,
+      "lng": 83.3393,
+      "name": "VUDA Park (VMRDA City Park)"
+    },
+    {
+      "lat": 17.7490,
+      "lng": 83.3422,
+      "name": "Kailasagiri Hilltop Park"
+    },
+    {
+      "lat": 17.7479,
+      "lng": 83.3499,
+      "name": "Tenneti Park"
+    },
+    {
+      "lat": 17.7634,
+      "lng": 83.3028,
+      "name": "Mudasarlova Park"
+    },
+    {
+      "lat": 17.7217,
+      "lng": 83.3057,
+      "name": "Dr. YSR Central Park"
+    },
+    {
+      "lat": 17.7290,
+      "lng": 83.3364,
+      "name": "Biodiversity Park"
+    },
+    {
+      "lat": 17.7214,
+      "lng": 83.3312,
+      "name": "Shivaji Park"
+    },
+    {
+      "lat": 17.7342,
+      "lng": 83.3218,
+      "name": "MVP Colony Children's Park"
+    },
+    {
+      "lat": 17.7381,
+      "lng": 83.3325,
+      "name": "Lawson's Bay Beach Park"
+    },
+    {
+      "lat": 17.7912,
+      "lng": 83.3392,
+      "name": "Sagar Nagar Beach Park"
+    },
+    {
+      "lat": 17.7825,
+      "lng": 83.3851,
+      "name": "Rushikonda Beach Park"
+    },
+    {
+      "lat": 17.7785,
+      "lng": 83.3421,
+      "name": "Arilova Community Park"
+    },
+    {
+      "lat": 17.8890,
+      "lng": 83.4520,
+      "name": "Bheemili Beach Park"
+    },
+    {
+      "lat": 17.7552,
+      "lng": 83.2186,
+      "name": "Gopalapatnam Park"
+    },
+    {
+      "lat": 17.7084,
+      "lng": 83.3215,
+      "name": "Old Town Children's Park"
+    },
+    {
+      "lat": 17.6954,
+      "lng": 83.2018,
+      "name": "Gajuwaka Nehru Park"
+    },
+    {
+      "lat": 17.6821,
+      "lng": 83.2095,
+      "name": "Steel Plant Township Park"
+    },
+    {
+      "lat": 17.7142,
+      "lng": 83.2842,
+      "name": "Kancharapalem Community Park"
+    },
+    {
+      "lat": 17.7194,
+      "lng": 83.2985,
+      "name": "Alluri Sitarama Raju Park"
+    }
+  ],
+
   "school": [
     {
       "lat": 17.720955,
@@ -1016,11 +1078,6 @@ const GVMC_POI_DATA = {
       "lat": 17.723056,
       "lng": 83.327021,
       "name": "Systems Design"
-    },
-    {
-      "lat": 17.687227,
-      "lng": 83.22069,
-      "name": "School"
     },
     {
       "lat": 17.735482,
@@ -1121,21 +1178,6 @@ const GVMC_POI_DATA = {
       "lat": 17.73188,
       "lng": 83.317201,
       "name": "Aditya Degree College"
-    },
-    {
-      "lat": 17.827745,
-      "lng": 83.203321,
-      "name": "School"
-    },
-    {
-      "lat": 17.76575,
-      "lng": 83.31589,
-      "name": "School"
-    },
-    {
-      "lat": 17.766647,
-      "lng": 83.316896,
-      "name": "School"
     },
     {
       "lat": 17.899835,
@@ -1418,11 +1460,6 @@ const GVMC_POI_DATA = {
       "name": "Narayana IIT Campus"
     },
     {
-      "lat": 17.723751,
-      "lng": 83.331278,
-      "name": "School"
-    },
-    {
       "lat": 17.723544,
       "lng": 83.328339,
       "name": "Pharmacy Department"
@@ -1448,11 +1485,6 @@ const GVMC_POI_DATA = {
       "name": "Sri Chaitanya Chanakya Bhavan"
     },
     {
-      "lat": 17.713067,
-      "lng": 83.302134,
-      "name": "School"
-    },
-    {
       "lat": 17.712904,
       "lng": 83.302336,
       "name": "Seventh Day"
@@ -1463,34 +1495,14 @@ const GVMC_POI_DATA = {
       "name": "st. anthony primary and high school"
     },
     {
-      "lat": 17.724278,
-      "lng": 83.333689,
-      "name": "School"
-    },
-    {
-      "lat": 17.71902,
-      "lng": 83.306437,
-      "name": "School"
-    },
-    {
       "lat": 17.718679,
       "lng": 83.307028,
       "name": "Pydah Degree college"
     },
     {
-      "lat": 17.721877,
-      "lng": 83.328599,
-      "name": "School"
-    },
-    {
       "lat": 17.724184,
       "lng": 83.312633,
       "name": "Ascent Junior college"
-    },
-    {
-      "lat": 17.719635,
-      "lng": 83.312947,
-      "name": "School"
     },
     {
       "lat": 17.72415,
@@ -1531,31 +1543,6 @@ const GVMC_POI_DATA = {
       "lat": 17.684919,
       "lng": 83.237313,
       "name": "Saraswati School"
-    },
-    {
-      "lat": 17.687398,
-      "lng": 83.236425,
-      "name": "School"
-    },
-    {
-      "lat": 17.685229,
-      "lng": 83.237133,
-      "name": "School"
-    },
-    {
-      "lat": 17.684587,
-      "lng": 83.237202,
-      "name": "School"
-    },
-    {
-      "lat": 17.670629,
-      "lng": 83.215945,
-      "name": "School"
-    },
-    {
-      "lat": 17.687159,
-      "lng": 83.222919,
-      "name": "School"
     },
     {
       "lat": 17.688993,
@@ -1638,11 +1625,6 @@ const GVMC_POI_DATA = {
       "name": "Pydah Engineering College"
     },
     {
-      "lat": 17.719639,
-      "lng": 83.284602,
-      "name": "School"
-    },
-    {
       "lat": 17.718793,
       "lng": 83.287632,
       "name": "St. Joseph's College for Women"
@@ -1703,11 +1685,6 @@ const GVMC_POI_DATA = {
       "name": "Gayatri Vidhya Parishad College of engineering"
     },
     {
-      "lat": 17.791304,
-      "lng": 83.212489,
-      "name": "School"
-    },
-    {
       "lat": 17.78748,
       "lng": 83.213206,
       "name": "High Fields School"
@@ -1748,11 +1725,6 @@ const GVMC_POI_DATA = {
       "name": "Bhashyam School"
     },
     {
-      "lat": 17.643729,
-      "lng": 83.23075,
-      "name": "School"
-    },
-    {
       "lat": 17.737291,
       "lng": 83.308543,
       "name": "V.B.V High School"
@@ -1783,16 +1755,6 @@ const GVMC_POI_DATA = {
       "name": "Timpany School"
     },
     {
-      "lat": 17.814941,
-      "lng": 83.40435,
-      "name": "School"
-    },
-    {
-      "lat": 17.818679,
-      "lng": 83.397508,
-      "name": "School"
-    },
-    {
       "lat": 17.81211,
       "lng": 83.332719,
       "name": "BITS Vizag"
@@ -1818,11 +1780,6 @@ const GVMC_POI_DATA = {
       "name": "Government Institute Of Chemical Engineering"
     },
     {
-      "lat": 17.725993,
-      "lng": 83.25789,
-      "name": "School"
-    },
-    {
       "lat": 17.750677,
       "lng": 83.245974,
       "name": "Daffodils School"
@@ -1831,16 +1788,6 @@ const GVMC_POI_DATA = {
       "lat": 17.744807,
       "lng": 83.232672,
       "name": "Saint Ann's School Grounds"
-    },
-    {
-      "lat": 17.834456,
-      "lng": 83.356424,
-      "name": "School"
-    },
-    {
-      "lat": 17.792585,
-      "lng": 83.358989,
-      "name": "School"
     },
     {
       "lat": 17.825287,
@@ -1853,19 +1800,9 @@ const GVMC_POI_DATA = {
       "name": "APSWR Centre of Excellence"
     },
     {
-      "lat": 17.797884,
-      "lng": 83.348349,
-      "name": "School"
-    },
-    {
       "lat": 17.785009,
       "lng": 83.376086,
       "name": "Gitam Medical College"
-    },
-    {
-      "lat": 17.787331,
-      "lng": 83.378998,
-      "name": "School"
     },
     {
       "lat": 17.89957,
@@ -1886,21 +1823,6 @@ const GVMC_POI_DATA = {
       "lat": 17.736236,
       "lng": 83.293338,
       "name": "Kendriya Vidyalaya Waltair"
-    },
-    {
-      "lat": 17.890904,
-      "lng": 83.296033,
-      "name": "School"
-    },
-    {
-      "lat": 17.666178,
-      "lng": 83.202264,
-      "name": "School"
-    },
-    {
-      "lat": 17.83009,
-      "lng": 83.219773,
-      "name": "School"
     },
     {
       "lat": 17.704384,
@@ -1951,11 +1873,6 @@ const GVMC_POI_DATA = {
       "lat": 17.8278,
       "lng": 83.334363,
       "name": "Silver Oaks International School - Kommadi Campus"
-    },
-    {
-      "lat": 17.737549,
-      "lng": 83.25912,
-      "name": "School"
     },
     {
       "lat": 17.894391,

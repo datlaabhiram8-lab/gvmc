@@ -855,10 +855,7 @@
       <div class="sv sv-purple" id="womenPct">49.11%</div>
       <div class="sl">Women Population</div>
     </div>
-    <div class="stat-item">
-      <div class="sv sv-green counter" data-target="118427">0</div>
-      <div class="sl">SC Population</div>
-    </div>
+   
   </div>
 </div>
 
@@ -1002,10 +999,9 @@
       </div>
       <p>Greater Visakhapatnam Municipal Corporation's Smart Ward Management & Sustainability Portal — empowering citizens with real-time data and digital governance tools.</p>
       <div class="social-links">
-        <a href="#" title="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
-        <a href="#" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-        <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
-        <a href="#" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        <a href="https://x.com/GVMC_Visakha" target="_blank" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://www.facebook.com/GVMC.VISAKHA" target="_blank" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com/gvmc_visakhapatnam/" target="_blank" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
       </div>
     </div>
 
@@ -1271,19 +1267,19 @@ function buildFallbackInsights() {
   if (entries.length === 0) return [];
 
   const insights = [];
-  let maxPop = 0, minPop = Infinity, maxWomen = 0, maxSC = 0;
-  let maxPopWard, minPopWard, maxWomenWard, maxSCWard;
+  let maxPop = 0, minPop = Infinity, maxWomen = 0, maxSustain = 0;
+  let maxPopWard, minPopWard, maxWomenWard, maxSustainWard;
 
   entries.forEach(([key, val]) => {
     const pop     = val.population || val.total_population || 0;
     const women   = val.women_pct  || val.women_percent || val.womenPct || 0;
-    const sc      = val.sc_population || val.scPopulation || val.sc || 0;
+    const sustain = val.sustainability || 0;
     const name    = val.name || val.wardName || `Ward ${key}`;
 
     if (pop > maxPop)   { maxPop = pop; maxPopWard = { key, name, pop }; }
     if (pop < minPop && pop > 0) { minPop = pop; minPopWard = { key, name, pop }; }
     if (women > maxWomen) { maxWomen = women; maxWomenWard = { key, name, women }; }
-    if (sc > maxSC)     { maxSC = sc; maxSCWard = { key, name, sc }; }
+    if (sustain > maxSustain) { maxSustain = sustain; maxSustainWard = { key, name, sustain }; }
   });
 
   const total = entries.reduce((s,[,v]) => s + (v.population || v.total_population || 0), 0);
@@ -1292,7 +1288,7 @@ function buildFallbackInsights() {
   if (maxPopWard) insights.push({ ward: maxPopWard.name, type: 'Highest Population', text: `Ward ${maxPopWard.key} has the highest population in GVMC with ${(maxPopWard.pop).toLocaleString('en-IN')} residents, requiring prioritised service delivery.`, metric: `${(maxPopWard.pop).toLocaleString('en-IN')} pop` });
   if (minPopWard) insights.push({ ward: minPopWard.name, type: 'Lowest Population', text: `Ward ${minPopWard.key} has the smallest ward population of ${(minPopWard.pop).toLocaleString('en-IN')}, indicating scope for new residential development.`, metric: `${(minPopWard.pop).toLocaleString('en-IN')} pop` });
   if (maxWomenWard) insights.push({ ward: maxWomenWard.name, type: 'Women Representation', text: `Ward ${maxWomenWard.key} leads with ${typeof maxWomenWard.women === 'number' ? maxWomenWard.women.toFixed(2) : maxWomenWard.women}% women population — highest women representation across all 72 wards.`, metric: `${typeof maxWomenWard.women === 'number' ? maxWomenWard.women.toFixed(1) : maxWomenWard.women}%` });
-  if (maxSCWard)   insights.push({ ward: maxSCWard.name,   type: 'SC Population Focus', text: `Ward ${maxSCWard.key} has the largest SC community with ${(maxSCWard.sc).toLocaleString('en-IN')} residents — welfare schemes should be prioritised here.`, metric: `${(maxSCWard.sc).toLocaleString('en-IN')} SC` });
+  if (maxSustainWard) insights.push({ ward: maxSustainWard.name, type: 'Sustainability Leader', text: `Ward ${maxSustainWard.key} has the highest sustainability score of ${maxSustainWard.sustain}/100, showing outstanding environmental alignment.`, metric: `${maxSustainWard.sustain}/100` });
   insights.push({ ward: 'All 72 Wards', type: 'City Overview', text: `GVMC manages 72 wards with an average ward population of ${Math.round(avg).toLocaleString('en-IN')} residents, totalling over 14.3 lakh citizens across Visakhapatnam.`, metric: `Avg ${Math.round(avg).toLocaleString('en-IN')}` });
   insights.push({ ward: 'GVMC City', type: 'SDG-11 Status', text: `Visakhapatnam is actively aligning its 72 wards with SDG Goal 11 targets — improving green spaces, waste management and sustainable infrastructure.`, metric: '🌿 SDG-11' });
 

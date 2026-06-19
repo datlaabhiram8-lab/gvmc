@@ -200,8 +200,9 @@
     /* ── Chart Grid ── */
     .charts-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 1.5rem;
+      max-width: 520px;
     }
     .chart-wrapper {
       background: var(--bg-glass);
@@ -563,6 +564,108 @@
       height: 420px;
       display: block;
     }
+    /* ── Nearby Amenities ── */
+    .amenities-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      transition: var(--transition);
+    }
+    .amenities-card:hover {
+      border-color: rgba(6,182,212,0.3);
+      box-shadow: 0 0 30px rgba(6,182,212,0.1);
+    }
+    .amenities-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    @media (max-width: 992px) {
+      .amenities-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .amenities-col {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .col-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 0.55rem;
+      border-bottom: 1px solid var(--border-glass);
+    }
+    .poi-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .poi-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0.75rem;
+      background: rgba(26,86,219,0.02);
+      border: 1px solid rgba(26,86,219,0.06);
+      border-radius: var(--radius);
+      transition: var(--transition);
+    }
+    .poi-item:hover {
+      background: rgba(26,86,219,0.06);
+      border-color: rgba(26,86,219,0.15);
+      transform: translateX(2px);
+    }
+    .poi-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow: hidden;
+    }
+    .poi-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .poi-dist {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+    .poi-map-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(6,182,212,0.08);
+      border: 1px solid rgba(6,182,212,0.18);
+      color: var(--accent);
+      transition: var(--transition);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .poi-map-btn:hover {
+      background: var(--gradient-btn);
+      color: #ffffff;
+      border-color: transparent;
+      transform: scale(1.1);
+      box-shadow: var(--shadow-accent);
+    }
 
     /* ── Responsive ── */
     @media (max-width: 1024px) {
@@ -753,13 +856,6 @@
             <canvas id="genderChart"></canvas>
           </div>
         </div>
-        <!-- Bar -->
-        <div class="chart-wrapper">
-          <div class="chart-title">📊 Population vs SC vs ST</div>
-          <div class="chart-canvas-wrap">
-            <canvas id="popBarChart"></canvas>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -900,6 +996,47 @@
       </div>
       <div class="project-list" id="projectList"></div>
     </div>
+    <!-- ── 8.5. NEARBY AMENITIES ── -->
+    <div class="amenities-card">
+      <div class="section-eyebrow">
+        <span class="tag">📍 Amenities</span>
+        <h2>Nearby Public Services</h2>
+      </div>
+      <div class="amenities-grid">
+        <!-- Hospitals Column -->
+        <div class="amenities-col">
+          <div class="col-title">
+            <i class="fa-solid fa-hospital" style="color:var(--danger)"></i>
+            <span>Hospitals & Clinics</span>
+          </div>
+          <div class="poi-list" id="poiHospitals">
+            <div style="font-size:0.8rem;color:var(--text-muted);text-align:center;padding:1rem 0;">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Schools Column -->
+        <div class="amenities-col">
+          <div class="col-title">
+            <i class="fa-solid fa-school" style="color:var(--accent2)"></i>
+            <span>Schools & Colleges</span>
+          </div>
+          <div class="poi-list" id="poiSchools">
+            <div style="font-size:0.8rem;color:var(--text-muted);text-align:center;padding:1rem 0;">Loading...</div>
+          </div>
+        </div>
+
+        <!-- Parks Column -->
+        <div class="amenities-col">
+          <div class="col-title">
+            <i class="fa-solid fa-tree" style="color:var(--success)"></i>
+            <span>Parks & Gardens</span>
+          </div>
+          <div class="poi-list" id="poiParks">
+            <div style="font-size:0.8rem;color:var(--text-muted);text-align:center;padding:1rem 0;">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- ── 9. MAP ── -->
     <div class="map-section-card">
@@ -930,6 +1067,7 @@
 <script src="js/main.js"></script>
 <script src="js/ward_data.js"></script>
 <script src="js/demographics.js"></script>
+<script src="js/ward-poi-data.js"></script>
 
 <!-- ═══════════════════════════════════════════════
      DASHBOARD LOGIC
@@ -1134,54 +1272,8 @@ if (!D) {
     });
   })();
 
-  // Bar – Population, SC, ST
-  (function renderBarChart() {
-    const ctx = document.getElementById('popBarChart').getContext('2d');
-    const gPop = ctx.createLinearGradient(0, 0, 0, 280);
-    gPop.addColorStop(0, '#1a56db'); gPop.addColorStop(1, '#06b6d4');
-    const gSC  = ctx.createLinearGradient(0, 0, 0, 280);
-    gSC.addColorStop(0, '#8b5cf6');  gSC.addColorStop(1, '#6d28d9');
-    const gST  = ctx.createLinearGradient(0, 0, 0, 280);
-    gST.addColorStop(0, '#10b981');  gST.addColorStop(1, '#059669');
+  // Bar chart removed (SC/ST data not shown)
 
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Total Population', 'SC Population', 'ST Population'],
-        datasets: [{
-          label: 'Count',
-          data: [D.population, D.sc, D.st],
-          backgroundColor: [gPop, gSC, gST],
-          borderRadius: 8,
-          borderSkipped: false,
-          barPercentage: 0.55
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: ctx => ` ${ctx.raw.toLocaleString('en-IN')}`
-            }
-          }
-        },
-        scales: {
-          x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 11 } } },
-          y: {
-            grid: { color: 'rgba(255,255,255,0.04)' },
-            ticks: {
-              font: { size: 11 },
-              callback: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v
-            }
-          }
-        },
-        animation: { duration: 1200 }
-      }
-    });
-  })();
 
   // ── 3d. Sustainability Score Ring ──
   (function renderSustainScore() {
@@ -1364,6 +1456,74 @@ if (!D) {
           </div>
         </div>`;
     });
+  })();
+
+  // ── 3j. Render Nearby Amenities ──
+  (function renderNearbyAmenities() {
+    if (typeof GVMC_POI_DATA === 'undefined') return;
+
+    const wardCoords = GVMC_MAP.getWardCoords(wardNum);
+    if (!wardCoords) return;
+
+    // Helper to calculate distance in km using Haversine
+    function getDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Radius of the earth in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c; // Distance in km
+    }
+
+    function getNearby(category, maxCount = 4) {
+      const items = (GVMC_POI_DATA[category] || []).filter(item => {
+        const name = item.name.trim().toLowerCase();
+        return name !== 'hospital' && name !== 'school' && name !== 'park';
+      });
+      const withDistance = items.map(item => {
+        const d = getDistance(wardCoords.lat, wardCoords.lng, item.lat, item.lng);
+        return { ...item, distance: d };
+      });
+      // Sort by distance ascending
+      withDistance.sort((a, b) => a.distance - b.distance);
+      return withDistance.slice(0, maxCount);
+    }
+
+    function renderCategoryList(elementId, items) {
+      const container = document.getElementById(elementId);
+      if (!container) return;
+      if (items.length === 0) {
+        container.innerHTML = `<div style="font-size:0.8rem;color:var(--text-muted);padding:1rem 0;text-align:center;">No nearby locations found.</div>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      items.forEach(item => {
+        // Build maps URL with pinpoint coordinates
+        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.name)}+${item.lat},${item.lng}`;
+        const distStr = item.distance < 1 
+          ? `${(item.distance * 1000).toFixed(0)} m away`
+          : `${item.distance.toFixed(2)} km away`;
+
+        container.innerHTML += `
+          <div class="poi-item">
+            <div class="poi-info">
+              <span class="poi-name" title="${item.name}">${item.name}</span>
+              <span class="poi-dist">📍 ${distStr}</span>
+            </div>
+            <a href="${mapsUrl}" target="_blank" rel="noopener" class="poi-map-btn" title="Open in Google Maps">
+              <i class="fa-solid fa-map-location-dot"></i>
+            </a>
+          </div>`;
+      });
+    }
+
+    renderCategoryList('poiHospitals', getNearby('hospital', 4));
+    renderCategoryList('poiSchools', getNearby('school', 4));
+    renderCategoryList('poiParks', getNearby('park', 4));
   })();
 
 } // end if (D)
