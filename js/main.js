@@ -40,6 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Init tabs if present
   initTabs();
+
+  // Update header session UI
+  updateHeaderAuth();
 });
 
 // ---- Counter Animation ----
@@ -253,7 +256,7 @@ function logoutOfficer() {
   localStorage.removeItem('gvmc_officer_role');
   localStorage.removeItem('gvmc_officer_name');
   localStorage.removeItem('gvmc_officer_login_time');
-  window.location.href = 'index.html';
+  window.location.reload();
 }
 
 // ---- Login Modal Handlers ----
@@ -333,19 +336,43 @@ function handleModalLogin(e) {
   btn.innerHTML = '<span>⏳ Authenticating…</span>';
   btn.classList.add('loading');
 
-  localStorage.setItem('gvmc_officer_logged_in', 'true');
-  localStorage.setItem('gvmc_officer_role', roleVal);
-  localStorage.setItem('gvmc_officer_name', user.charAt(0).toUpperCase() + user.slice(1));
-  localStorage.setItem('gvmc_officer_login_time', new Date().toISOString());
+  try {
+    localStorage.setItem('gvmc_officer_logged_in', 'true');
+    localStorage.setItem('gvmc_officer_role', roleVal);
+    localStorage.setItem('gvmc_officer_name', user.charAt(0).toUpperCase() + user.slice(1));
+    localStorage.setItem('gvmc_officer_login_time', new Date().toISOString());
+  } catch (storageErr) {
+    console.warn('localStorage unavailable:', storageErr);
+  }
 
-  showToast('Login successful! Redirecting…', 'success');
+  const isCommunityPage = window.location.pathname.indexOf('community.html') !== -1;
 
-  setTimeout(() => {
-    const lastWard = sessionStorage.getItem('gvmc_last_ward');
-    window.location.href = lastWard
-      ? `ward-dashboard.html?ward=${lastWard}`
-      : 'ward-dashboard.html?ward=17';
-  }, 900);
+  if (isCommunityPage) {
+    showToast('Login successful!', 'success');
+    setTimeout(() => {
+      closeLoginModal();
+      updateHeaderAuth();
+      if (typeof window.checkOfficerAccess === 'function') {
+        window.checkOfficerAccess();
+      }
+      // Reset button state
+      btn.innerHTML = '<span>🚀 Sign In to Portal</span>';
+      btn.classList.remove('loading');
+    }, 900);
+  } else {
+    showToast('Login successful! Redirecting…', 'success');
+    setTimeout(() => {
+      try {
+        const lastWard = sessionStorage.getItem('gvmc_last_ward');
+        window.location.href = lastWard
+          ? `ward-dashboard.html?ward=${lastWard}`
+          : 'ward-dashboard.html?ward=17';
+      } catch (navErr) {
+        // Fallback: direct navigation if sessionStorage also fails
+        window.location.href = 'ward-dashboard.html?ward=17';
+      }
+    }, 900);
+  }
 }
 
 document.addEventListener('click', e => {
@@ -353,3 +380,44 @@ document.addEventListener('click', e => {
     e.target.classList.remove('open');
   }
 });
+
+function updateHeaderAuth() {
+  try {
+    const isLoggedIn = localStorage.getItem('gvmc_officer_logged_in') === 'true';
+    if (!isLoggedIn) return;
+
+    const role = localStorage.getItem('gvmc_officer_role') || 'Officer';
+    const name = localStorage.getItem('gvmc_officer_name') || 'Admin';
+
+    // Find the login button in header
+    const loginBtn = document.querySelector('.header-login-btn');
+    if (loginBtn) {
+      const container = document.createElement('div');
+      container.className = 'header-session-wrap';
+      container.style.cssText = 'display:flex;align-items:center;gap:0.75rem;margin-left:auto;';
+      container.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:flex-end;font-family:'Inter',sans-serif;line-height:1.2;">
+          <span style="font-size:0.75rem;font-weight:700;color:var(--text-primary);">${name}</span>
+          <span style="font-size:0.65rem;color:var(--text-muted);font-weight:500;">${role}</span>
+        </div>
+        <button onclick="logoutOfficer()" class="btn-logout" style="
+          background:rgba(239,68,68,0.1);
+          border:1px solid rgba(239,68,68,0.2);
+          color:var(--danger);
+          padding:8px 12px;
+          border-radius:6px;
+          font-size:0.75rem;
+          font-weight:700;
+          cursor:pointer;
+          transition:var(--transition);
+          white-space:nowrap;
+        ">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+      `;
+      loginBtn.parentNode.replaceChild(container, loginBtn);
+    }
+  } catch (e) {
+    console.warn('Error updating header auth:', e);
+  }
+}

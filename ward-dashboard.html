@@ -13,7 +13,10 @@
   <!-- ── ACCESS: officers always allowed; citizens may view after ward search (?ward=) ── -->
   <script>
     (function () {
-      var isOfficer = localStorage.getItem('gvmc_officer_logged_in') === 'true';
+      var isOfficer = false;
+      try {
+        isOfficer = localStorage.getItem('gvmc_officer_logged_in') === 'true';
+      } catch (e) {}
       var params = new URLSearchParams(window.location.search);
       var ward = parseInt(params.get('ward'), 10);
       var hasWard = !isNaN(ward) && ward >= 1 && ward <= 72;
@@ -1077,10 +1080,18 @@
 // -0. SESSION UI — show officer name + logout button
 // ────────────────────────────────────────────────
 (function sessionUI() {
-  if (localStorage.getItem('gvmc_officer_logged_in') !== 'true') return;
+  try {
+    if (localStorage.getItem('gvmc_officer_logged_in') !== 'true') return;
+  } catch (e) { return; }
 
-  const role    = localStorage.getItem('gvmc_officer_role')  || 'Officer';
-  const name    = localStorage.getItem('gvmc_officer_name') || 'Admin';
+  var role, name;
+  try {
+    role    = localStorage.getItem('gvmc_officer_role')  || 'Officer';
+    name    = localStorage.getItem('gvmc_officer_name') || 'Admin';
+  } catch (e) {
+    role = 'Officer';
+    name = 'Admin';
+  }
   const area    = document.getElementById('headerSessionArea');
   if (!area) return;
   area.innerHTML = `

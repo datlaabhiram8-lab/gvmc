@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -151,6 +151,231 @@
     .btn-volunteer:hover {
       background: rgba(255,255,255,0.1);
     }
+
+    /* ── Create Event Button (officer-only) ── */
+    .create-event-btn {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 0.7rem 1.6rem;
+      border-radius: 50px;
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(16,185,129,0.35);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .create-event-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .create-event-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(16,185,129,0.5);
+    }
+    .create-event-btn:hover::before { opacity: 1; }
+    .create-event-btn.visible { display: inline-flex; }
+    .create-event-btn .officer-badge {
+      background: rgba(255,255,255,0.2);
+      padding: 2px 8px;
+      border-radius: 50px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+    .title-row .page-title-wrap {
+      margin-bottom: 0;
+      text-align: left;
+      flex: 1;
+    }
+
+    /* ── Create Event Modal ── */
+    .create-event-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.35s ease;
+    }
+    .create-event-modal.open {
+      opacity: 1;
+      visibility: visible;
+    }
+    .create-event-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 2rem 2.25rem;
+      width: 95%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+      transform: translateY(30px) scale(0.95);
+      transition: transform 0.35s ease;
+    }
+    .create-event-modal.open .create-event-card {
+      transform: translateY(0) scale(1);
+    }
+    .create-event-card .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.75rem;
+    }
+    .create-event-card .modal-header h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10b981, #059669);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .create-event-card .modal-close {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border-glass);
+      color: var(--text-muted);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .create-event-card .modal-close:hover {
+      background: rgba(239,68,68,0.15);
+      color: #f87171;
+      border-color: rgba(239,68,68,0.3);
+    }
+    .ce-form .ce-group {
+      margin-bottom: 1.25rem;
+    }
+    .ce-form .ce-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .ce-form .ce-input,
+    .ce-form .ce-select,
+    .ce-form .ce-textarea {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      background: #f8fafc;
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      transition: border-color 0.25s;
+      box-sizing: border-box;
+    }
+
+    /* ── Delete Event Button (officer-only) ── */
+    .btn-delete-event {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      padding: 0.6rem;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-align: center;
+      transition: var(--transition);
+      cursor: pointer;
+      margin-top: 12px;
+    }
+    .btn-delete-event:hover {
+      background: #ef4444;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+    }
+    body.is-officer-view .btn-delete-event {
+      display: inline-flex;
+    }
+    .ce-form .ce-input:focus,
+    .ce-form .ce-select:focus,
+    .ce-form .ce-textarea:focus {
+      outline: none;
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16,185,129,0.12);
+    }
+    .ce-form .ce-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .ce-form .ce-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .ce-form .ce-submit {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(16,185,129,0.3);
+      transition: all 0.3s;
+      margin-top: 0.5rem;
+    }
+    .ce-form .ce-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(16,185,129,0.45);
+    }
+    .ce-officer-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.6rem 1rem;
+      background: rgba(16,185,129,0.08);
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+      font-size: 0.78rem;
+      color: #10b981;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -227,9 +452,15 @@
 
 <!-- MAIN HUB -->
 <div class="comm-container">
-  <div class="page-title-wrap">
-    <h1>Events & Announcements</h1>
-    <p>Get involved in local ward initiatives, attend public town halls, and help make Vizag cleaner and greener.</p>
+  <div class="title-row">
+    <div class="page-title-wrap">
+      <h1>Events & Announcements</h1>
+      <p>Get involved in local ward initiatives, attend public town halls, and help make Vizag cleaner and greener.</p>
+    </div>
+    <button class="create-event-btn" id="createEventBtn" onclick="openCreateEventModal()">
+      <i class="fa-solid fa-plus"></i> Create New Event
+      <span class="officer-badge" id="officerRoleBadge">OFFICER</span>
+    </button>
   </div>
 
   <div class="tabs-wrap">
@@ -368,19 +599,245 @@
     showToast(`Successfully registered as a ${type === 'Volunteer' ? 'Volunteer' : 'Participant'} for "${name}"!`, 'success');
   }
 
-  function showToast(msg, type = 'info') {
-    if (typeof window.showToast === 'function') {
-      window.showToast(msg, type);
+  // ── Officer-only: Create Event Button Visibility & View Mode ──
+  window.checkOfficerAccess = function() {
+    try {
+      var isLoggedIn = localStorage.getItem('gvmc_officer_logged_in') === 'true';
+      var role = localStorage.getItem('gvmc_officer_role') || '';
+      var allowedRoles = ['Admin', 'Ward Officer', 'Data Entry Operator'];
+      if (isLoggedIn && allowedRoles.indexOf(role) !== -1) {
+        var btn = document.getElementById('createEventBtn');
+        var badge = document.getElementById('officerRoleBadge');
+        if (btn) btn.classList.add('visible');
+        if (badge) badge.textContent = role.toUpperCase();
+        document.body.classList.add('is-officer-view');
+      } else {
+        // If logged out, make sure it is hidden
+        var btn = document.getElementById('createEventBtn');
+        if (btn) btn.classList.remove('visible');
+        document.body.classList.remove('is-officer-view');
+      }
+    } catch (e) {}
+  };
+  window.checkOfficerAccess();
+
+  // ── Custom Events Storage Helper ──
+  function getCustomEvents() {
+    try {
+      var data = localStorage.getItem('gvmc_custom_events');
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveCustomEvents(events) {
+    try {
+      localStorage.setItem('gvmc_custom_events', JSON.stringify(events));
+    } catch (e) {}
+  }
+
+  // ── Render Card HTML ──
+  function createEventCardHTML(event) {
+    var catLabels = { env: 'Environment', gov: 'Governance', health: 'Health Camp' };
+    var catBadges = { env: 'badge-env', gov: 'badge-gov', health: 'badge-health' };
+
+    // Format date nicely
+    var dateObj = new Date(event.date + 'T' + event.time);
+    var formattedDate = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    // Format time
+    var hours = dateObj.getHours();
+    var mins = dateObj.getMinutes().toString().padStart(2, '0');
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    var formattedTime = hours.toString().padStart(2, '0') + ':' + mins + ' ' + ampm;
+
+    var escTitle = event.title.replace(/'/g, "\\'");
+
+    return (
+      '<div>' +
+        '<span class="event-badge ' + (catBadges[event.category] || 'badge-gov') + '">' + (catLabels[event.category] || 'Governance') + '</span>' +
+        '<h3 class="event-title">' + event.title + '</h3>' +
+        '<div class="event-meta">' +
+          '<span><i class="fa-solid fa-calendar"></i> ' + formattedDate + '</span>' +
+          '<span><i class="fa-solid fa-clock"></i> ' + formattedTime + '</span>' +
+        '</div>' +
+        '<p class="event-desc">' + event.desc + '</p>' +
+      '</div>' +
+      '<div>' +
+        '<div class="event-actions">' +
+          '<button class="btn-rsvp" onclick="joinEvent(\'' + escTitle + '\', \'RSVP\')">RSVP</button>' +
+          '<button class="btn-volunteer" onclick="joinEvent(\'' + escTitle + '\', \'Volunteer\')">Volunteer</button>' +
+        '</div>' +
+        '<button class="btn-delete-event" onclick="deleteCustomEvent(' + event.id + ')"><i class="fa-solid fa-trash"></i> Delete Event</button>' +
+      '</div>'
+    );
+  }
+
+  // ── Load custom events on startup ──
+  (function loadCustomEvents() {
+    var events = getCustomEvents();
+    var grid = document.getElementById('eventsGrid');
+    if (!grid) return;
+    events.forEach(function(event) {
+      var card = document.createElement('div');
+      card.className = 'event-card';
+      card.dataset.cat = event.category;
+      card.id = 'custom-event-' + event.id;
+      card.innerHTML = createEventCardHTML(event);
+      grid.insertBefore(card, grid.firstChild);
+    });
+  })();
+
+  function openCreateEventModal() {
+    var modal = document.getElementById('createEventModal');
+    if (modal) {
+      modal.classList.add('open');
+      try {
+        var name = localStorage.getItem('gvmc_officer_name') || 'Officer';
+        var role = localStorage.getItem('gvmc_officer_role') || 'Admin';
+        var nameEl = document.getElementById('ceOfficerName');
+        var roleEl = document.getElementById('ceOfficerRole');
+        if (nameEl) nameEl.textContent = name;
+        if (roleEl) roleEl.textContent = role;
+      } catch (e) {}
+    }
+  }
+
+  function closeCreateEventModal() {
+    var modal = document.getElementById('createEventModal');
+    if (modal) modal.classList.remove('open');
+  }
+
+  function handleCreateEvent(e) {
+    e.preventDefault();
+    var title = document.getElementById('ceTitle').value.trim();
+    var category = document.getElementById('ceCategory').value;
+    var date = document.getElementById('ceDate').value;
+    var time = document.getElementById('ceTime').value;
+    var desc = document.getElementById('ceDesc').value.trim();
+
+    if (!title || !category || !date || !time || !desc) {
+      showToast('Please fill in all fields.', 'error');
       return;
     }
-    const c = document.getElementById('toastContainer');
-    const t = document.createElement('div');
-    t.className = `toast ${type}`;
-    t.innerHTML = `<span>${type === 'info' ? 'ℹ️' : type === 'success' ? '✅' : '❌'}</span><span style="font-size:0.85rem">${msg}</span>`;
-    c.appendChild(t);
-    setTimeout(() => t.remove(), 3500);
+
+    var newEvent = {
+      id: Date.now(),
+      title: title,
+      category: category,
+      date: date,
+      time: time,
+      desc: desc
+    };
+
+    // Save to LocalStorage
+    var events = getCustomEvents();
+    events.push(newEvent);
+    saveCustomEvents(events);
+
+    // Build the new card
+    var card = document.createElement('div');
+    card.className = 'event-card';
+    card.dataset.cat = category;
+    card.id = 'custom-event-' + newEvent.id;
+    card.style.animation = 'fadeInUp 0.5s ease forwards';
+    card.innerHTML = createEventCardHTML(newEvent);
+
+    // Prepend to grid
+    var grid = document.getElementById('eventsGrid');
+    if (grid) grid.insertBefore(card, grid.firstChild);
+
+    // Reset form & close modal
+    document.getElementById('createEventForm').reset();
+    closeCreateEventModal();
+    showToast('Event "' + title + '" published successfully!', 'success');
   }
+
+  function deleteCustomEvent(id) {
+    if (!confirm('Are you sure you want to delete this event?')) return;
+
+    // Remove from LocalStorage
+    var events = getCustomEvents();
+    var filtered = events.filter(function(ev) { return ev.id !== id; });
+    saveCustomEvents(filtered);
+
+    // Remove from DOM
+    var card = document.getElementById('custom-event-' + id);
+    if (card) {
+      card.style.transform = 'scale(0.8)';
+      card.style.opacity = '0';
+      card.style.transition = 'all 0.3s ease';
+      setTimeout(function() {
+        card.remove();
+      }, 300);
+    }
+    showToast('Event deleted successfully.', 'success');
+  }
+
+  // Close create-event modal on backdrop click
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('create-event-modal')) {
+      closeCreateEventModal();
+    }
+  });
 </script>
+
+<!-- ════════════════════════════════════════════
+     CREATE EVENT MODAL (officer-only)
+════════════════════════════════════════════ -->
+<div class="create-event-modal" id="createEventModal">
+  <div class="create-event-card">
+    <div class="modal-header">
+      <h2>📅 Create New Event</h2>
+      <button class="modal-close" onclick="closeCreateEventModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="ce-officer-info" id="ceOfficerInfo">
+      <i class="fa-solid fa-shield-halved"></i>
+      <span>Posting as: <strong id="ceOfficerName">Officer</strong> · <span id="ceOfficerRole">Admin</span></span>
+    </div>
+
+    <form class="ce-form" id="createEventForm" onsubmit="handleCreateEvent(event)" novalidate>
+      <div class="ce-group">
+        <label class="ce-label" for="ceTitle">Event Title *</label>
+        <input class="ce-input" type="text" id="ceTitle" placeholder="e.g. Ward Cleanup Drive" required />
+      </div>
+
+      <div class="ce-group">
+        <label class="ce-label" for="ceCategory">Category *</label>
+        <select class="ce-select" id="ceCategory" required>
+          <option value="">— Select Category —</option>
+          <option value="env">🌿 Environment</option>
+          <option value="gov">🏛️ Governance / Town Hall</option>
+          <option value="health">🏥 Health Camp</option>
+        </select>
+      </div>
+
+      <div class="ce-row">
+        <div class="ce-group">
+          <label class="ce-label" for="ceDate">Date *</label>
+          <input class="ce-input" type="date" id="ceDate" required />
+        </div>
+        <div class="ce-group">
+          <label class="ce-label" for="ceTime">Time *</label>
+          <input class="ce-input" type="time" id="ceTime" required />
+        </div>
+      </div>
+
+      <div class="ce-group">
+        <label class="ce-label" for="ceDesc">Description *</label>
+        <textarea class="ce-textarea" id="ceDesc" placeholder="Briefly describe the event, location, and what attendees should expect…" required></textarea>
+      </div>
+
+      <button type="submit" class="ce-submit">
+        <i class="fa-solid fa-paper-plane"></i> &nbsp;Publish Event
+      </button>
+    </form>
+  </div>
+</div>
 
 <!-- ════════════════════════════════════════════
      LOGIN MODAL
