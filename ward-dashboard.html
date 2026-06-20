@@ -19,7 +19,7 @@
       } catch (e) {}
       var params = new URLSearchParams(window.location.search);
       var ward = parseInt(params.get('ward'), 10);
-      var hasWard = !isNaN(ward) && ward >= 1 && ward <= 72;
+      var hasWard = !isNaN(ward) && ward >= 1 && ward <= 120;
       if (!isOfficer && !hasWard) {
         window.location.replace('ward-search.html');
       }
@@ -1047,11 +1047,11 @@
         <div class="map-header-left">
           <span>🗺️ Ward Location Map</span>
           <span class="map-powered-badge"><i class="fa-brands fa-google"></i> Google Maps</span>
-          <span id="mapWardSubtitle" style="font-size:0.78rem;color:var(--text-muted);font-weight:400;">All 72 GVMC wards mapped</span>
+          <span id="mapWardSubtitle" style="font-size:0.78rem;color:var(--text-muted);font-weight:400;">All 120 GVMC wards mapped</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
           <button type="button" id="mapShowAllBtn" class="open-gmaps-btn" style="cursor:pointer;border:none;background:rgba(255,255,255,0.06);color:var(--text-muted);">
-            <i class="fa-solid fa-layer-group"></i> All 72 Wards
+            <i class="fa-solid fa-layer-group"></i> All 120 Wards
           </button>
           <a id="openGoogleMapsLink" href="#" target="_blank" rel="noopener" class="open-gmaps-btn">
             <i class="fa-solid fa-up-right-from-square"></i> Open in Google Maps
@@ -1167,7 +1167,7 @@ const wardNum = parseInt(getParam('ward')) || 17;
 // ────────────────────────────────────────────────
 (function buildSelector() {
   const sel = document.getElementById('wardSelect');
-  for (let w = 1; w <= 72; w++) {
+  for (let w = 1; w <= 120; w++) {
     const name = WARD_DEMOGRAPHICS[w] ? WARD_DEMOGRAPHICS[w].name : '';
     const opt  = document.createElement('option');
     opt.value = w;
