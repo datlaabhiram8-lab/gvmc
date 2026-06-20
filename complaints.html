@@ -334,6 +334,13 @@
           <label class="form-label" for="compDesc">Grievance Details</label>
           <textarea class="form-textarea" id="compDesc" placeholder="Describe the issue in detail..." required></textarea>
         </div>
+        <div class="form-group">
+          <label class="form-label" for="compPhoto">Add Photo (optional)</label>
+          <input type="file" id="compPhoto" accept="image/*" capture="environment" class="form-input" onchange="previewPhoto(event)" />
+          <div id="compPhotoPreview" style="margin-top:8px;display:none;">
+            <img id="compPhotoImg" src="" alt="Preview" style="max-width:100%;border-radius:6px;border:1px solid rgba(255,255,255,0.04);" />
+          </div>
+        </div>
         <button type="submit" class="btn-submit">🚀 Submit Complaint</button>
       </form>
     </div>
@@ -527,34 +534,67 @@
     });
   }
 
+  function previewPhoto(e) {
+    const file = e.target.files && e.target.files[0];
+    const preview = document.getElementById('compPhotoPreview');
+    const img = document.getElementById('compPhotoImg');
+    if (file && img) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        img.src = reader.result;
+        if (preview) preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    } else {
+      if (img) img.src = '';
+      if (preview) preview.style.display = 'none';
+    }
+  }
+
   function submitComplaint(e) {
     e.preventDefault();
     const ward = document.getElementById('compWard').value;
     const cat = document.getElementById('compCategory').value;
     const colony = document.getElementById('compColony').value.trim();
     const desc = document.getElementById('compDesc').value.trim();
+    const photoInput = document.getElementById('compPhoto');
 
     if (typeof generateId !== 'function') return;
 
     const newId = generateId('GVMC');
-    const newComplaint = {
-      id: newId,
-      ward: parseInt(ward),
-      category: cat,
-      colony: colony,
-      desc: desc,
-      status: 'Pending',
-      date: new Date().toLocaleDateString('en-IN')
-    };
 
-    storedComplaints.push(newComplaint);
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(storedComplaints));
+    function finalizeSubmit(photoData) {
+      const newComplaint = {
+        id: newId,
+        ward: parseInt(ward),
+        category: cat,
+        colony: colony,
+        desc: desc,
+        status: 'Pending',
+        date: new Date().toLocaleDateString('en-IN')
+      };
+      if (photoData) newComplaint.photo = photoData;
 
-    // Toast & Reset
-    showToast(`Complaint lodged successfully! ID: ${newId}`, 'success');
-    document.getElementById('complaintForm').reset();
-    applySearchedWardContext();
-    renderRecentComplaints();
+      storedComplaints.push(newComplaint);
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(storedComplaints));
+
+      // Toast & Reset
+      showToast(`Complaint lodged successfully! ID: ${newId}`, 'success');
+      document.getElementById('complaintForm').reset();
+      const preview = document.getElementById('compPhotoPreview');
+      if (preview) preview.style.display = 'none';
+      applySearchedWardContext();
+      renderRecentComplaints();
+    }
+
+    if (photoInput && photoInput.files && photoInput.files[0]) {
+      const file = photoInput.files[0];
+      const reader = new FileReader();
+      reader.onload = () => finalizeSubmit(reader.result);
+      reader.readAsDataURL(file);
+    } else {
+      finalizeSubmit(null);
+    }
   }
 
   function trackComplaint() {
@@ -580,6 +620,7 @@
           <div><strong>Ward:</strong> Ward ${match.ward}</div>
           <div><strong>Colony / Area:</strong> ${getColonyLabel(match)}</div>
           <div><strong>Details:</strong> ${match.desc}</div>
+          ${match.photo ? `<div style="margin-top:8px;"><img src="${match.photo}" style="max-width:100%;border-radius:6px;border:1px solid rgba(255,255,255,0.06);" alt="Complaint photo" /></div>` : ''}
           <div style="margin-top:4px;font-style:italic;"><strong>Filed on:</strong> ${match.date}</div>
         </div>
       `;
