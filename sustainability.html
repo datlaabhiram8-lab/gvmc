@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sustainability Scores | GVMC – Smart Ward Portal</title>
-  <meta name="description" content="GVMC Smart Ward Management Portal – Green indexes, waste recycling indicators, and SDG-11 compliance tracking." />
+  <title>Sustainability Dashboard | Smart Ward Connect</title>
+  <meta name="description" content="Smart Ward Connect – Green indexes, waste recycling indicators, and SDG-11 compliance tracking." />
   <link rel="icon" href="assets/gvmc-logo.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,7 +19,7 @@
     }
     .page-title-wrap {
       text-align: center;
-      margin-bottom: 3rem;
+      margin-bottom: 2.5rem;
     }
     .page-title-wrap h1 {
       font-family: 'Outfit', sans-serif;
@@ -34,14 +34,54 @@
       font-size: 1rem;
       margin-top: 0.5rem;
     }
+    
+    /* Tabs styling */
+    .sus-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .sus-tab-btn {
+      background: rgba(0, 0, 0, 0.03);
+      border: 1px solid var(--border-glass);
+      color: var(--text-muted);
+      padding: 0.8rem 1.8rem;
+      border-radius: 50px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .sus-tab-btn:hover {
+      background: rgba(26,86,219,0.06);
+      color: var(--primary-light);
+    }
+    .sus-tab-btn.active {
+      background: var(--gradient-btn);
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: var(--shadow-accent);
+    }
+    .sus-tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    .sus-tab-content.active {
+      display: block;
+    }
+
     .sus-selector-card {
-      background: rgba(255,255,255,0.05);
+      background: var(--bg-card);
       border: 1px solid var(--border-glass);
       border-radius: var(--radius-lg);
       padding: 2rem;
       text-align: center;
       margin-bottom: 3rem;
-      backdrop-filter: blur(16px);
       box-shadow: var(--shadow-card);
       max-width: 600px;
       margin-left: auto;
@@ -58,7 +98,7 @@
     }
     .sus-select {
       width: 100%;
-      background: rgba(0,0,0,0.2);
+      background: rgba(0,0,0,0.02);
       border: 1px solid var(--border-glass);
       color: var(--text-primary);
       padding: 0.8rem 1.2rem;
@@ -86,35 +126,21 @@
       align-items: start;
     }
     .radial-card {
-      background: rgba(255,255,255,0.04);
+      background: var(--bg-card);
       border: 1px solid var(--border-glass);
       border-radius: var(--radius-lg);
       padding: 2.5rem;
       text-align: center;
       box-shadow: var(--shadow-card);
     }
-    .score-ring {
-      width: 160px;
-      height: 160px;
-      border-radius: 50%;
-      margin: 0 auto 1.5rem;
+    
+    .score-ring-wrap {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      position: relative;
+      gap: 1rem;
     }
-    .score-ring::before {
-      content: '';
-      position: absolute;
-      inset: 14px;
-      background: #ffffff;
-      border-radius: 50%;
-    }
-    .score-inner {
-      position: relative;
-      z-index: 1;
-    }
+    
     .score-num {
       font-family: 'Outfit', sans-serif;
       font-size: 2.2rem;
@@ -135,13 +161,14 @@
       letter-spacing: 0.5px;
       text-transform: uppercase;
     }
-    .rating-excellent { background: rgba(16,185,129,0.2); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
-    .rating-good      { background: rgba(26,86,219,0.2);  color: var(--primary-light); border: 1px solid rgba(26,86,219,0.3); }
-    .rating-average   { background: rgba(245,158,11,0.2); color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
-    .rating-poor      { background: rgba(239,68,68,0.2);  color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+    .rating-excellent { background: rgba(16,185,129,0.12); color: var(--success); border: 1px solid rgba(16,185,129,0.25); }
+    .rating-good      { background: rgba(26,86,219,0.12);  color: var(--primary-light); border: 1px solid rgba(26,86,219,0.25); }
+    .rating-average   { background: rgba(245,158,11,0.12); color: var(--warning); border: 1px solid rgba(245,158,11,0.25); }
+    .rating-poor      { background: rgba(249,115,22,0.12);  color: #f97316; border: 1px solid rgba(249,115,22,0.25); }
+    .rating-critical  { background: rgba(239,68,68,0.12);  color: var(--danger); border: 1px solid rgba(239,68,68,0.25); }
 
     .breakdown-card {
-      background: rgba(255,255,255,0.04);
+      background: var(--bg-card);
       border: 1px solid var(--border-glass);
       border-radius: var(--radius-lg);
       padding: 2.5rem;
@@ -156,17 +183,18 @@
     .breakdown-list {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1.2rem;
     }
     .breakdown-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.3rem;
     }
     .breakdown-label {
       font-size: 0.9rem;
       font-weight: 600;
+      color: var(--text-primary);
     }
     .breakdown-score {
       font-size: 0.9rem;
@@ -174,7 +202,7 @@
     }
     .breakdown-bar {
       height: 8px;
-      background: rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.05);
       border-radius: 50px;
       overflow: hidden;
     }
@@ -184,8 +212,130 @@
       width: 0%;
       transition: width 1s ease;
     }
+
+    /* Citizen Survey styling */
+    .survey-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      box-shadow: var(--shadow-card);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .survey-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      margin-bottom: 2.5rem;
+      margin-top: 1.5rem;
+    }
+    .survey-row {
+      background: rgba(0,0,0,0.015);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.5rem;
+      display: grid;
+      grid-template-columns: 2fr 3fr auto;
+      gap: 1.5rem;
+      align-items: center;
+      transition: var(--transition);
+    }
+    .survey-row:hover {
+      border-color: var(--primary-light);
+      background: rgba(26,86,219,0.02);
+    }
+    .survey-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .survey-label {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+    .survey-weight {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+      font-weight: 500;
+    }
+    .slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .survey-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 6px;
+      border-radius: 5px;
+      background: #e2e8f0;
+      outline: none;
+      transition: background 0.3s;
+    }
+    .survey-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      transition: var(--transition);
+    }
+    .survey-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      background: var(--primary-light);
+    }
+    .rating-badge-wrap {
+      min-width: 45px;
+      text-align: center;
+    }
+    .rating-val-badge {
+      display: inline-block;
+      padding: 0.3rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      background: rgba(26,86,219,0.08);
+      color: var(--primary);
+      border: 1px solid rgba(26,86,219,0.15);
+    }
+    
+    .history-item {
+      background: rgba(0,0,0,0.015);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     @media (max-width: 992px) {
       .sus-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .survey-row {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+      }
+      .sus-tabs {
+        flex-direction: column;
+        align-items: center;
+      }
+      .sus-tab-btn {
+        width: 100%;
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -215,7 +365,7 @@
     <a href="index.html" class="header-brand">
       <img src="assets/gvmc-logo.png" alt="GVMC Emblem" class="gvmc-logo" />
       <div class="brand-text">
-        <div class="brand-title"><span>G</span>reater <span>V</span>isakhapatnam <span>M</span>unicipal <span>C</span>orporation</div>
+        <div class="brand-title"><span>Smart</span> Ward Connect</div>
       </div>
     </a>
     <div class="header-cm">
@@ -237,9 +387,9 @@
     <li><a href="index.html">Home</a></li>
     <li><a href="ward-search.html">Ward Search</a></li>
     <li><a href="ward-comparison.html">Compare</a></li>
+    <li><a href="sustainability.html" class="active">Sustainability</a></li>
     <li><a href="complaints.html">Complaints</a></li>
     <li><a href="community.html">Community</a></li>
-    
     <li><a href="contact.html">Contact Us</a></li>
     <li class="emergency-link"><a href="emergency.html"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;font-size:.75rem"></i>Emergency</a></li>
   </ul>
@@ -254,9 +404,9 @@
   <a href="index.html">🏠 Home</a>
   <a href="ward-search.html">🔍 Ward Search</a>
   <a href="ward-comparison.html">⚖️ Compare</a>
+  <a href="sustainability.html" class="active">🌿 Sustainability</a>
   <a href="complaints.html">📢 Complaints</a>
   <a href="community.html">🤝 Community</a>
-  
   <a href="contact.html">📞 Contact Us</a>
   <a href="emergency.html">🚨 Emergency</a>
 </div>
@@ -264,77 +414,330 @@
 <!-- SUSTAINABILITY MAIN -->
 <div class="sus-container">
   <div class="page-title-wrap">
-    <h1>Green Sustainability Scores</h1>
-    <p>Monitor your ward's air quality, green cover ratios, and progress towards SDG-11 targets.</p>
+    <h1>GVMC Sustainability Scores</h1>
+    <p>Monitor ward-level SDG 11 indicators and submit citizen ratings to evaluate local sustainability performance.</p>
   </div>
 
-  <div class="sus-selector-card">
-    <h3>Select Ward to View Metrics</h3>
-    <select class="sus-select" id="wardSelect" onchange="renderSustainability()">
-      <option value="">— Choose Ward —</option>
-    </select>
+  <!-- Tabs -->
+  <div class="sus-tabs">
+    <button class="sus-tab-btn active" id="tabBtnDashboard" onclick="switchTab('dashboard')">
+      <i class="fa-solid fa-chart-line"></i> Official Ward Dashboard
+    </button>
+    <button class="sus-tab-btn" id="tabBtnSurvey" onclick="switchTab('survey')">
+      <i class="fa-solid fa-square-poll-horizontal"></i> Citizen Feedback Survey
+    </button>
   </div>
 
-  <!-- Dashboard -->
-  <div class="sus-dashboard" id="susDashboard">
-    <div class="sus-grid">
-      <!-- Radial Card -->
-      <div class="radial-card">
-        <h2 id="susWardName" style="font-family:'Outfit',sans-serif;font-size:1.4rem;margin-bottom:1.5rem;">Ward —</h2>
-        <div class="score-ring" id="scoreRing">
-          <div class="score-inner">
-            <div class="score-num" id="scoreVal">—</div>
-            <div class="score-denom">Green Index</div>
+  <!-- TAB 1: OFFICIAL DASHBOARD -->
+  <div class="sus-tab-content active" id="contentDashboard">
+    <div class="sus-selector-card">
+      <h3>Select Ward to View Official Metrics</h3>
+      <select class="sus-select" id="wardSelect" onchange="renderSustainability()">
+        <option value="">— Choose Ward —</option>
+      </select>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <div class="sus-dashboard" id="susDashboard">
+      <div class="sus-grid">
+        <!-- Radial Card -->
+        <div class="radial-card">
+          <h2 id="susWardName" style="font-family:'Outfit',sans-serif;font-size:1.4rem;margin-bottom:1.5rem;">Ward —</h2>
+          <div class="score-ring-wrap">
+            <div style="position: relative; width: 180px; height: 110px; margin: 0 auto;">
+              <canvas id="officialGauge"></canvas>
+              <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); text-align: center;">
+                <div class="score-num" id="scoreVal" style="color: var(--success); font-family: 'Outfit'; font-weight:800; font-size: 2.2rem;">—</div>
+                <div class="score-denom">Sustainability Score</div>
+              </div>
+            </div>
+            <div class="rating-badge" id="ratingLabel" style="margin-top: 10px;">Loading…</div>
           </div>
         </div>
-        <div class="rating-badge" id="ratingLabel">Loading…</div>
+
+        <!-- Breakdown Card (8 Sustainability indicators) -->
+        <div class="breakdown-card">
+          <h2>Sustainability Indicators Breakdown</h2>
+          <div class="breakdown-list">
+            <!-- Indicator 1 -->
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🧹 1. Cleanliness & Waste Management</span>
+                <span class="breakdown-score" id="bdCleanliness">—</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfCleanliness" style="background:var(--gradient-btn)"></div>
+              </div>
+            </div>
+            <!-- Indicator 2 -->
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">💧 2. Water Availability & Quality</span>
+                <span class="breakdown-score" id="bdWater">—</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfWater" style="background:var(--gradient-green)"></div>
+              </div>
+            </div>
+            <!-- Indicator 3 -->
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🚌 3. Public Transport Accessibility</span>
+                <span class="breakdown-score" id="bdTransport">—</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfTransport" style="background:var(--gradient-btn)"></div>
+              </div>
+            </div>
+            <!-- Indicator 4 -->
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🌳 4. Green Spaces & Parks</span>
+                <span class="breakdown-score" id="bdGreen">—</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfGreen" style="background:var(--gradient-green)"></div>
+              </div>
+            </div>
+            <!-- Indicator 5 -->
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🛣️ 5. Road & Pedestrian Infrastructure</span>
+                <span class="breakdown-score" id="bdRoads">—</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfRoads" style="background:var(--gradient-gold)"></div>
+              </div>
+            </div>
+            <!-- Indicator 6 -->
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🌬️ 6. Air & Noise Pollution Control</span>
+                <span class="breakdown-score" id="bdPollution">—</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfPollution" style="background:var(--gradient-purple)"></div>
+              </div>
+            </div>
+            <!-- Indicator 7 -->
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🛡️ 7. Disaster Preparedness & Safety</span>
+                <span class="breakdown-score" id="bdDisaster">—</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfDisaster" style="background:var(--gradient-btn)"></div>
+              </div>
+            </div>
+            <!-- Indicator 8 -->
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🗳️ 8. Citizen Participation & Governance</span>
+                <span class="breakdown-score" id="bdGovernance">—</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfGovernance" style="background:var(--gradient-green)"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
+  </div>
 
-      <!-- Breakdown Card -->
-      <div class="breakdown-card">
-        <h2>Indicator Breakdown</h2>
-        <div class="breakdown-list">
-          <!-- Item 1 -->
-          <div class="breakdown-item">
-            <div class="breakdown-header">
-              <span class="breakdown-label">🏢 Public Infrastructure & Sanitation Facilities</span>
-              <span class="breakdown-score" id="bdFacilities">—</span>
+  <!-- TAB 2: CITIZEN FEEDBACK SURVEY -->
+  <div class="sus-tab-content" id="contentSurvey">
+    <div class="survey-card" id="surveyFormCard">
+      <h2 style="font-family:'Outfit',sans-serif; text-align:center; font-size:1.6rem; margin-bottom:1.5rem;">✍️ Citizen Sustainability Survey</h2>
+      <p style="color:var(--text-muted); text-align:center; margin-bottom:2rem; max-width:600px; margin-left:auto; margin-right:auto;">Rate your ward's sustainability categories from 1 (Very Poor) to 10 (Excellent). Your scores are weighted according to municipal priority targets.</p>
+      
+      <form id="sustainabilitySurveyForm" onsubmit="handleSurveySubmit(event)">
+        <div class="form-group" style="max-width: 500px; margin: 0 auto 2rem; text-align: left;">
+          <label class="form-label" for="surveyWardSelect" style="display:block; font-weight:700; margin-bottom:0.5rem;">Select Ward to Evaluate</label>
+          <select class="sus-select" id="surveyWardSelect" required>
+            <option value="">— Choose Ward —</option>
+          </select>
+        </div>
+
+        <div class="survey-grid">
+          <!-- Category 1 -->
+          <div class="survey-row">
+            <div class="survey-info">
+              <span class="survey-label">🧹 Cleanliness & Waste Management</span>
+              <span class="survey-weight">Weight: 20%</span>
             </div>
-            <div class="breakdown-bar">
-              <div class="breakdown-fill" id="bfFacilities" style="background:var(--gradient-btn)"></div>
+            <div class="slider-wrap">
+              <input type="range" class="survey-slider" id="valCleanliness" min="1" max="10" value="5" oninput="updateLiveScore()" />
             </div>
-          </div>
-          <!-- Item 2 -->
-          <div class="breakdown-item">
-            <div class="breakdown-header">
-              <span class="breakdown-label">🧹 Cleanliness & Waste Management Index</span>
-              <span class="breakdown-score" id="bdCleanliness">—</span>
-            </div>
-            <div class="breakdown-bar">
-              <div class="breakdown-fill" id="bfCleanliness" style="background:var(--gradient-purple)"></div>
-            </div>
-          </div>
-          <!-- Item 3 -->
-          <div class="breakdown-item">
-            <div class="breakdown-header">
-              <span class="breakdown-label">🌳 Parks & Green Canopy Coverage</span>
-              <span class="breakdown-score" id="bdGreen">—</span>
-            </div>
-            <div class="breakdown-bar">
-              <div class="breakdown-fill" id="bfGreen" style="background:var(--gradient-green)"></div>
+            <div class="rating-badge-wrap">
+              <span class="rating-val-badge" id="lblCleanliness">5</span>
             </div>
           </div>
-          <!-- Item 4 -->
-          <div class="breakdown-item">
-            <div class="breakdown-header">
-              <span class="breakdown-label">😊 Citizen Feedback Satisfaction</span>
-              <span class="breakdown-score" id="bdSatisfaction">—</span>
+          
+          <!-- Category 2 -->
+          <div class="survey-row">
+            <div class="survey-info">
+              <span class="survey-label">💧 Water Availability & Quality</span>
+              <span class="survey-weight">Weight: 15%</span>
             </div>
-            <div class="breakdown-bar">
-              <div class="breakdown-fill" id="bfSatisfaction" style="background:var(--gradient-gold)"></div>
+            <div class="slider-wrap">
+              <input type="range" class="survey-slider" id="valWater" min="1" max="10" value="5" oninput="updateLiveScore()" />
+            </div>
+            <div class="rating-badge-wrap">
+              <span class="rating-val-badge" id="lblWater">5</span>
+            </div>
+          </div>
+
+          <!-- Category 3 -->
+          <div class="survey-row">
+            <div class="survey-info">
+              <span class="survey-label">🚌 Public Transport Accessibility</span>
+              <span class="survey-weight">Weight: 15%</span>
+            </div>
+            <div class="slider-wrap">
+              <input type="range" class="survey-slider" id="valTransport" min="1" max="10" value="5" oninput="updateLiveScore()" />
+            </div>
+            <div class="rating-badge-wrap">
+              <span class="rating-val-badge" id="lblTransport">5</span>
+            </div>
+          </div>
+
+          <!-- Category 4 -->
+          <div class="survey-row">
+            <div class="survey-info">
+              <span class="survey-label">🌳 Green Spaces & Parks</span>
+              <span class="survey-weight">Weight: 10%</span>
+            </div>
+            <div class="slider-wrap">
+              <input type="range" class="survey-slider" id="valGreen" min="1" max="10" value="5" oninput="updateLiveScore()" />
+            </div>
+            <div class="rating-badge-wrap">
+              <span class="rating-val-badge" id="lblGreen">5</span>
+            </div>
+          </div>
+
+          <!-- Category 5 -->
+          <div class="survey-row">
+            <div class="survey-info">
+              <span class="survey-label">🛣️ Road & Pedestrian Infrastructure</span>
+              <span class="survey-weight">Weight: 10%</span>
+            </div>
+            <div class="slider-wrap">
+              <input type="range" class="survey-slider" id="valRoads" min="1" max="10" value="5" oninput="updateLiveScore()" />
+            </div>
+            <div class="rating-badge-wrap">
+              <span class="rating-val-badge" id="lblRoads">5</span>
+            </div>
+          </div>
+
+          <!-- Category 6 -->
+          <div class="survey-row">
+            <div class="survey-info">
+              <span class="survey-label">🌬️ Air & Noise Pollution Control</span>
+              <span class="survey-weight">Weight: 10%</span>
+            </div>
+            <div class="slider-wrap">
+              <input type="range" class="survey-slider" id="valPollution" min="1" max="10" value="5" oninput="updateLiveScore()" />
+            </div>
+            <div class="rating-badge-wrap">
+              <span class="rating-val-badge" id="lblPollution">5</span>
+            </div>
+          </div>
+
+          <!-- Category 7 -->
+          <div class="survey-row">
+            <div class="survey-info">
+              <span class="survey-label">🛡️ Disaster Preparedness & Safety</span>
+              <span class="survey-weight">Weight: 10%</span>
+            </div>
+            <div class="slider-wrap">
+              <input type="range" class="survey-slider" id="valDisaster" min="1" max="10" value="5" oninput="updateLiveScore()" />
+            </div>
+            <div class="rating-badge-wrap">
+              <span class="rating-val-badge" id="lblDisaster">5</span>
+            </div>
+          </div>
+
+          <!-- Category 8 -->
+          <div class="survey-row">
+            <div class="survey-info">
+              <span class="survey-label">🗳️ Citizen Participation & Governance</span>
+              <span class="survey-weight">Weight: 10%</span>
+            </div>
+            <div class="slider-wrap">
+              <input type="range" class="survey-slider" id="valGovernance" min="1" max="10" value="5" oninput="updateLiveScore()" />
+            </div>
+            <div class="rating-badge-wrap">
+              <span class="rating-val-badge" id="lblGovernance">5</span>
             </div>
           </div>
         </div>
+
+        <!-- Live Score Summary Box -->
+        <div class="live-score-card" style="background:rgba(26,86,219,0.04); border:1px dashed var(--border-glass); border-radius:var(--radius); padding:1.5rem; text-align:center; margin-bottom:2rem; display:flex; justify-content:space-between; align-items:center;">
+          <div style="text-align:left;">
+            <h4 style="font-family:'Outfit',sans-serif; margin:0; font-size:1.1rem; color:var(--text-primary);">Live Score Preview</h4>
+            <p style="margin:4px 0 0; font-size:0.8rem; color:var(--text-muted);">Adjust ratings above to see the calculation update.</p>
+          </div>
+          <div style="display:flex; align-items:center; gap:1rem;">
+            <div style="font-size:2.2rem; font-weight:800; font-family:'Outfit',sans-serif; color:var(--primary);" id="liveScoreVal">50</div>
+            <div class="rating-badge rating-average" id="liveScoreBadge" style="margin:0;">Average</div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-login" style="background:var(--gradient-btn); color:#ffffff; border:none; padding:1rem 2rem; border-radius:50px; font-weight:700; cursor:pointer; width:100%; font-size:1.1rem; box-shadow:var(--shadow-accent); transition:var(--transition);">
+          <span>🚀 Submit Citizen Feedback</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Success View -->
+    <div class="survey-card" id="surveySuccessPanel" style="display:none; text-align:center; padding:3rem 1.5rem; animation:fadeIn 0.5s ease;">
+      <div style="font-size:4rem; margin-bottom:1rem;">🎉</div>
+      <h2 style="font-family:'Outfit',sans-serif; font-size:1.8rem; margin-bottom:0.5rem; color:var(--success);">Feedback Submitted!</h2>
+      <p style="color:var(--text-muted); max-width:500px; margin:0 auto 2.5rem;">Thank you for contributing to your ward's governance. Your feedback has been calculated and saved to the sustainability ledger.</p>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem; max-width:650px; margin:0 auto 3rem; text-align:left; align-items:center;">
+        <div class="score-ring-wrap" style="align-items:center;">
+          <div style="position: relative; width: 180px; height: 110px; margin: 0 auto;">
+            <canvas id="surveyResultGauge"></canvas>
+            <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); text-align: center;">
+              <div class="score-num" id="surveyResultScore" style="font-size: 2.2rem; font-weight: 800; font-family: 'Outfit';">—</div>
+              <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">out of 100</div>
+            </div>
+          </div>
+          <div class="score-rating-badge rating-badge" id="surveyResultBadge" style="margin-top: 10px;">Sustainable</div>
+        </div>
+        
+        <div style="background:rgba(0,0,0,0.015); border:1px solid var(--border-glass); border-radius:var(--radius); padding:1.5rem;">
+          <h4 style="margin:0 0 1rem; font-family:'Outfit'; font-size:1rem; border-bottom:1px solid var(--border-glass); padding-bottom:0.5rem;">Evaluation Details</h4>
+          <div style="display:flex; flex-direction:column; gap:0.5rem; font-size:0.85rem;">
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--text-muted);">Ward Evaluated:</span>
+              <strong id="successWardName">Ward —</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--text-muted);">Weighted Score:</span>
+              <strong id="successWeighted">0.0 / 100</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--text-muted);">Status Level:</span>
+              <strong id="successStatus" style="color:var(--primary-light);">Sustainable 🟢</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <button type="button" class="btn-login" style="max-width:300px; margin:0 auto; background:rgba(0,0,0,0.05); color:var(--text-primary); border:1px solid var(--border-glass); padding:0.8rem 1.5rem; border-radius:50px; font-weight:600; cursor:pointer;" onclick="resetSurveyForm()">
+        Evaluate Another Ward
+      </button>
+    </div>
+
+    <!-- History Panel -->
+    <div class="survey-card" id="historyCard" style="margin-top: 2.5rem; max-width: 800px; display: none;">
+      <h3 style="font-family:'Outfit',sans-serif; font-size:1.2rem; margin-bottom:1.2rem; border-bottom:1px solid var(--border-glass); padding-bottom:0.5rem;">📋 Recent Citizen Submissions</h3>
+      <div style="display:flex; flex-direction:column; gap:0.8rem;" id="recentReviewsList">
+        <!-- History Items go here -->
       </div>
     </div>
   </div>
@@ -352,6 +755,7 @@
 </footer>
 
 <!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script src="js/main.js"></script>
 <script src="js/ward_data.js"></script>
 <script src="js/demographics.js"></script>
@@ -375,18 +779,112 @@
     }
   });
 
+  // Switch Tabs
+  function switchTab(tabId) {
+    document.querySelectorAll('.sus-tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.sus-tab-content').forEach(content => content.classList.remove('active'));
+    
+    if (tabId === 'dashboard') {
+      document.getElementById('tabBtnDashboard').classList.add('active');
+      document.getElementById('contentDashboard').classList.add('active');
+      renderSustainability();
+    } else {
+      document.getElementById('tabBtnSurvey').classList.add('active');
+      document.getElementById('contentSurvey').classList.add('active');
+      updateLiveScore();
+      loadSurveyHistory();
+    }
+  }
+
   // Load Wards options
   document.addEventListener('DOMContentLoaded', () => {
     if (typeof WARD_DEMOGRAPHICS !== 'undefined') {
       const select = document.getElementById('wardSelect');
+      const surveySelect = document.getElementById('surveyWardSelect');
       const keys = Object.keys(WARD_DEMOGRAPHICS).sort((a,b) => parseInt(a) - parseInt(b));
       keys.forEach(k => {
-        const option = new Option(`Ward ${k} - ${WARD_DEMOGRAPHICS[k].name || ''}`, k);
-        select.add(option);
+        const option1 = new Option(`Ward ${k} - ${WARD_DEMOGRAPHICS[k].name || ''}`, k);
+        const option2 = new Option(`Ward ${k} - ${WARD_DEMOGRAPHICS[k].name || ''}`, k);
+        select.add(option1);
+        surveySelect.add(option2);
       });
     }
+    updateLiveScore();
+    loadSurveyHistory();
   });
 
+  // Chart instances object
+  let gauges = {};
+
+  // Standard Gauge Function using Chart.js
+  function renderGaugeChart(canvasId, score, color) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    
+    if (gauges[canvasId]) {
+      gauges[canvasId].destroy();
+    }
+
+    gauges[canvasId] = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Score', 'Remaining'],
+        datasets: [{
+          data: [score, 100 - score],
+          backgroundColor: [color, 'rgba(0,0,0,0.06)'],
+          borderWidth: 0,
+          cutout: '80%',
+          borderRadius: [10, 0]
+        }]
+      },
+      options: {
+        rotation: 270,
+        circumference: 180,
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false }
+        }
+      }
+    });
+  }
+
+  // SDG 11 Ratings deterministic seeding function (same as ward-dashboard)
+  function getSDG11Ratings(wardNum, targetSum) {
+    const base = Math.floor(targetSum / 10);
+    const remainder = targetSum % 10;
+    const ratings = Array(10).fill(base);
+    
+    const indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    let seed = wardNum;
+    for (let i = indices.length - 1; i > 0; i--) {
+      seed = (seed * 9301 + 49297) % 233280;
+      const j = Math.floor((seed / 233280) * (i + 1));
+      const temp = indices[i];
+      indices[i] = indices[j];
+      indices[j] = temp;
+    }
+    
+    for (let i = 0; i < remainder; i++) {
+      ratings[indices[i]] += 1;
+    }
+    
+    let transferSeed = wardNum + 42;
+    for (let t = 0; t < 3; t++) {
+      transferSeed = (transferSeed * 9301 + 49297) % 233280;
+      const idxFrom = Math.floor((transferSeed / 233280) * 10);
+      transferSeed = (transferSeed * 9301 + 49297) % 233280;
+      const idxTo = Math.floor((transferSeed / 233280) * 10);
+      
+      if (idxFrom !== idxTo && ratings[idxFrom] > 4 && ratings[idxTo] < 9) {
+        ratings[idxFrom] -= 1;
+        ratings[idxTo] += 1;
+      }
+    }
+    return ratings;
+  }
+
+  // Official Dashboard Render
   function renderSustainability() {
     const val = document.getElementById('wardSelect').value;
     const dash = document.getElementById('susDashboard');
@@ -396,14 +894,18 @@
       return;
     }
 
+    const wardNum = parseInt(val);
     const ward = WARD_DEMOGRAPHICS[val];
-    const score = ward.sustainability || 70;
-
+    
+    // Calculate dynamic sustainability data
+    const dynamicData = getWardSustainabilityData(wardNum);
+    const score = dynamicData.finalScore;
+    const ratings = dynamicData.finalRatings;
+    
     document.getElementById('susWardName').textContent = `Ward ${val} - ${ward.name || ''}`;
     document.getElementById('scoreVal').textContent = score;
 
-    // Conic gradient ring
-    const ring = document.getElementById('scoreRing');
+    // Get color and text
     let ringColor = '#10b981';
     let ratingCls = 'rating-excellent';
     let ratingTxt = 'Excellent';
@@ -422,38 +924,189 @@
       ratingTxt = 'Good';
     }
 
-    ring.style.background = `conic-gradient(${ringColor} ${score * 3.6}deg, rgba(255,255,255,0.07) 0)`;
+    // Render official Gauge
+    renderGaugeChart('officialGauge', score, ringColor);
     
     const label = document.getElementById('ratingLabel');
     label.className = `rating-badge ${ratingCls}`;
     label.textContent = ratingTxt;
 
-    // Breakdown components (calculated based on demographics)
-    const pop = ward.population || 20000;
-    
-    // Deterministic mock breakdown values based on pop, sc to keep it stable
-    const facScore = Math.min(Math.round(45 + (pop % 45)), 98);
-    const cleanScore = Math.min(Math.round(50 + (score % 35) + (pop % 15)), 99);
-    const greenScore = Math.min(Math.round(40 + (score % 45) + (pop % 10)), 95);
-    const satScore = Math.min(Math.round(55 + (score % 30) + (pop % 12)), 96);
+    // Render progress bars for 8 indicators
+    const setBar = (bdId, fillId, val) => {
+      document.getElementById(bdId).textContent = `${val.toFixed(1)} / 10`;
+      document.getElementById(fillId).style.width = `${val * 10}%`;
+    };
 
-    document.getElementById('bdFacilities').textContent = facScore + '/100';
-    document.getElementById('bdCleanliness').textContent = cleanScore + '/100';
-    document.getElementById('bdGreen').textContent = greenScore + '/100';
-    document.getElementById('bdSatisfaction').textContent = satScore + '/100';
-
-    document.getElementById('bfFacilities').style.width = facScore + '%';
-    document.getElementById('bfCleanliness').style.width = cleanScore + '%';
-    document.getElementById('bfGreen').style.width = greenScore + '%';
-    document.getElementById('bfSatisfaction').style.width = satScore + '%';
+    setBar('bdCleanliness', 'bfCleanliness', ratings.cleanliness);
+    setBar('bdWater', 'bfWater', ratings.water);
+    setBar('bdTransport', 'bfTransport', ratings.transport);
+    setBar('bdGreen', 'bfGreen', ratings.green);
+    setBar('bdRoads', 'bfRoads', ratings.roads);
+    setBar('bdPollution', 'bfPollution', ratings.pollution);
+    setBar('bdDisaster', 'bfDisaster', ratings.disaster);
+    setBar('bdGovernance', 'bfGovernance', ratings.governance);
 
     dash.classList.add('show');
   }
+
+  // Live Score calculations for Citizen Survey
+  function calculateCurrentSurveyScore() {
+    const r1 = parseInt(document.getElementById('valCleanliness').value);
+    const r2 = parseInt(document.getElementById('valWater').value);
+    const r3 = parseInt(document.getElementById('valTransport').value);
+    const r4 = parseInt(document.getElementById('valGreen').value);
+    const r5 = parseInt(document.getElementById('valRoads').value);
+    const r6 = parseInt(document.getElementById('valPollution').value);
+    const r7 = parseInt(document.getElementById('valDisaster').value);
+    const r8 = parseInt(document.getElementById('valGovernance').value);
+
+    // Apply weights
+    const score = (
+      (r1 / 10 * 20) +
+      (r2 / 10 * 15) +
+      (r3 / 10 * 15) +
+      (r4 / 10 * 10) +
+      (r5 / 10 * 10) +
+      (r6 / 10 * 10) +
+      (r7 / 10 * 10) +
+      (r8 / 10 * 10)
+    );
+
+    return Math.round(score);
+  }
+
+  function updateLiveScore() {
+    // Update labels first
+    const sliders = [
+      'Cleanliness', 'Water', 'Transport', 'Green', 
+      'Roads', 'Pollution', 'Disaster', 'Governance'
+    ];
+    
+    sliders.forEach(s => {
+      const val = document.getElementById('val' + s).value;
+      const lbl = document.getElementById('lbl' + s);
+      lbl.textContent = val;
+      
+      // Dynamic colors on badges
+      lbl.className = 'rating-val-badge';
+      if (val <= 4) lbl.classList.add('poor');
+      else if (val <= 7) lbl.classList.add('average');
+      else lbl.classList.add('excellent');
+    });
+
+    const score = calculateCurrentSurveyScore();
+    const liveScoreEl = document.getElementById('liveScoreVal');
+    liveScoreEl.textContent = score;
+
+    const labelInfo = getCitizenSustainabilityLabel(score);
+    const badge = document.getElementById('liveScoreBadge');
+    badge.className = `rating-badge ${labelInfo.class}`;
+    badge.textContent = `${labelInfo.label} ${labelInfo.emoji}`;
+    liveScoreEl.style.color = labelInfo.color;
+  }
+
+  // Handle Citizen Survey Submission
+  function handleSurveySubmit(e) {
+    e.preventDefault();
+    const wardSelect = document.getElementById('surveyWardSelect');
+    const wardNum = parseInt(wardSelect.value);
+    
+    if (!wardNum) {
+      alert("Please select a ward first.");
+      return;
+    }
+
+    const finalScore = calculateCurrentSurveyScore();
+    
+    // Store in LocalStorage
+    const submissions = JSON.parse(localStorage.getItem('gvmc_sustainability_feedback') || '[]');
+    const newSubmission = {
+      id: 'CSB-' + Date.now(),
+      ward: wardNum,
+      wardName: WARD_DEMOGRAPHICS[wardNum].name || `Ward ${wardNum}`,
+      score: finalScore,
+      ratings: {
+        cleanliness: parseInt(document.getElementById('valCleanliness').value),
+        water: parseInt(document.getElementById('valWater').value),
+        transport: parseInt(document.getElementById('valTransport').value),
+        green: parseInt(document.getElementById('valGreen').value),
+        roads: parseInt(document.getElementById('valRoads').value),
+        pollution: parseInt(document.getElementById('valPollution').value),
+        disaster: parseInt(document.getElementById('valDisaster').value),
+        governance: parseInt(document.getElementById('valGovernance').value)
+      },
+      date: new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })
+    };
+
+    submissions.unshift(newSubmission);
+    localStorage.setItem('gvmc_sustainability_feedback', JSON.stringify(submissions));
+
+    // Show Success Panel
+    document.getElementById('surveyFormCard').style.display = 'none';
+    document.getElementById('surveySuccessPanel').style.display = 'block';
+
+    // Populate Success Metrics
+    document.getElementById('successWardName').textContent = `Ward ${wardNum} - ${newSubmission.wardName}`;
+    document.getElementById('successWeighted').textContent = `${finalScore} / 100`;
+    
+    const labelInfo = getCitizenSustainabilityLabel(finalScore);
+    const successStatus = document.getElementById('successStatus');
+    successStatus.textContent = `${labelInfo.label} ${labelInfo.emoji}`;
+    successStatus.style.color = labelInfo.color;
+    
+    document.getElementById('surveyResultScore').textContent = finalScore;
+    document.getElementById('surveyResultScore').style.color = labelInfo.color;
+    document.getElementById('surveyResultBadge').className = `score-rating-badge rating-badge ${labelInfo.class}`;
+    document.getElementById('surveyResultBadge').textContent = labelInfo.label;
+
+    renderGaugeChart('surveyResultGauge', finalScore, labelInfo.color);
+    
+    loadSurveyHistory();
+  }
+
+  // Load and render survey history
+  function loadSurveyHistory() {
+    const submissions = JSON.parse(localStorage.getItem('gvmc_sustainability_feedback') || '[]');
+    const historyCard = document.getElementById('historyCard');
+    const list = document.getElementById('recentReviewsList');
+    
+    if (submissions.length === 0) {
+      historyCard.style.display = 'none';
+      return;
+    }
+    
+    historyCard.style.display = 'block';
+    list.innerHTML = '';
+    
+    // Show only the 5 most recent submissions
+    submissions.slice(0, 5).forEach(sub => {
+      const labelInfo = getCitizenSustainabilityLabel(sub.score);
+      
+      const item = document.createElement('div');
+      item.className = 'history-item';
+      item.innerHTML = `
+        <div style="text-align:left;">
+          <h4 style="margin:0; font-size:0.95rem; font-family:'Outfit';">Ward ${sub.ward} - ${sub.wardName}</h4>
+          <span style="font-size:0.75rem; color:var(--text-muted);">Submitted: ${sub.date}</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.8rem;">
+          <div style="font-weight:800; font-family:'Outfit'; font-size:1.2rem; color:${labelInfo.color}">${sub.score}</div>
+          <span class="rating-badge ${labelInfo.class}" style="padding: 0.2rem 0.6rem; font-size: 0.7rem;">${labelInfo.label} ${labelInfo.emoji}</span>
+        </div>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  function resetSurveyForm() {
+    document.getElementById('sustainabilitySurveyForm').reset();
+    document.getElementById('surveySuccessPanel').style.display = 'none';
+    document.getElementById('surveyFormCard').style.display = 'block';
+    updateLiveScore();
+  }
 </script>
 
-<!-- ════════════════════════════════════════════
-     LOGIN MODAL
-════════════════════════════════════════════ -->
+<!-- LOGIN MODAL -->
 <div class="login-modal" id="loginModal">
   <div class="login-card">
     <button class="login-modal-close" onclick="closeLoginModal()">
@@ -510,7 +1163,6 @@
 
     <div class="login-divider"><span>Demo Credentials</span></div>
     <div class="demo-creds">
-      <div class="demo-creds-title">🔐 Test Access Credentials</div>
       <div class="demo-row">
         <div class="demo-item">
           <span class="demo-lbl">Username</span>
@@ -522,10 +1174,6 @@
         </div>
         <button type="button" class="btn-autofill" onclick="autofillModal()">↗ Autofill</button>
       </div>
-    </div>
-
-    <div class="login-footer-note">
-      Need help? Contact <a href="mailto:support@gvmc.gov.in">support@gvmc.gov.in</a>
     </div>
   </div>
 </div>

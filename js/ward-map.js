@@ -1,4 +1,5 @@
-/* GVMC Portal – Ward location map (Google Maps, all 72 wards) */
+/* Smart Ward Connect – Ward location map (Google Maps, all 120 wards)
+   Renders red boundary polygons for wards 73-120 based on WARD_BOUNDARIES data. */
 
 function initWardGoogleMap(options) {
   const wardNum = parseInt(options.wardNum, 10) || 17;
@@ -41,6 +42,8 @@ function initWardGoogleMap(options) {
   } else {
     window.__gvmcActiveMap = null;
     renderEmbedMap(container, wardNum, wardName);
+    // Overlay boundary on fallback iframe for wards 73-120
+    renderBoundaryOverlay(container, wardNum);
   }
 }
 
@@ -76,6 +79,37 @@ function renderEmbedMap(container, wardNum, wardName) {
     </iframe>`;
 }
 
+/**
+ * Renders an SVG boundary overlay badge for wards 73-120 when using the embed (no-API) fallback.
+ * Shows a visual indicator that boundary data is available.
+ */
+function renderBoundaryOverlay(container, wardNum) {
+  if (wardNum < 73 || wardNum > 120) return;
+  if (typeof WARD_BOUNDARIES === 'undefined' || !WARD_BOUNDARIES[wardNum]) return;
+
+  const badge = document.createElement('div');
+  badge.style.cssText = `
+    position:absolute; bottom:12px; left:12px; z-index:10;
+    background:rgba(15,23,42,0.85); border:1.5px solid #ef4444;
+    border-radius:8px; padding:6px 12px;
+    font-family:'Inter',sans-serif; font-size:0.75rem;
+    color:#fca5a5; display:flex; align-items:center; gap:6px;
+    pointer-events:none;
+  `;
+  badge.innerHTML = `
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <polygon points="7,1 13,5 13,9 7,13 1,9 1,5" stroke="#ef4444" stroke-width="1.5" fill="rgba(239,68,68,0.15)"/>
+    </svg>
+    Ward ${wardNum} boundary active`;
+
+  // Wrap container to allow positioning
+  const wrapper = container.parentElement;
+  if (wrapper) {
+    wrapper.style.position = 'relative';
+    wrapper.appendChild(badge);
+  }
+}
+
 function renderInteractiveMap(container, wardNum, wardName, demographics, coords) {
   container.innerHTML = '';
 
@@ -91,6 +125,14 @@ function renderInteractiveMap(container, wardNum, wardName, demographics, coords
 
   window.__gvmcActiveMap = map;
   renderAllWardMarkers(map, wardNum);
+
+  // ── Draw red boundary polygon for wards 73-120 ──
+  if (wardNum >= 73 && wardNum <= 120) {
+    renderWardBoundary(map, wardNum, wardName, true /* isActive */);
+  }
+
+  // Draw boundaries for nearby wards 73-120 that are visible on the map
+  renderNearbyBoundaries(map, wardNum);
 
   const activeMarker = new google.maps.Marker({
     map,
@@ -119,6 +161,72 @@ function renderInteractiveMap(container, wardNum, wardName, demographics, coords
   const infoWindow = new google.maps.InfoWindow({ content: infoHtml, maxWidth: 280 });
   infoWindow.open({ anchor: activeMarker, map });
   activeMarker.addListener('click', () => infoWindow.open({ anchor: activeMarker, map }));
+}
+
+/**
+ * Draws the red boundary polygon for a ward on the Google Map.
+ * @param {google.maps.Map} map
+ * @param {number} wardNum
+ * @param {string} wardName
+ * @param {boolean} isActive – true = bright red (current ward), false = dimmer red (nearby)
+ */
+function renderWardBoundary(map, wardNum, wardName, isActive) {
+  if (typeof WARD_BOUNDARIES === 'undefined' || !WARD_BOUNDARIES[wardNum]) return;
+
+  const paths = WARD_BOUNDARIES[wardNum];
+
+  const polygon = new google.maps.Polygon({
+    paths,
+    map,
+    strokeColor:   isActive ? '#ef4444' : '#f87171',
+    strokeOpacity: isActive ? 1.0       : 0.55,
+    strokeWeight:  isActive ? 2.5       : 1.5,
+    fillColor:     isActive ? '#ef4444' : '#f87171',
+    fillOpacity:   isActive ? 0.10      : 0.04,
+    zIndex:        isActive ? 5         : 2
+  });
+
+  // Info window on boundary click
+  const infoWindow = new google.maps.InfoWindow();
+  polygon.addListener('click', (e) => {
+    infoWindow.setContent(
+      `<div style="font-family:Inter,sans-serif;padding:4px;">
+        <b style="color:#1e293b;">Ward ${wardNum}</b>
+        ${wardName !== `Ward ${wardNum}` ? `<span style="color:#64748b;font-size:0.8rem;"> – ${wardName}</span>` : ''}
+        <div style="margin-top:4px;font-size:0.78rem;color:#64748b;">
+          <span style="color:#ef4444;">⬡</span> Ward boundary
+        </div>
+      </div>`
+    );
+    infoWindow.setPosition(e.latLng);
+    infoWindow.open(map);
+  });
+
+  return polygon;
+}
+
+/**
+ * Draws faint boundary outlines for nearby wards 73-120 around the current ward.
+ */
+function renderNearbyBoundaries(map, activeWardNum) {
+  if (typeof WARD_BOUNDARIES === 'undefined') return;
+
+  for (let w = 73; w <= 120; w++) {
+    if (w === activeWardNum) continue;
+    if (!WARD_BOUNDARIES[w]) continue;
+
+    const center = GVMC_MAP.getWardCoords(w);
+    const active = GVMC_MAP.getWardCoords(activeWardNum);
+
+    // Only draw wards within ~0.05° (~5 km) of the active ward
+    const dist = Math.sqrt(
+      Math.pow(center.lat - active.lat, 2) +
+      Math.pow(center.lng - active.lng, 2)
+    );
+    if (dist > 0.05) continue;
+
+    renderWardBoundary(map, w, GVMC_MAP.getWardName(w), false);
+  }
 }
 
 function renderAllWardMarkers(map, activeWardNum) {
@@ -162,6 +270,10 @@ function fitMapToAllWards(map) {
 function buildInfoWindowHtml(wardNum, wardName, demographics) {
   let html = `<div style="font-family:Inter,sans-serif;min-width:180px;padding:2px 0;">
     <div style="font-weight:700;font-size:0.95rem;margin-bottom:4px;color:#1e293b;">Ward ${wardNum} – ${wardName}</div>`;
+
+  if (wardNum >= 73 && wardNum <= 120) {
+    html += `<div style="font-size:0.75rem;color:#ef4444;margin-bottom:4px;">⬡ Boundary mapped</div>`;
+  }
 
   if (demographics) {
     html += `

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MY AREA | GVMC – Smart Ward Management Portal</title>
-  <meta name="description" content="GVMC Smart Ward Management Portal – Search your area, track complaints, view ward demographics, and access civic services for all 72 wards of Greater Visakhapatnam Municipal Corporation." />
+  <title>Smart Ward Connect – GVMC Ward Portal</title>
+  <meta name="description" content="Smart Ward Connect – Search your area, track complaints, view ward demographics, and access civic services for all 120 wards of Greater Visakhapatnam Municipal Corporation." />
   <link rel="icon" href="assets/gvmc-logo.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -382,7 +382,7 @@
     .result-area-name { font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin-top: 2px; }
     .result-badge { padding: 4px 12px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34d399; white-space: nowrap; }
 
-    .result-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+    .result-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 18px; }
     .stat-pill { background: #f8fafc; border: 1px solid var(--border-glass); border-radius: 10px; padding: 10px 12px; text-align: center; }
     .stat-pill .sp-val { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--blue-light); }
     .stat-pill .sp-lbl { font-size: 0.68rem; color: var(--text-muted); margin-top: 2px; }
@@ -648,7 +648,7 @@
       .hamburger { display: flex; }
       .services-grid { grid-template-columns: 1fr 1fr; }
       .insights-grid { grid-template-columns: 1fr; }
-      .result-stats { grid-template-columns: repeat(3,1fr); }
+      .result-stats { grid-template-columns: repeat(2,1fr); }
       .stats-bar-inner { flex-direction: column; gap: 0; }
       .stat-item:not(:last-child)::after { display: none; }
       .footer-grid { grid-template-columns: 1fr; }
@@ -704,7 +704,7 @@
     <a href="index.html" class="header-brand">
       <img src="assets/gvmc-logo.png" alt="GVMC Emblem" class="gvmc-logo" />
       <div class="brand-text">
-        <div class="brand-title"><span>G</span>reater <span>V</span>isakhapatnam <span>M</span>unicipal <span>C</span>orporation</div>
+        <div class="brand-title"><span>Smart</span> Ward Connect</div>
       </div>
     </a>
     <div class="header-cm">
@@ -728,6 +728,7 @@
     <li><a href="index.html" class="active">Home</a></li>
     <li><a href="ward-search.html">Ward Search</a></li>
     <li><a href="ward-comparison.html">Compare</a></li>
+    <li><a href="sustainability.html">Sustainability</a></li>
     <li><a href="complaints.html">Complaints</a></li>
     <li><a href="community.html">Community</a></li>
     
@@ -745,6 +746,7 @@
   <a href="index.html">🏠 Home</a>
   <a href="ward-search.html">🔍 Ward Search</a>
   <a href="ward-comparison.html">⚖️ Compare</a>
+  <a href="sustainability.html">🌿 Sustainability</a>
   <a href="complaints.html">📢 Complaints</a>
   <a href="community.html">🤝 Community</a>
   
@@ -771,8 +773,8 @@
 
     <h1 class="hero-title">
       Welcome to<br />
-      <span class="grad-text">GVMC Smart Ward</span><br />
-      Management Portal
+      <span class="grad-text">Smart Ward Connect</span><br />
+      Your Ward, Your City
     </h1>
 
     <p class="hero-tagline">
@@ -820,10 +822,6 @@
           <div class="sp-val" id="rWomen">--%</div>
           <div class="sp-lbl">Women</div>
         </div>
-        <div class="stat-pill">
-          <div class="sp-val" id="rSC">--</div>
-          <div class="sp-lbl">SC Population</div>
-        </div>
       </div>
       <a href="#" id="dashBtn" class="view-dash-btn">
         <i class="fa-solid fa-chart-line"></i>View Ward Dashboard
@@ -844,7 +842,7 @@
 <div class="stats-bar" id="statsBar">
   <div class="stats-bar-inner">
     <div class="stat-item">
-      <div class="sv sv-blue counter" data-target="72">0</div>
+      <div class="sv sv-blue counter" data-target="120">0</div>
       <div class="sl">Total Wards</div>
     </div>
     <div class="stat-item">
@@ -995,7 +993,7 @@
     <div class="footer-brand">
       <div class="fb-logo">
         <div class="fb-logo-icon">🏛️</div>
-        <div class="fb-name">MY AREA | GVMC</div>
+        <div class="fb-name">Smart Ward Connect</div>
       </div>
       <p>Greater Visakhapatnam Municipal Corporation's Smart Ward Management & Sustainability Portal — empowering citizens with real-time data and digital governance tools.</p>
       <div class="social-links">
@@ -1149,7 +1147,6 @@ function runSearch(query) {
     document.getElementById('rAreaName').textContent    = wardName;
     document.getElementById('rPop').textContent         = typeof pop === 'number' ? pop.toLocaleString('en-IN') : pop;
     document.getElementById('rWomen').textContent       = typeof womenPct === 'number' ? womenPct.toFixed(2) + '%' : womenPct + '%';
-    document.getElementById('rSC').textContent         = typeof scPop === 'number' ? scPop.toLocaleString('en-IN') : scPop;
     sessionStorage.setItem('gvmc_last_ward', wardNo);
     sessionStorage.setItem('gvmc_last_area', wardName);
     document.getElementById('dashBtn').href             = `ward-dashboard.html?ward=${wardNo}`;
@@ -1285,12 +1282,12 @@ function buildFallbackInsights() {
   const total = entries.reduce((s,[,v]) => s + (v.population || v.total_population || 0), 0);
   const avg   = total / entries.length;
 
-  if (maxPopWard) insights.push({ ward: maxPopWard.name, type: 'Highest Population', text: `Ward ${maxPopWard.key} has the highest population in GVMC with ${(maxPopWard.pop).toLocaleString('en-IN')} residents, requiring prioritised service delivery.`, metric: `${(maxPopWard.pop).toLocaleString('en-IN')} pop` });
+  if (maxPopWard) insights.push({ ward: maxPopWard.name, type: 'Highest Population', text: `Ward ${maxPopWard.key} has the highest population in Greater Visakhapatnam with ${(maxPopWard.pop).toLocaleString('en-IN')} residents, requiring prioritised service delivery.`, metric: `${(maxPopWard.pop).toLocaleString('en-IN')} pop` });
   if (minPopWard) insights.push({ ward: minPopWard.name, type: 'Lowest Population', text: `Ward ${minPopWard.key} has the smallest ward population of ${(minPopWard.pop).toLocaleString('en-IN')}, indicating scope for new residential development.`, metric: `${(minPopWard.pop).toLocaleString('en-IN')} pop` });
-  if (maxWomenWard) insights.push({ ward: maxWomenWard.name, type: 'Women Representation', text: `Ward ${maxWomenWard.key} leads with ${typeof maxWomenWard.women === 'number' ? maxWomenWard.women.toFixed(2) : maxWomenWard.women}% women population — highest women representation across all 72 wards.`, metric: `${typeof maxWomenWard.women === 'number' ? maxWomenWard.women.toFixed(1) : maxWomenWard.women}%` });
+  if (maxWomenWard) insights.push({ ward: maxWomenWard.name, type: 'Women Representation', text: `Ward ${maxWomenWard.key} leads with ${typeof maxWomenWard.women === 'number' ? maxWomenWard.women.toFixed(2) : maxWomenWard.women}% women population — highest women representation across all 120 wards.`, metric: `${typeof maxWomenWard.women === 'number' ? maxWomenWard.women.toFixed(1) : maxWomenWard.women}%` });
   if (maxSustainWard) insights.push({ ward: maxSustainWard.name, type: 'Sustainability Leader', text: `Ward ${maxSustainWard.key} has the highest sustainability score of ${maxSustainWard.sustain}/100, showing outstanding environmental alignment.`, metric: `${maxSustainWard.sustain}/100` });
-  insights.push({ ward: 'All 72 Wards', type: 'City Overview', text: `GVMC manages 72 wards with an average ward population of ${Math.round(avg).toLocaleString('en-IN')} residents, totalling over 14.3 lakh citizens across Visakhapatnam.`, metric: `Avg ${Math.round(avg).toLocaleString('en-IN')}` });
-  insights.push({ ward: 'GVMC City', type: 'SDG-11 Status', text: `Visakhapatnam is actively aligning its 72 wards with SDG Goal 11 targets — improving green spaces, waste management and sustainable infrastructure.`, metric: '🌿 SDG-11' });
+  insights.push({ ward: 'All 120 Wards', type: 'City Overview', text: `Smart Ward Connect covers 120 wards with an average ward population of ${Math.round(avg).toLocaleString('en-IN')} residents, totalling over 14.3 lakh citizens across Visakhapatnam.`, metric: `Avg ${Math.round(avg).toLocaleString('en-IN')}` });
+  insights.push({ ward: 'GVMC City', type: 'SDG-11 Status', text: `Visakhapatnam is actively aligning its 120 wards with SDG Goal 11 targets — improving green spaces, waste management and sustainable infrastructure.`, metric: '🌿 SDG-11' });
 
   return insights;
 }

@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ward Search | GVMC – Smart Ward Management Portal</title>
-  <meta name="description" content="GVMC Smart Ward Management Portal – Search your area, track complaints, view ward demographics, and access civic services for all 72 wards." />
+  <title>Ward Search | Smart Ward Connect</title>
+  <meta name="description" content="Smart Ward Connect – Search your area, track complaints, view ward demographics, and access civic services for all 120 wards." />
   <link rel="icon" href="assets/gvmc-logo.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -171,7 +171,7 @@
     }
     .res-stats-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 1.25rem;
       margin-bottom: 2rem;
     }
@@ -269,7 +269,7 @@
     <a href="index.html" class="header-brand">
       <img src="assets/gvmc-logo.png" alt="GVMC Emblem" class="gvmc-logo" />
       <div class="brand-text">
-        <div class="brand-title"><span>G</span>reater <span>V</span>isakhapatnam <span>M</span>unicipal <span>C</span>orporation</div>
+        <div class="brand-title"><span>Smart</span> Ward Connect</div>
       </div>
     </a>
     <div class="header-cm">
@@ -291,6 +291,7 @@
     <li><a href="index.html">Home</a></li>
     <li><a href="ward-search.html" class="active">Ward Search</a></li>
     <li><a href="ward-comparison.html">Compare</a></li>
+    <li><a href="sustainability.html">Sustainability</a></li>
     <li><a href="complaints.html">Complaints</a></li>
     <li><a href="community.html">Community</a></li>
     
@@ -308,6 +309,7 @@
   <a href="index.html">🏠 Home</a>
   <a href="ward-search.html" class="active">🔍 Ward Search</a>
   <a href="ward-comparison.html">⚖️ Compare</a>
+  <a href="sustainability.html">🌿 Sustainability</a>
   <a href="complaints.html">📢 Complaints</a>
   <a href="community.html">🤝 Community</a>
   
@@ -360,10 +362,6 @@
         <div class="res-stat-card">
           <div class="res-stat-val" id="rWomen">--%</div>
           <div class="res-stat-lbl">Women Population</div>
-        </div>
-        <div class="res-stat-card">
-          <div class="res-stat-val" id="rSC">--</div>
-          <div class="res-stat-lbl">SC Population</div>
         </div>
       </div>
       <div class="res-btn-wrap">
@@ -495,8 +493,6 @@
         ? pop.toLocaleString('en-IN') : (pop || 'Data pending');
       document.getElementById('rWomen').textContent    = (womenPct !== undefined && womenPct !== null)
         ? (typeof womenPct === 'number' ? womenPct.toFixed(2) : womenPct) + '%' : 'Data pending';
-      document.getElementById('rSC').textContent       = (scPop !== undefined && scPop !== null)
-        ? (typeof scPop === 'number' ? scPop.toLocaleString('en-IN') : scPop) : 'Data pending';
       sessionStorage.setItem('gvmc_last_ward', wardNo);
       sessionStorage.setItem('gvmc_last_area', matchedArea || wardName);
       document.getElementById('dashBtn').href          = `ward-dashboard.html?ward=${wardNo}`;

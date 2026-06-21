@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ward Dashboard – GVMC Smart Ward Management Portal</title>
+  <title>Ward Dashboard | Smart Ward Connect</title>
 
   <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -19,7 +19,7 @@
       } catch (e) {}
       var params = new URLSearchParams(window.location.search);
       var ward = parseInt(params.get('ward'), 10);
-      var hasWard = !isNaN(ward) && ward >= 1 && ward <= 72;
+      var hasWard = !isNaN(ward) && ward >= 1 && ward <= 120;
       if (!isOfficer && !hasWard) {
         window.location.replace('ward-search.html');
       }
@@ -33,6 +33,7 @@
   <!-- Ward coordinates + Google Maps -->
   <script src="js/ward-coordinates.js"></script>
   <script src="js/maps-config.js"></script>
+  <script src="js/ward-boundaries.js"></script>
   <script src="js/ward-map.js"></script>
 
   <!-- Chart.js -->
@@ -158,9 +159,9 @@
     }
 
     /* ── KPI Cards ── */
-    .kpi-grid-4 {
+    .kpi-grid-3 {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 1.25rem;
     }
     .kpi-card {
@@ -203,10 +204,17 @@
     /* ── Chart Grid ── */
     .charts-grid {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 1.5rem;
-      max-width: 520px;
+      width: 100%;
     }
+
+    /* ── Poll CSS ── */
+    .poll-form { display: flex; flex-direction: column; gap: 0.8rem; height: 100%; }
+    .poll-item label { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--text-primary); }
+    .poll-slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: rgba(26,86,219,0.15); outline: none; }
+    .poll-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--primary); cursor: pointer; transition: 0.2s; }
+    .poll-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
     .chart-wrapper {
       background: var(--bg-glass);
       border: 1px solid var(--border-glass);
@@ -672,13 +680,13 @@
 
     /* ── Responsive ── */
     @media (max-width: 1024px) {
-      .kpi-grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .kpi-grid-3 { grid-template-columns: repeat(2, 1fr); }
       .sustain-inner { grid-template-columns: 1fr; }
       .score-ring-wrap { flex-direction: row; align-items: center; gap: 1.5rem; }
     }
     @media (max-width: 768px) {
       .charts-grid { grid-template-columns: 1fr; }
-      .kpi-grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .kpi-grid-3 { grid-template-columns: repeat(2, 1fr); }
       .page-header-content { flex-direction: column; }
       .feedback-grid { grid-template-columns: repeat(2, 1fr); }
       .dash-content { padding: 1.5rem 1rem 3rem; }
@@ -687,7 +695,7 @@
       .data-table th, .data-table td { padding: 0.7rem 0.85rem; }
     }
     @media (max-width: 480px) {
-      .kpi-grid-4 { grid-template-columns: 1fr 1fr; }
+      .kpi-grid-3 { grid-template-columns: 1fr 1fr; }
       .score-ring { width: 110px; height: 110px; }
       .score-ring-wrap { flex-direction: column; }
     }
@@ -723,7 +731,7 @@
     <a href="index.html" class="header-brand">
       <img src="assets/gvmc-logo.png" alt="GVMC Emblem" class="gvmc-logo" />
       <div class="brand-text">
-        <div class="brand-title"><span>G</span>reater <span>V</span>isakhapatnam <span>M</span>unicipal <span>C</span>orporation</div>
+        <div class="brand-title"><span>Smart</span> Ward Connect</div>
       </div>
     </a>
     <div class="header-cm">
@@ -750,6 +758,7 @@
     <li><a href="index.html">Home</a></li>
     <li><a href="ward-search.html">Ward Search</a></li>
     <li><a href="ward-comparison.html">Compare</a></li>
+    <li><a href="sustainability.html">Sustainability</a></li>
     <li><a href="complaints.html">Complaints</a></li>
     <li><a href="community.html">Community</a></li>
     
@@ -767,6 +776,7 @@
   <a href="index.html">🏠 Home</a>
   <a href="ward-search.html">🔍 Ward Search</a>
   <a href="ward-comparison.html">⚖️ Compare</a>
+  <a href="sustainability.html">🌿 Sustainability</a>
   <a href="complaints.html">📢 Complaints</a>
   <a href="community.html">🤝 Community</a>
   
@@ -817,7 +827,7 @@
         <span class="tag">📊 Overview</span>
         <h2>Key Metrics</h2>
       </div>
-      <div class="kpi-grid-4">
+      <div class="kpi-grid-3">
         <div class="kpi-card blue">
           <div class="kpi-icon">👥</div>
           <span class="kpi-value" id="kpiPop">0</span>
@@ -829,12 +839,6 @@
           <span class="kpi-value" id="kpiWomen">0%</span>
           <div class="kpi-label">Women %</div>
           <div class="kpi-sub" id="kpiWomenSub">–</div>
-        </div>
-        <div class="kpi-card purple">
-          <div class="kpi-icon">🏷️</div>
-          <span class="kpi-value" id="kpiSC">0%</span>
-          <div class="kpi-label">SC Population %</div>
-          <div class="kpi-sub" id="kpiSCSub">–</div>
         </div>
         <div class="kpi-card gold">
           <div class="kpi-icon">🌿</div>
@@ -859,6 +863,54 @@
             <canvas id="genderChart"></canvas>
           </div>
         </div>
+
+        <!-- Citizen Feedback Poll -->
+        <div class="chart-wrapper" style="display: flex; flex-direction: column;">
+          <div class="chart-title">📋 Citizen Feedback Poll</div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.4;">Rate the sustainability of this ward. Your feedback contributes to the overall Citizen Satisfaction score.</p>
+          <form id="pollForm" class="poll-form">
+            <div class="poll-item">
+              <label>Cleanliness & Waste Management (20%) <span class="val">5</span>/10</label>
+              <input type="range" class="poll-slider" data-weight="20" min="1" max="10" value="5">
+            </div>
+            <div class="poll-item">
+              <label>Water Availability & Quality (15%) <span class="val">5</span>/10</label>
+              <input type="range" class="poll-slider" data-weight="15" min="1" max="10" value="5">
+            </div>
+            <div class="poll-item">
+              <label>Public Transport Accessibility (15%) <span class="val">5</span>/10</label>
+              <input type="range" class="poll-slider" data-weight="15" min="1" max="10" value="5">
+            </div>
+            <div class="poll-item">
+              <label>Green Spaces & Parks (10%) <span class="val">5</span>/10</label>
+              <input type="range" class="poll-slider" data-weight="10" min="1" max="10" value="5">
+            </div>
+            <div class="poll-item">
+              <label>Road & Pedestrian Infrastructure (10%) <span class="val">5</span>/10</label>
+              <input type="range" class="poll-slider" data-weight="10" min="1" max="10" value="5">
+            </div>
+            <div class="poll-item">
+              <label>Air & Noise Pollution Control (10%) <span class="val">5</span>/10</label>
+              <input type="range" class="poll-slider" data-weight="10" min="1" max="10" value="5">
+            </div>
+            <div class="poll-item">
+              <label>Disaster Preparedness & Safety (10%) <span class="val">5</span>/10</label>
+              <input type="range" class="poll-slider" data-weight="10" min="1" max="10" value="5">
+            </div>
+            <div class="poll-item">
+              <label>Citizen Participation & Governance (10%) <span class="val">5</span>/10</label>
+              <input type="range" class="poll-slider" data-weight="10" min="1" max="10" value="5">
+            </div>
+            
+            <div class="poll-result" style="margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Calculated Score</div>
+                <div id="pollScoreDisplay" style="font-size: 1.6rem; font-family: 'Outfit', sans-serif; font-weight: 800; color: var(--primary);">50</div>
+              </div>
+              <button type="submit" class="btn-primary" style="padding: 0.6rem 1.2rem; border-radius: 8px; border: none; background: var(--primary); color: white; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: background 0.2s;">Submit Rating</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
@@ -870,12 +922,13 @@
       </div>
       <div class="sustain-card">
         <div class="sustain-inner">
-          <!-- Circular Ring -->
+          <!-- Gauge Chart -->
           <div class="score-ring-wrap">
-            <div class="score-ring" id="scoreRing">
-              <div class="score-inner">
-                <div class="score-num" id="sustainNum">–</div>
-                <div class="score-denom">out of 100</div>
+            <div class="score-gauge-container" style="position: relative; width: 160px; height: 100px; margin: 0 auto 0.5rem;">
+              <canvas id="sustainGauge" width="160" height="100"></canvas>
+              <div class="gauge-center-text" style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); text-align: center;">
+                <span class="score-num" id="sustainNum" style="font-family:'Outfit',sans-serif; font-size: 2.2rem; font-weight: 800; line-height: 1;">–</span>
+                <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">out of 100</div>
               </div>
             </div>
             <div class="score-rating-badge" id="ratingBadge">Loading…</div>
@@ -885,47 +938,74 @@
           <div class="breakdown-list">
             <div class="breakdown-item">
               <div class="breakdown-header">
-                <span class="breakdown-label">🏢 Public Facilities</span>
-                <span class="breakdown-score" id="bdFacilities">–</span>
-              </div>
-              <div class="breakdown-bar">
-                <div class="breakdown-fill" id="bfFacilities" style="width:0%;background:var(--gradient-btn)"></div>
-              </div>
-            </div>
-            <div class="breakdown-item">
-              <div class="breakdown-header">
-                <span class="breakdown-label">😊 Citizen Satisfaction</span>
-                <span class="breakdown-score" id="bdSatisfaction">–</span>
-              </div>
-              <div class="breakdown-bar">
-                <div class="breakdown-fill" id="bfSatisfaction" style="width:0%;background:var(--gradient-green)"></div>
-              </div>
-            </div>
-            <div class="breakdown-item">
-              <div class="breakdown-header">
-                <span class="breakdown-label">🔨 Projects Completed</span>
-                <span class="breakdown-score" id="bdProjects">–</span>
-              </div>
-              <div class="breakdown-bar">
-                <div class="breakdown-fill" id="bfProjects" style="width:0%;background:var(--gradient-purple)"></div>
-              </div>
-            </div>
-            <div class="breakdown-item">
-              <div class="breakdown-header">
-                <span class="breakdown-label">🧹 Cleanliness</span>
+                <span class="breakdown-label">🧹 Cleanliness & Waste Management</span>
                 <span class="breakdown-score" id="bdCleanliness">–</span>
               </div>
               <div class="breakdown-bar">
-                <div class="breakdown-fill" id="bfCleanliness" style="width:0%;background:var(--gradient-gold)"></div>
+                <div class="breakdown-fill" id="bfCleanliness" style="width:0%;background:var(--gradient-btn)"></div>
               </div>
             </div>
             <div class="breakdown-item">
               <div class="breakdown-header">
-                <span class="breakdown-label">🌳 Green Coverage</span>
+                <span class="breakdown-label">💧 Water Availability & Quality</span>
+                <span class="breakdown-score" id="bdWater">–</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfWater" style="width:0%;background:var(--gradient-green)"></div>
+              </div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🚌 Public Transport Accessibility</span>
+                <span class="breakdown-score" id="bdTransport">–</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfTransport" style="width:0%;background:var(--gradient-btn)"></div>
+              </div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🌳 Green Spaces & Parks</span>
                 <span class="breakdown-score" id="bdGreen">–</span>
               </div>
               <div class="breakdown-bar">
                 <div class="breakdown-fill" id="bfGreen" style="width:0%;background:var(--gradient-green)"></div>
+              </div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🛣️ Road & Pedestrian Infrastructure</span>
+                <span class="breakdown-score" id="bdRoads">–</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfRoads" style="width:0%;background:var(--gradient-gold)"></div>
+              </div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🌬️ Air & Noise Pollution Control</span>
+                <span class="breakdown-score" id="bdPollution">–</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfPollution" style="width:0%;background:var(--gradient-purple)"></div>
+              </div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🛡️ Disaster Preparedness & Safety</span>
+                <span class="breakdown-score" id="bdDisaster">–</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfDisaster" style="width:0%;background:var(--gradient-btn)"></div>
+              </div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-header">
+                <span class="breakdown-label">🗳️ Citizen Participation & Governance</span>
+                <span class="breakdown-score" id="bdGovernance">–</span>
+              </div>
+              <div class="breakdown-bar">
+                <div class="breakdown-fill" id="bfGovernance" style="width:0%;background:var(--gradient-green)"></div>
               </div>
             </div>
           </div>
@@ -1047,18 +1127,38 @@
         <div class="map-header-left">
           <span>🗺️ Ward Location Map</span>
           <span class="map-powered-badge"><i class="fa-brands fa-google"></i> Google Maps</span>
-          <span id="mapWardSubtitle" style="font-size:0.78rem;color:var(--text-muted);font-weight:400;">All 72 GVMC wards mapped</span>
+          <span id="mapWardSubtitle" style="font-size:0.78rem;color:var(--text-muted);font-weight:400;">All 120 GVMC wards mapped</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
           <button type="button" id="mapShowAllBtn" class="open-gmaps-btn" style="cursor:pointer;border:none;background:rgba(255,255,255,0.06);color:var(--text-muted);">
-            <i class="fa-solid fa-layer-group"></i> All 72 Wards
+            <i class="fa-solid fa-layer-group"></i> All 120 Wards
           </button>
           <a id="openGoogleMapsLink" href="#" target="_blank" rel="noopener" class="open-gmaps-btn">
             <i class="fa-solid fa-up-right-from-square"></i> Open in Google Maps
           </a>
         </div>
       </div>
-      <div id="wardMap"></div>
+
+      <!-- Boundary legend (shown only for wards 73-120) -->
+      <div id="boundaryLegend" style="display:none;padding:6px 14px 2px;font-size:0.78rem;color:var(--text-muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,0.06);">
+        <span style="display:flex;align-items:center;gap:5px;">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0">
+            <polygon points="8,1 15,5 15,11 8,15 1,11 1,5" stroke="#ef4444" stroke-width="1.8" fill="rgba(239,68,68,0.12)"/>
+          </svg>
+          <span style="color:#f87171;font-weight:600;">Active ward boundary</span>
+        </span>
+        <span style="display:flex;align-items:center;gap:5px;">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0">
+            <polygon points="8,1 15,5 15,11 8,15 1,11 1,5" stroke="#f87171" stroke-width="1.2" stroke-opacity="0.6" fill="rgba(239,68,68,0.04)"/>
+          </svg>
+          <span>Neighbouring ward boundaries</span>
+        </span>
+        <span style="color:#64748b;font-style:italic;">· Based on official delimitation data</span>
+      </div>
+
+      <div style="position:relative;">
+        <div id="wardMap"></div>
+      </div>
     </div>
 
   </main>
@@ -1167,7 +1267,7 @@ const wardNum = parseInt(getParam('ward')) || 17;
 // ────────────────────────────────────────────────
 (function buildSelector() {
   const sel = document.getElementById('wardSelect');
-  for (let w = 1; w <= 72; w++) {
+  for (let w = 1; w <= 120; w++) {
     const name = WARD_DEMOGRAPHICS[w] ? WARD_DEMOGRAPHICS[w].name : '';
     const opt  = document.createElement('option');
     opt.value = w;
@@ -1189,28 +1289,12 @@ if (!D) {
   document.getElementById('pageTitle').textContent = 'Ward Not Found';
 } else {
 
-  // Deterministic sustainability sub-scores seeded from ward number
-  function seededScore(seed, max) {
-    const x = Math.sin(seed * 9301 + 49297) * 233280;
-    const rand = x - Math.floor(x);
-    return Math.round(rand * max * 0.6 + max * 0.4); // 40%–100% range
-  }
+  // Load dynamic sustainability data
+  const dynamicSustainData = getWardSustainabilityData(wardNum);
+  const sustainTotal = dynamicSustainData.finalScore;
+  const ratings = dynamicSustainData.finalRatings;
 
-  const sustainTotal = D.sustainability;
-  const breakdown = {
-    facilities:   Math.min(seededScore(wardNum + 1, 25), Math.round(sustainTotal * 0.27)),
-    satisfaction: Math.min(seededScore(wardNum + 2, 20), Math.round(sustainTotal * 0.22)),
-    projects:     Math.min(seededScore(wardNum + 3, 20), Math.round(sustainTotal * 0.21)),
-    cleanliness:  Math.min(seededScore(wardNum + 4, 20), Math.round(sustainTotal * 0.20)),
-    green:        Math.min(seededScore(wardNum + 5, 15), Math.round(sustainTotal * 0.15))
-  };
 
-  // Clamp to max
-  breakdown.facilities   = Math.max(0, Math.min(25, breakdown.facilities));
-  breakdown.satisfaction = Math.max(0, Math.min(20, breakdown.satisfaction));
-  breakdown.projects     = Math.max(0, Math.min(20, breakdown.projects));
-  breakdown.cleanliness  = Math.max(0, Math.min(20, breakdown.cleanliness));
-  breakdown.green        = Math.max(0, Math.min(15, breakdown.green));
 
   // ── 3a. Update page headings ──
   document.getElementById('wardNumDisplay').textContent = wardNum;
@@ -1228,10 +1312,6 @@ if (!D) {
     animateCounter(document.getElementById('kpiWomen'), D.womenPct, '%', 1200, 1);
     document.getElementById('kpiWomenSub').textContent =
       `${D.female.toLocaleString('en-IN')} women`;
-
-    animateCounter(document.getElementById('kpiSC'), D.scPct, '%', 1200, 1);
-    document.getElementById('kpiSCSub').textContent =
-      `${D.sc.toLocaleString('en-IN')} SC residents`;
 
     animateCounter(document.getElementById('kpiSustain'), sustainTotal, '', 1400);
     document.getElementById('kpiSustainSub').textContent = 'out of 100';
@@ -1288,7 +1368,6 @@ if (!D) {
 
   // ── 3d. Sustainability Score Ring ──
   (function renderSustainScore() {
-    const ring  = document.getElementById('scoreRing');
     const numEl = document.getElementById('sustainNum');
     const badge = document.getElementById('ratingBadge');
 
@@ -1303,31 +1382,60 @@ if (!D) {
       ringColor = '#ef4444'; ratingClass = 'rating-poor';      ratingText = '🔴 Needs Improvement';
     }
 
-    ring.style.setProperty('--ring-color', ringColor);
     numEl.style.color = ringColor;
     badge.className   = 'score-rating-badge ' + ratingClass;
     badge.textContent = ratingText;
 
-    // Animate ring and number
+    // Render Chart.js Gauge
+    const ctx = document.getElementById('sustainGauge').getContext('2d');
+    const sustainGauge = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Score', 'Remaining'],
+        datasets: [{
+          data: [0, 100], // Start at 0 for animation
+          backgroundColor: [ringColor, 'rgba(255,255,255,0.06)'],
+          borderWidth: 0,
+          cutout: '80%',
+          borderRadius: [10, 0]
+        }]
+      },
+      options: {
+        rotation: 270,
+        circumference: 180,
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false }
+        }
+      }
+    });
+
+    // Animate the gauge chart and number
     let current = 0;
     const interval = setInterval(() => {
       current = Math.min(current + 1, sustainTotal);
-      ring.style.setProperty('--pct', current);
+      sustainGauge.data.datasets[0].data = [current, 100 - current];
+      sustainGauge.update('none');
       numEl.textContent = current;
       if (current >= sustainTotal) clearInterval(interval);
-    }, 16);
+    }, 12);
 
     // Breakdown bars (animate after a short delay)
     setTimeout(() => {
-      function setBar(fillId, scoreId, score, max) {
-        document.getElementById(scoreId).textContent = `${score} / ${max}`;
-        document.getElementById(fillId).style.width = `${(score / max) * 100}%`;
+      function setBar(fillId, scoreId, score) {
+        document.getElementById(scoreId).textContent = `${score.toFixed(1)} / 10`;
+        document.getElementById(fillId).style.width = `${score * 10}%`;
       }
-      setBar('bfFacilities',  'bdFacilities',   breakdown.facilities,   25);
-      setBar('bfSatisfaction','bdSatisfaction',  breakdown.satisfaction, 20);
-      setBar('bfProjects',    'bdProjects',      breakdown.projects,     20);
-      setBar('bfCleanliness', 'bdCleanliness',   breakdown.cleanliness,  20);
-      setBar('bfGreen',       'bdGreen',         breakdown.green,        15);
+      setBar('bfCleanliness', 'bdCleanliness', ratings.cleanliness);
+      setBar('bfWater',       'bdWater',       ratings.water);
+      setBar('bfTransport',   'bdTransport',   ratings.transport);
+      setBar('bfGreen',       'bdGreen',       ratings.green);
+      setBar('bfRoads',       'bdRoads',       ratings.roads);
+      setBar('bfPollution',   'bdPollution',   ratings.pollution);
+      setBar('bfDisaster',    'bdDisaster',    ratings.disaster);
+      setBar('bfGovernance',  'bdGovernance',  ratings.governance);
     }, 400);
   })();
 
@@ -1383,11 +1491,14 @@ if (!D) {
   // ── 3h. Citizen Feedback Ratings ──
   (function renderFeedback() {
     const categories = [
-      { icon:'🛣️', name:'Roads',        rating: +(2 + (Math.sin(wardNum * 1.3) * 1.5 + 1.5)).toFixed(1) },
-      { icon:'🌳', name:'Parks',        rating: +(2 + (Math.sin(wardNum * 2.1) * 1.5 + 1.5)).toFixed(1) },
-      { icon:'🏥', name:'Hospitals',    rating: +(2 + (Math.sin(wardNum * 3.7) * 1.5 + 1.5)).toFixed(1) },
-      { icon:'🧹', name:'Cleanliness',  rating: +(2 + (Math.sin(wardNum * 4.5) * 1.5 + 1.5)).toFixed(1) },
-      { icon:'💧', name:'Water Supply', rating: +(2 + (Math.sin(wardNum * 5.2) * 1.5 + 1.5)).toFixed(1) },
+      { icon: '🧹', name: 'Cleanliness & Waste', rating: +(ratings.cleanliness / 2).toFixed(1) },
+      { icon: '💧', name: 'Water Availability', rating: +(ratings.water / 2).toFixed(1) },
+      { icon: '🚌', name: 'Public Transport', rating: +(ratings.transport / 2).toFixed(1) },
+      { icon: '🌳', name: 'Green Spaces', rating: +(ratings.green / 2).toFixed(1) },
+      { icon: '🛣️', name: 'Road Infrastructure', rating: +(ratings.roads / 2).toFixed(1) },
+      { icon: '🌬️', name: 'Air/Noise Pollution', rating: +(ratings.pollution / 2).toFixed(1) },
+      { icon: '🛡️', name: 'Disaster Safety', rating: +(ratings.disaster / 2).toFixed(1) },
+      { icon: '🗳️', name: 'Citizen Participation', rating: +(ratings.governance / 2).toFixed(1) }
     ];
 
     function starsHTML(r) {
@@ -1401,6 +1512,7 @@ if (!D) {
     }
 
     const grid = document.getElementById('feedbackGrid');
+    grid.innerHTML = '';
     categories.forEach(c => {
       grid.innerHTML += `
         <div class="feedback-item">
@@ -1476,9 +1588,26 @@ if (!D) {
     const wardCoords = GVMC_MAP.getWardCoords(wardNum);
     if (!wardCoords) return;
 
+    // Get the ward boundary polygon if available (wards 73-120)
+    const hasBoundary = typeof WARD_BOUNDARIES !== 'undefined' && WARD_BOUNDARIES[wardNum];
+    const boundary = hasBoundary ? WARD_BOUNDARIES[wardNum] : null;
+
+    // Ray-casting point-in-polygon test
+    function isInsideBoundary(lat, lng, polygon) {
+      let inside = false;
+      for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const xi = polygon[i].lat, yi = polygon[i].lng;
+        const xj = polygon[j].lat, yj = polygon[j].lng;
+        const intersect = ((yi > lng) !== (yj > lng)) &&
+          (lat < (xj - xi) * (lng - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+      }
+      return inside;
+    }
+
     // Helper to calculate distance in km using Haversine
     function getDistance(lat1, lon1, lat2, lon2) {
-      const R = 6371; // Radius of the earth in km
+      const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLon = (lon2 - lon1) * Math.PI / 180;
       const a =
@@ -1486,19 +1615,64 @@ if (!D) {
         Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      return R * c; // Distance in km
+      return R * c;
     }
 
+    // Max radius (km) for wards without boundary data
+    const MAX_RADIUS_KM = 2;
+
     function getNearby(category, maxCount = 4) {
+      const wNum = parseInt(wardNum);
+      if (wNum === 1 || wNum === 2 || wNum === 3) {
+        let items = [];
+        if (category === 'park') {
+          items = [
+            { name: "Waves Amusement Park", lat: 17.8920, lng: 83.4485 },
+            { name: "Mandi Park", lat: 17.8905, lng: 83.4460 },
+            { name: "Divis Park", lat: 17.8885, lng: 83.4495 },
+            { name: "Beach Park", lat: 17.8890, lng: 83.4510 }
+          ];
+        } else if (category === 'school') {
+          items = [
+            { name: "Cambridge School", lat: 17.8910, lng: 83.4450 },
+            { name: "Government High School Bheemunipatnam", lat: 17.8935, lng: 83.4470 },
+            { name: "CBM School", lat: 17.8870, lng: 83.4435 },
+            { name: "Saint Ann's English Medium School", lat: 17.8950, lng: 83.4500 }
+          ];
+        } else if (category === 'hospital') {
+          items = [
+            { name: "Apollo Pharmacy Bheemunipatnam", lat: 17.8915, lng: 83.4465 },
+            { name: "Varun Health Centren Bheemili", lat: 17.8925, lng: 83.4490 },
+            { name: "Veterinary Hospital", lat: 17.8860, lng: 83.4445 },
+            { name: "Government Hospital", lat: 17.8940, lng: 83.4525 }
+          ];
+        }
+        return items.map(item => {
+          const d = getDistance(wardCoords.lat, wardCoords.lng, item.lat, item.lng);
+          return { ...item, distance: d };
+        }).sort((a, b) => a.distance - b.distance);
+      }
+
       const items = (GVMC_POI_DATA[category] || []).filter(item => {
         const name = item.name.trim().toLowerCase();
         return name !== 'hospital' && name !== 'school' && name !== 'park';
       });
-      const withDistance = items.map(item => {
+
+      // Filter: only POIs inside the boundary OR within MAX_RADIUS_KM
+      const filtered = items.filter(item => {
+        if (boundary) {
+          return isInsideBoundary(item.lat, item.lng, boundary);
+        }
+        // Fallback for wards without boundary data: use tight radius
+        const d = getDistance(wardCoords.lat, wardCoords.lng, item.lat, item.lng);
+        return d <= MAX_RADIUS_KM;
+      });
+
+      // Compute distances and sort
+      const withDistance = filtered.map(item => {
         const d = getDistance(wardCoords.lat, wardCoords.lng, item.lat, item.lng);
         return { ...item, distance: d };
       });
-      // Sort by distance ascending
       withDistance.sort((a, b) => a.distance - b.distance);
       return withDistance.slice(0, maxCount);
     }
@@ -1507,13 +1681,12 @@ if (!D) {
       const container = document.getElementById(elementId);
       if (!container) return;
       if (items.length === 0) {
-        container.innerHTML = `<div style="font-size:0.8rem;color:var(--text-muted);padding:1rem 0;text-align:center;">No nearby locations found.</div>`;
+        container.innerHTML = `<div style="font-size:0.8rem;color:var(--text-muted);padding:1rem 0;text-align:center;">No nearby locations found within ward boundary.</div>`;
         return;
       }
 
       container.innerHTML = '';
       items.forEach(item => {
-        // Build maps URL with pinpoint coordinates
         const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.name)}+${item.lat},${item.lng}`;
         const distStr = item.distance < 1 
           ? `${(item.distance * 1000).toFixed(0)} m away`
@@ -1537,6 +1710,79 @@ if (!D) {
     renderCategoryList('poiParks', getNearby('park', 4));
   })();
 
+  // ────────────────────────────────────────────────
+  // 3e. CITIZEN POLL JS
+  // ────────────────────────────────────────────────
+  (function initCitizenPoll() {
+    const form = document.getElementById('pollForm');
+    if (!form) return;
+    const scoreDisplay = document.getElementById('pollScoreDisplay');
+    const sliders = form.querySelectorAll('.poll-slider');
+    
+    function updateScore() {
+      let score = 0;
+      sliders.forEach(slider => {
+        const val = parseInt(slider.value);
+        const weight = parseInt(slider.getAttribute('data-weight'));
+        score += (val * weight) / 10;
+        
+        // Update label val span
+        const labelVal = slider.previousElementSibling.querySelector('.val');
+        if (labelVal) {
+          labelVal.textContent = val;
+        }
+      });
+      const roundedScore = Math.round(score);
+      scoreDisplay.textContent = roundedScore;
+      
+      // Dynamically change color of calculated score
+      const labelInfo = getCitizenSustainabilityLabel(roundedScore);
+      scoreDisplay.style.color = labelInfo.color;
+    }
+    
+    // Attach input event listeners
+    sliders.forEach(slider => {
+      slider.addEventListener('input', updateScore);
+    });
+    
+    // Set initial score colors & labels
+    updateScore();
+    
+    // Handle form submit
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const finalScore = Math.round(Array.from(sliders).reduce((acc, slider) => {
+        return acc + (parseInt(slider.value) * parseInt(slider.getAttribute('data-weight'))) / 10;
+      }, 0));
+      
+      // Save to localStorage
+      const submissions = JSON.parse(localStorage.getItem('gvmc_sustainability_feedback') || '[]');
+      const newSubmission = {
+        id: 'CSB-' + Date.now(),
+        ward: wardNum,
+        wardName: (D && D.name) ? D.name : `Ward ${wardNum}`,
+        score: finalScore,
+        ratings: {
+          cleanliness: parseInt(sliders[0].value),
+          water: parseInt(sliders[1].value),
+          transport: parseInt(sliders[2].value),
+          green: parseInt(sliders[3].value),
+          roads: parseInt(sliders[4].value),
+          pollution: parseInt(sliders[5].value),
+          disaster: parseInt(sliders[6].value),
+          governance: parseInt(sliders[7].value)
+        },
+        date: new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })
+      };
+      
+      submissions.unshift(newSubmission);
+      localStorage.setItem('gvmc_sustainability_feedback', JSON.stringify(submissions));
+      
+      alert(`Thank you! Your feedback for Ward ${wardNum} has been recorded. Current satisfaction rating: ${finalScore}/100.`);
+      location.reload(); // Reload to update dashboard stats and gauge
+    });
+  })();
+
 } // end if (D)
 
 // ────────────────────────────────────────────────
@@ -1548,6 +1794,12 @@ initWardGoogleMap({
   demographics: D || null,
   containerId: 'wardMap'
 });
+
+// Show boundary legend for wards 73-120
+if (wardNum >= 73 && wardNum <= 120) {
+  const legend = document.getElementById('boundaryLegend');
+  if (legend) legend.style.display = 'flex';
+}
 
 // ────────────────────────────────────────────────
 // 5. NAV SCROLL EFFECT & HAMBURGER

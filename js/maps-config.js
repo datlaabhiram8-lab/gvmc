@@ -23,7 +23,7 @@ const GVMC_MAP = {
 
   getWardName(wardNum) {
     const n = parseInt(wardNum, 10);
-    if (typeof WARD_DEMOGRAPHICS !== 'undefined' && WARD_DEMOGRAPHICS[n]) {
+    if (typeof WARD_DEMOGRAPHICS !== 'undefined' && WARD_DEMOGRAPHICS[n] && WARD_DEMOGRAPHICS[n].name) {
       return WARD_DEMOGRAPHICS[n].name;
     }
     return `Ward ${n}`;
@@ -46,7 +46,7 @@ const GVMC_MAP = {
 
   getAllWardCoords() {
     const list = [];
-    for (let w = 1; w <= 72; w++) {
+    for (let w = 1; w <= 120; w++) {
       const coords = this.getWardCoords(w);
       list.push({ wardNum: w, name: this.getWardName(w), ...coords });
     }

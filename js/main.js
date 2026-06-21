@@ -158,6 +158,15 @@ function getSustainabilityLabel(score) {
   return { label: 'Needs Improvement', color: '#ef4444' };
 }
 
+// ---- Citizen Sustainability label ----
+function getCitizenSustainabilityLabel(score) {
+  if (score >= 81) return { label: 'Highly Sustainable', emoji: '🌟', color: '#10b981', class: 'rating-excellent' };
+  if (score >= 61) return { label: 'Sustainable', emoji: '🟢', color: '#3b82f6', class: 'rating-good' };
+  if (score >= 41) return { label: 'Average', emoji: '🟡', color: '#f59e0b', class: 'rating-average' };
+  if (score >= 21) return { label: 'Poor', emoji: '🟠', color: '#f97316', class: 'rating-poor' };
+  return { label: 'Critical', emoji: '🔴', color: '#ef4444', class: 'rating-critical' };
+}
+
 // ---- Chart default options (dark theme) ----
 const CHART_DEFAULTS = {
   color: '#94a3b8',
@@ -210,7 +219,7 @@ const PROJECT_TYPES        = ['Road Construction', 'Drainage Repair', 'Park Deve
 
 function sampleComplaints(count = 5) {
   return Array.from({ length: count }, (_, i) => {
-    const ward = Math.floor(Math.random() * 72) + 1;
+    const ward = Math.floor(Math.random() * 120) + 1;
     let colony = 'Local area';
     const wardKey = String(ward);
     if (typeof WARD_AREAS !== 'undefined' && WARD_AREAS[wardKey]?.length) {
@@ -234,7 +243,7 @@ function sampleComplaints(count = 5) {
 function sampleProjects(count = 5) {
   return Array.from({ length: count }, (_, i) => ({
     title: PROJECT_TYPES[i % PROJECT_TYPES.length],
-    ward: Math.floor(Math.random() * 72) + 1,
+    ward: Math.floor(Math.random() * 120) + 1,
     progress: [0, 25, 50, 75, 100][Math.floor(Math.random() * 5)],
     status: ['Planning', 'In Progress', 'Completed'][Math.floor(Math.random() * 3)]
   }));
@@ -421,3 +430,100 @@ function updateHeaderAuth() {
     console.warn('Error updating header auth:', e);
   }
 }
+
+// ---- Get Dynamic Sustainability Data ----
+function getWardSustainabilityData(wardNum) {
+  const n = parseInt(wardNum, 10);
+  // Get base score from WARD_DEMOGRAPHICS or default to 70
+  let baseScore = 70;
+  if (typeof WARD_DEMOGRAPHICS !== 'undefined' && WARD_DEMOGRAPHICS[n]) {
+    baseScore = WARD_DEMOGRAPHICS[n].sustainability || Math.floor(60 + ((n * 17) % 36));
+  } else {
+    baseScore = Math.floor(60 + ((n * 17) % 36));
+  }
+
+  // Seed base values
+  const keys = ['cleanliness', 'water', 'transport', 'green', 'roads', 'pollution', 'disaster', 'governance'];
+  const baseVal = baseScore / 10;
+  const baseRatings = {};
+
+  keys.forEach((key, idx) => {
+    // Deterministic variation between -1.5 and +1.5 based on ward number
+    const variation = Math.sin(n * (idx + 1)) * 1.5;
+    baseRatings[key] = Math.max(1, Math.min(10, Math.round(baseVal + variation)));
+  });
+
+  // Adjust to exactly match baseScore
+  const getWeightedSum = (r) => {
+    return Math.round(
+      r.cleanliness * 2.0 +
+      r.water * 1.5 +
+      r.transport * 1.5 +
+      r.green * 1.0 +
+      r.roads * 1.0 +
+      r.pollution * 1.0 +
+      r.disaster * 1.0 +
+      r.governance * 1.0
+    );
+  };
+
+  let loops = 0;
+  while (getWeightedSum(baseRatings) !== baseScore && loops < 100) {
+    loops++;
+    const diff = baseScore - getWeightedSum(baseRatings);
+    const key = keys[Math.floor(Math.abs(Math.sin(n + loops) * keys.length))];
+    const step = diff > 0 ? 1 : -1;
+    if (baseRatings[key] + step >= 1 && baseRatings[key] + step <= 10) {
+      baseRatings[key] += step;
+    }
+  }
+
+  // 2. Fetch citizen feedback from localStorage
+  let submissions = [];
+  try {
+    submissions = JSON.parse(localStorage.getItem('gvmc_sustainability_feedback') || '[]');
+  } catch (e) {
+    console.error(e);
+  }
+
+  const wardReviews = submissions.filter(s => parseInt(s.ward) === n);
+
+  let finalRatings = { ...baseRatings };
+  let citizenAvgRatings = null;
+
+  if (wardReviews.length > 0) {
+    citizenAvgRatings = {};
+    keys.forEach(key => {
+      let sum = 0;
+      wardReviews.forEach(rev => {
+        sum += (rev.ratings && rev.ratings[key] !== undefined) ? rev.ratings[key] : 5;
+      });
+      citizenAvgRatings[key] = sum / wardReviews.length;
+      
+      // Dynamic mix: 50% municipal, 50% citizen feedback
+      finalRatings[key] = (baseRatings[key] + citizenAvgRatings[key]) / 2;
+    });
+  }
+
+  // Calculate final score
+  const finalScore = Math.round(
+    finalRatings.cleanliness * 2.0 +
+    finalRatings.water * 1.5 +
+    finalRatings.transport * 1.5 +
+    finalRatings.green * 1.0 +
+    finalRatings.roads * 1.0 +
+    finalRatings.pollution * 1.0 +
+    finalRatings.disaster * 1.0 +
+    finalRatings.governance * 1.0
+  );
+
+  return {
+    baseScore,
+    finalScore,
+    baseRatings,
+    citizenAvgRatings,
+    finalRatings,
+    reviewCount: wardReviews.length
+  };
+}
+
