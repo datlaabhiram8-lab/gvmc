@@ -3,15 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Citizen Complaint System | Smart Ward Connect</title>
-  <meta name="description" content="Smart Ward Connect – File civic complaints, track resolutions, and view active ward issues." />
+  <title>Complaints | Smart Ward Connect</title>
+  <meta name="description" content="GVMC Smart Ward Connect – File civic complaints or manage grievances as an officer." />
   <link rel="icon" href="assets/gvmc-logo.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
   <style>
+    /* ──────────── CITIZEN PORTAL ──────────── */
     .complaints-container {
       max-width: 1200px;
       margin: 0 auto;
@@ -29,17 +31,14 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .page-title-wrap p {
-      color: var(--text-muted);
-      font-size: 1rem;
-      margin-top: 0.5rem;
-    }
+    .page-title-wrap p { color: var(--text-muted); font-size: 1rem; margin-top: 0.5rem; }
     .complaints-grid {
       display: grid;
       grid-template-columns: 1.2fr 1.8fr;
       gap: 2rem;
       align-items: start;
     }
+    @media (max-width: 992px) { .complaints-grid { grid-template-columns: 1fr; } }
     .form-card {
       background: rgba(255,255,255,0.05);
       border: 1px solid var(--border-glass);
@@ -57,9 +56,7 @@
       align-items: center;
       gap: 8px;
     }
-    .form-group {
-      margin-bottom: 1.25rem;
-    }
+    .form-group { margin-bottom: 1.25rem; }
     .form-label {
       display: block;
       font-size: 0.78rem;
@@ -79,14 +76,11 @@
       font-size: 0.95rem;
       outline: none;
       transition: var(--transition);
+      box-sizing: border-box;
+      font-family: inherit;
     }
-    .form-input:focus, .form-select:focus, .form-textarea:focus {
-      border-color: var(--primary-light);
-    }
-    .form-textarea {
-      height: 100px;
-      resize: vertical;
-    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--primary-light); }
+    .form-textarea { height: 100px; resize: vertical; }
     .btn-submit {
       width: 100%;
       background: var(--gradient-btn);
@@ -97,11 +91,10 @@
       font-family: 'Outfit', sans-serif;
       transition: var(--transition);
       margin-top: 0.5rem;
+      border: none;
+      cursor: pointer;
     }
-    .btn-submit:hover {
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-glow);
-    }
+    .btn-submit:hover { transform: translateY(-1px); box-shadow: var(--shadow-glow); }
     .tracking-card {
       background: rgba(255,255,255,0.05);
       border: 1px solid var(--border-glass);
@@ -111,16 +104,8 @@
       box-shadow: var(--shadow-card);
       margin-bottom: 2rem;
     }
-    .tracking-card h2 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin-bottom: 1.25rem;
-    }
-    .track-search {
-      display: flex;
-      gap: 10px;
-    }
+    .tracking-card h2 { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 1.25rem; }
+    .track-search { display: flex; gap: 10px; }
     .btn-track {
       background: var(--gradient-purple);
       color: white;
@@ -128,6 +113,8 @@
       border-radius: var(--radius);
       font-weight: 700;
       font-family: 'Outfit', sans-serif;
+      border: none;
+      cursor: pointer;
     }
     .track-result-box {
       margin-top: 1.5rem;
@@ -138,9 +125,7 @@
       display: none;
       animation: fadeIn 0.3s ease;
     }
-    .track-result-box.show {
-      display: block;
-    }
+    .track-result-box.show { display: block; }
     .list-card {
       background: rgba(255,255,255,0.05);
       border: 1px solid var(--border-glass);
@@ -149,12 +134,7 @@
       backdrop-filter: blur(16px);
       box-shadow: var(--shadow-card);
     }
-    .list-card h2 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin-bottom: 1.25rem;
-    }
+    .list-card h2 { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 1.25rem; }
     .status-badge {
       display: inline-flex;
       align-items: center;
@@ -164,25 +144,14 @@
       font-size: 0.72rem;
       font-weight: 700;
     }
-    .status-badge::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-    }
+    .status-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
     .s-pending  { background: rgba(245,158,11,0.15); color: var(--warning); }
     .s-pending::before  { background: var(--warning); }
     .s-progress { background: rgba(26,86,219,0.15); color: var(--primary-light); }
     .s-progress::before { background: var(--primary-light); }
     .s-resolved { background: rgba(16,185,129,0.15); color: var(--success); }
     .s-resolved::before { background: var(--success); }
-    
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-      margin-top: 1rem;
-    }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 1rem; }
     .data-table th {
       background: rgba(26,86,219,0.1);
       padding: 0.75rem 1rem;
@@ -198,10 +167,7 @@
       border-top: 1px solid rgba(255,255,255,0.05);
       color: var(--text-muted);
     }
-    .data-table tr:hover td {
-      background: rgba(255,255,255,0.02);
-      color: var(--text-primary);
-    }
+    .data-table tr:hover td { background: rgba(255,255,255,0.02); color: var(--text-primary); }
     .ward-context-banner {
       display: none;
       align-items: center;
@@ -216,8 +182,269 @@
     }
     .ward-context-banner.show { display: flex; flex-wrap: wrap; }
     .ward-context-banner strong { color: var(--accent); }
-    @media (max-width: 992px) {
-      .complaints-grid { grid-template-columns: 1fr; }
+
+    /* ──────────── OFFICER CMS ──────────── */
+    #officerCMSPage {
+      display: none;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 2rem 2rem 5rem;
+    }
+    
+    /* ── Officer Panel ── */
+    .officer-panel {
+      background: var(--bg-glass);
+      border: 1px solid rgba(26,86,219,0.3);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+    .officer-panel-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-glass);
+      background: linear-gradient(135deg, rgba(26,86,219,0.15) 0%, rgba(6,182,212,0.1) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .officer-panel-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.15rem;
+      font-family: 'Outfit', sans-serif;
+      color: var(--text-dark);
+    }
+    .officer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(26,86,219,0.2);
+      border: 1px solid rgba(26,86,219,0.4);
+      color: var(--primary-light);
+      padding: 0.2rem 0.65rem;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .officer-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border-glass);
+      background: rgba(255,255,255,0.02);
+    }
+    .officer-filter-select {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border-glass);
+      color: var(--text-primary);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-family: inherit;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      outline: none;
+    }
+    .officer-filter-select:focus {
+      border-color: var(--primary-light);
+    }
+    .officer-filter-search {
+      flex: 1;
+      min-width: 180px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border-glass);
+      color: var(--text-primary);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-family: inherit;
+      outline: none;
+    }
+    .officer-filter-search:focus { border-color: var(--primary-light); }
+    .officer-filter-btn {
+      background: var(--gradient-btn);
+      color: white;
+      border: none;
+      padding: 0.45rem 1rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+    .officer-filter-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .officer-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-bottom: 1px solid var(--border-glass);
+    }
+    @media (max-width: 768px) { .officer-kpi-row { grid-template-columns: repeat(2, 1fr); } }
+    .officer-kpi-item {
+      padding: 1rem 1.25rem;
+      text-align: center;
+      border-right: 1px solid var(--border-glass);
+    }
+    .officer-kpi-item:last-child { border-right: none; }
+    .officer-kpi-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .officer-kpi-lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0.25rem; }
+    
+    /* Complaint action buttons */
+    .complaint-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: var(--transition);
+      white-space: nowrap;
+      margin: 2px 2px 2px 0;
+    }
+    .action-view { background: rgba(6,182,212,0.15); color: var(--accent); border: 1px solid rgba(6,182,212,0.3); }
+    .action-view:hover { background: rgba(6,182,212,0.28); }
+    .action-progress { background: rgba(26,86,219,0.15); color: var(--primary-light); border: 1px solid rgba(26,86,219,0.3); }
+    .action-progress:hover { background: rgba(26,86,219,0.28); }
+    .action-resolve { background: rgba(16,185,129,0.15); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+    .action-resolve:hover { background: rgba(16,185,129,0.28); }
+    .action-pending { background: rgba(245,158,11,0.15); color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
+    .action-pending:hover { background: rgba(245,158,11,0.28); }
+
+    /* Detail Modal */
+    .officer-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0,0,0,0.72);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+    }
+    .officer-modal-overlay.open { display: flex; }
+    .officer-modal-card {
+      background: #0f172a;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      max-width: 580px;
+      width: 92%;
+      padding: 2rem;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+    .officer-modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: #fff;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .officer-modal-close:hover { background: rgba(255,255,255,0.18); }
+    .officer-modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.4rem;
+      color: #f1f5f9;
+      font-family: 'Outfit', sans-serif;
+    }
+    .officer-detail-table { width: 100%; border-collapse: collapse; }
+    .officer-detail-table tr td { padding: 0.5rem 0; vertical-align: top; color: #94a3b8; font-size: 0.86rem; }
+    .officer-detail-table tr td:first-child { font-weight: 600; color: #64748b; width: 130px; }
+    .officer-detail-table tr td:last-child { color: #e2e8f0; }
+    .officer-status-update {
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .officer-status-label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); width: 100%; }
+    .officer-status-select {
+      flex: 1;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #f1f5f9;
+      padding: 0.55rem 0.9rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.84rem;
+      outline: none;
+    }
+    .officer-save-btn {
+      background: var(--gradient-btn);
+      color: white;
+      border: none;
+      padding: 0.55rem 1.4rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: var(--transition);
+    }
+    .officer-save-btn:hover { opacity: 0.9; }
+
+    /* When officer toggles to lodge form, hide grid side-panel and go full width */
+    #citizenTrackList[style*="display: none"],
+    #citizenTrackList[style*="display:none"] {
+      display: none !important;
+    }
+    .complaints-grid:has(#citizenTrackList[style*="none"]) {
+      grid-template-columns: 1fr;
+    }
+    #citizenLodgeContainer { transition: none; }
+
+    /* Empty state */
+    .cms-empty {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-muted);
+    }
+    .cms-empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .cms-empty p { font-size: 0.9rem; }
+
+    /* Loading shimmer */
+    @keyframes shimmer { from { background-position: -400px 0; } to { background-position: 400px 0; } }
+    .cms-loading-row td {
+      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.03) 75%);
+      background-size: 400px 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 4px;
+      height: 36px;
     }
   </style>
 </head>
@@ -272,11 +499,9 @@
     <li><a href="sustainability.html">Sustainability</a></li>
     <li><a href="complaints.html" class="active">Complaints</a></li>
     <li><a href="community.html">Community</a></li>
-    
     <li><a href="contact.html">Contact Us</a></li>
     <li class="emergency-link"><a href="emergency.html"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;font-size:.75rem"></i>Emergency</a></li>
   </ul>
-
   <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
     <span></span><span></span><span></span>
   </button>
@@ -290,21 +515,42 @@
   <a href="sustainability.html">🌿 Sustainability</a>
   <a href="complaints.html" class="active">📢 Complaints</a>
   <a href="community.html">🤝 Community</a>
-  
   <a href="contact.html">📞 Contact Us</a>
   <a href="emergency.html">🚨 Emergency</a>
 </div>
 
-<!-- COMPLAINTS MAIN -->
-<div class="complaints-container">
+<!-- ══════════════════════════════════════════
+     A) CITIZEN PORTAL (shown when NOT officer)
+══════════════════════════════════════════ -->
+<div class="complaints-container" id="citizenPortal">
   <div class="page-title-wrap">
     <h1>Civic Grievance Redressal Portal</h1>
-    <p>File municipal issues directly with your ward secretariat and track resolution timelines.</p>
+    <p>File municipal issues directly with your secretariat and manage resolutions in real-time.</p>
   </div>
 
   <div class="complaints-grid">
     <!-- Lodge Form -->
-    <div class="form-card">
+    <div id="citizenLodgeContainer" style="width: 100%;">
+      <div id="officerLodgeBackBtnWrap" style="display:none; margin-bottom:1.25rem;">
+        <button type="button" onclick="toggleOfficerLodgeForm()" style="
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 0.55rem 1.2rem;
+          border-radius: 8px;
+          font-size: 0.82rem;
+          font-weight: 600;
+          cursor: pointer;
+          background: rgba(26,86,219,0.1);
+          border: 1px solid rgba(26,86,219,0.25);
+          color: var(--primary-light);
+          font-family: inherit;
+          transition: var(--transition);
+        ">
+          <i class="fa-solid fa-arrow-left"></i> Back to Complaints Management
+        </button>
+      </div>
+      <div class="form-card">
       <h2><i class="fa-solid fa-file-pen" style="color:var(--accent);"></i> Lodge Complaint</h2>
       <div class="ward-context-banner" id="wardContextBanner">
         <i class="fa-solid fa-location-dot" style="color:var(--accent);"></i>
@@ -334,7 +580,7 @@
         </div>
         <div class="form-group">
           <label class="form-label" for="compDesc">Grievance Details</label>
-          <textarea class="form-textarea" id="compDesc" placeholder="Describe the issue in detail..." required></textarea>
+          <textarea class="form-textarea" id="compDesc" placeholder="Describe the issue in detail..."></textarea>
         </div>
         <div class="form-group">
           <label class="form-label" for="compPhoto">Add Photo (optional)</label>
@@ -346,22 +592,19 @@
         <button type="submit" class="btn-submit">🚀 Submit Complaint</button>
       </form>
     </div>
+  </div>
 
-    <!-- Tracking & List -->
-    <div>
-      <!-- Tracking Box -->
+  <!-- Tracking & List -->
+  <div id="citizenTrackList">
       <div class="tracking-card">
         <h2>🔍 Track Grievance Status</h2>
         <div class="track-search">
           <input type="text" class="form-input" id="trackInput" placeholder="Enter Complaint ID (e.g. GVMC-KVJ9L)" />
           <button class="btn-track" onclick="trackComplaint()">Track</button>
         </div>
-        <div class="track-result-box" id="trackResult">
-          <!-- Populated by JS -->
-        </div>
+        <div class="track-result-box" id="trackResult"></div>
       </div>
 
-      <!-- Recent Table -->
       <div class="list-card">
         <h2>📢 Recent Registered Grievances</h2>
         <div style="overflow-x:auto;">
@@ -376,12 +619,120 @@
                 <th>Submitted On</th>
               </tr>
             </thead>
-            <tbody id="recentComplaintsBody">
-              <!-- Populated by JS -->
-            </tbody>
+            <tbody id="recentComplaintsBody"></tbody>
           </table>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     B) OFFICER CMS (shown when officer is logged in)
+══════════════════════════════════════════ -->
+<div id="officerCMSPage" style="display:none;max-width:1300px;margin:0 auto;padding:2rem 2rem 5rem;">
+  <div class="officer-panel">
+    <!-- Header -->
+    <div class="officer-panel-header">
+      <div class="officer-panel-title">
+        <span>🛡️ Complaints Management Portal</span>
+        <span class="officer-badge" id="cmsRoleBadge">Admin</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+        <span style="font-size:0.8rem;color:var(--text-muted);" id="cmsOfficerName"></span>
+        <button class="officer-filter-btn" onclick="cmsRefresh()" style="background:rgba(16,185,129,0.15);color:var(--success);border:1px solid rgba(16,185,129,0.3);">⟳ Refresh</button>
+        <button class="officer-filter-btn" onclick="toggleOfficerLodgeForm()"><i class="fa-solid fa-plus"></i> Lodge Complaint</button>
+      </div>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="officer-kpi-row">
+      <div class="officer-kpi-item">
+        <div class="officer-kpi-num" id="cmsKpiTotal" style="color:var(--primary-light);">—</div>
+        <div class="officer-kpi-lbl">Total</div>
+      </div>
+      <div class="officer-kpi-item">
+        <div class="officer-kpi-num" id="cmsKpiPending" style="color:var(--warning);">—</div>
+        <div class="officer-kpi-lbl">Pending</div>
+      </div>
+      <div class="officer-kpi-item">
+        <div class="officer-kpi-num" id="cmsKpiProgress" style="color:var(--accent2);">—</div>
+        <div class="officer-kpi-lbl">In Progress</div>
+      </div>
+      <div class="officer-kpi-item">
+        <div class="officer-kpi-num" id="cmsKpiResolved" style="color:var(--success);">—</div>
+        <div class="officer-kpi-lbl">Resolved</div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="officer-filter-bar">
+      <span style="font-size:0.78rem;font-weight:700;color:var(--text-muted);white-space:nowrap;">Filter:</span>
+      <select id="cmsStatusFilter" class="officer-filter-select">
+        <option value="">All Statuses</option>
+        <option value="Pending">Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Resolved">Resolved</option>
+      </select>
+      <select id="cmsCategoryFilter" class="officer-filter-select">
+        <option value="">All Categories</option>
+        <option value="Garbage Issue">Garbage / Waste Collection</option>
+        <option value="Water Leakage">Water Leakage / Shortage</option>
+        <option value="Road Damage">Road Damage / Potholes</option>
+        <option value="Streetlight Failure">Streetlight Maintenance</option>
+        <option value="Drainage Issue">Sewage / Drainage Leakage</option>
+      </select>
+      <select id="cmsWardFilter" class="officer-filter-select" style="max-width:160px;">
+        <option value="">All Wards</option>
+      </select>
+      <input type="text" id="cmsSearchInput" class="officer-filter-search" placeholder="Search by ID or keyword…" />
+      <button class="officer-filter-btn" onclick="cmsApplyFilters()">Apply Filters</button>
+      <button class="officer-filter-btn" onclick="cmsResetFilters()" style="background:transparent;color:var(--text-muted);border:1px solid var(--border-glass);">Reset</button>
+      <span style="margin-left:auto;font-size:0.75rem;color:var(--text-muted);" id="cmsCountBadge"></span>
+    </div>
+
+    <!-- Table Panel -->
+    <div style="overflow-x:auto;">
+      <table class="data-table" id="cmsTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Description</th>
+            <th>Ward</th>
+            <th>Area / Colony</th>
+            <th>Category</th>
+            <th>Date Filed</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th style="min-width:210px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="cmsTbody">
+          <tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text-muted);">⏳ Loading complaints…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     COMPLAINT DETAIL MODAL
+     ══════════════════════════════════════════ -->
+<div class="officer-modal-overlay" id="cmsDetailModal">
+  <div class="officer-modal-card">
+    <button class="officer-modal-close" onclick="closeCmsModal()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="officer-modal-title" id="cmsModalTitle">Complaint Details</div>
+    <div id="cmsModalBody"></div>
+    <div class="officer-status-update">
+      <span class="officer-status-label">Update Status:</span>
+      <select id="cmsModalStatusSelect" class="officer-status-select">
+        <option value="Pending">Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Resolved">Resolved</option>
+      </select>
+      <button class="officer-save-btn" onclick="cmsSaveModalStatus()">Save Status</button>
     </div>
   </div>
 </div>
@@ -397,77 +748,399 @@
   </div>
 </footer>
 
-<!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- SCRIPTS -->
+<!-- ══════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
 <script src="js/main.js"></script>
 <script src="js/ward_data.js"></script>
 <script src="js/demographics.js"></script>
-<script>
-  // Navbar scroll & Hamburger
-  const navEl = document.getElementById('navbar');
-  window.addEventListener('scroll', () => {
-    navEl.classList.toggle('scrolled', window.scrollY > 40);
-  });
 
+<script>
+  /* ─── Navbar ─── */
+  const navEl = document.getElementById('navbar');
+  window.addEventListener('scroll', () => navEl.classList.toggle('scrolled', window.scrollY > 40));
   const hamburger = document.getElementById('hamburgerBtn');
   const mobileNav = document.getElementById('mobileNav');
   hamburger.addEventListener('click', () => {
     hamburger.classList.toggle('open');
     mobileNav.classList.toggle('open');
   });
-  document.addEventListener('click', (e) => {
+  document.addEventListener('click', e => {
     if (!navEl.contains(e.target) && !mobileNav.contains(e.target)) {
       hamburger.classList.remove('open');
       mobileNav.classList.remove('open');
     }
   });
 
-  // LocalStorage initialization
+  /* ═══════════════════════════════════════════════════
+     ROUTING: Show officer CMS or citizen portal
+  ═══════════════════════════════════════════════════ */
+  const IS_OFFICER = localStorage.getItem('gvmc_officer_logged_in') === 'true';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (IS_OFFICER) {
+      document.getElementById('citizenPortal').style.display = 'none';
+      document.getElementById('officerCMSPage').style.display = 'block';
+      // Patch title
+      document.title = 'Complaints Management Portal | Smart Ward Connect';
+      // Set role badge & name
+      const role = localStorage.getItem('gvmc_officer_role') || 'Officer';
+      const name = localStorage.getItem('gvmc_officer_name') || '';
+      document.getElementById('cmsRoleBadge').textContent = role;
+      document.getElementById('cmsOfficerName').textContent = name ? `Welcome, ${name}` : '';
+      // Populate ward filter
+      populateCmsWardFilter();
+      // Load data
+      cmsLoadComplaints();
+    } else {
+      // Citizen mode
+      initCitizenPortal();
+    }
+  });
+
+  /* ═══════════════════════════════════════════════════
+     OFFICER CMS LOGIC
+  ═══════════════════════════════════════════════════ */
+  let _cmsAllComplaints = [];
+  let _cmsCurrentId = null;
+
+  function populateCmsWardFilter() {
+    const sel = document.getElementById('cmsWardFilter');
+    for (let w = 1; w <= 120; w++) {
+      const opt = document.createElement('option');
+      opt.value = w;
+      opt.textContent = `Ward ${w}`;
+      sel.appendChild(opt);
+    }
+  }
+
+  async function cmsLoadComplaints() {
+    const tbody = document.getElementById('cmsTbody');
+    tbody.innerHTML = `<tr class="cms-loading-row"><td colspan="9">&nbsp;</td></tr>
+                       <tr class="cms-loading-row"><td colspan="9">&nbsp;</td></tr>
+                       <tr class="cms-loading-row"><td colspan="9">&nbsp;</td></tr>`;
+
+    const role = localStorage.getItem('gvmc_officer_role') || 'Officer';
+    let complaints = [];
+
+    try {
+      if (!window.supabaseClient) throw new Error('Supabase not configured');
+      let q = window.supabaseClient
+        .from('complaints')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(100);
+      // Ward Officers only see their ward (stored during login as last ward)
+      if (role === 'Ward Officer') {
+        const lastWard = sessionStorage.getItem('gvmc_last_ward') || '17';
+        q = q.eq('ward_id', parseInt(lastWard));
+      }
+      const { data, error } = await q;
+      if (error) throw error;
+      complaints = data || [];
+    } catch (err) {
+      console.warn('Supabase unavailable, using sample data:', err);
+      complaints = _buildSampleComplaints();
+    }
+
+    _cmsAllComplaints = complaints;
+    cmsRenderTable(complaints);
+    cmsUpdateKPIs(complaints);
+  }
+
+  function _buildSampleComplaints() {
+    const statuses = ['Pending', 'In Progress', 'Resolved'];
+    const cats = ['Road Damage', 'Garbage Issue', 'Water Leakage', 'Streetlight Failure', 'Drainage Issue', 'Sanitation', 'Electricity', 'Water Supply'];
+    const descs = [
+      'Pothole on main road causing vehicle damage and accidents',
+      'Garbage not collected for 4 days, causing hygiene issues',
+      'Water supply disruption in colony for past 2 days',
+      'Street light failure near school and market area',
+      'Open drainage causing foul smell and mosquito breeding',
+      'Damaged footpath near bus stop creating risk for pedestrians',
+      'Overflowing garbage bin near main market',
+      'Road waterlogging during rain due to blocked drains',
+      'Broken water pipeline leaking on main road',
+      'Illegal waste dumping near park area'
+    ];
+    const areas = ['Hanumanthavaka Junction', 'Simhachalam Hill', 'Adavivaram', 'Deendayalapuram', 'MVP Colony', 'Steel Plant Area', 'Rushikonda Beach', 'Old Town', 'Dwaraka Nagar', 'Gajuwaka'];
+    return Array.from({ length: 10 }, (_, i) => ({
+      id: `GVMC-CMP-${2024 + (i % 2)}-${String(170 + i + 1).padStart(4, '0')}`,
+      description: descs[i % descs.length],
+      colony: areas[i % areas.length],
+      category: cats[i % cats.length],
+      created_at: new Date(Date.now() - i * 2.1 * 86400000).toISOString(),
+      status: statuses[i % 3],
+      priority: ['High', 'Medium', 'Low'][i % 3],
+      ward_id: 17 + (i % 5)
+    }));
+  }
+
+  function cmsRenderTable(list) {
+    const tbody = document.getElementById('cmsTbody');
+    const countEl = document.getElementById('cmsCountBadge');
+    if (countEl) countEl.textContent = `${list.length} complaint${list.length !== 1 ? 's' : ''}`;
+
+    if (!list.length) {
+      tbody.innerHTML = `<tr><td colspan="9">
+        <div class="cms-empty">
+          <div class="cms-empty-icon">✅</div>
+          <p>No complaints match your current filters.</p>
+        </div>
+      </td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = '';
+    list.forEach(c => {
+      const status = c.status || 'Pending';
+      const statusClass = status === 'Resolved' ? 's-resolved' : status === 'In Progress' ? 's-progress' : 's-pending';
+      const priority = c.priority || 'Medium';
+      const prioColor = priority === 'High' ? '#f87171' : priority === 'Medium' ? '#fbbf24' : '#34d399';
+      const dateStr = c.created_at
+        ? new Date(c.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+        : '—';
+      const desc = (c.description || 'No description').substring(0, 55) + ((c.description || '').length > 55 ? '…' : '');
+      const id = c.id || '—';
+
+      const actionBtns = `
+        <button class="complaint-action-btn action-view" onclick="cmsViewDetail('${id}')"><i class="fa-regular fa-eye"></i> View</button>
+        ${status !== 'In Progress' ? `<button class="complaint-action-btn action-progress" onclick="cmsUpdateStatus('${id}','In Progress')"><i class="fa-solid fa-play"></i> Progress</button>` : ''}
+        ${status !== 'Resolved'    ? `<button class="complaint-action-btn action-resolve" onclick="cmsUpdateStatus('${id}','Resolved')"><i class="fa-solid fa-check"></i> Resolve</button>` : ''}
+        ${status !== 'Pending'     ? `<button class="complaint-action-btn action-pending" onclick="cmsUpdateStatus('${id}','Pending')"><i class="fa-solid fa-rotate-left"></i> Reopen</button>` : ''}
+      `;
+
+      tbody.innerHTML += `
+        <tr>
+          <td style="color:var(--accent);font-weight:700;font-size:0.76rem;white-space:nowrap;">${id}</td>
+          <td style="max-width:200px;white-space:normal;color:var(--text-primary);line-height:1.4;">${desc}</td>
+          <td style="white-space:nowrap;">Ward ${c.ward_id || '—'}</td>
+          <td style="max-width:160px;white-space:normal;">${c.colony || c.area || '—'}</td>
+          <td><span class="status-badge" style="background:rgba(6,182,212,0.1);color:var(--accent);border:1px solid rgba(6,182,212,0.22);">${c.category || '—'}</span></td>
+          <td style="white-space:nowrap;font-size:0.8rem;">${dateStr}</td>
+          <td><span class="status-badge ${statusClass}">${status}</span></td>
+          <td style="color:${prioColor};font-weight:700;">${priority}</td>
+          <td>${actionBtns}</td>
+        </tr>`;
+    });
+  }
+
+  function cmsUpdateKPIs(list) {
+    const total    = list.length;
+    const pending  = list.filter(c => (c.status || 'Pending') === 'Pending').length;
+    const progress = list.filter(c => c.status === 'In Progress').length;
+    const resolved = list.filter(c => c.status === 'Resolved').length;
+    const el = id => document.getElementById(id);
+    if (el('cmsKpiTotal'))    el('cmsKpiTotal').textContent    = total;
+    if (el('cmsKpiPending'))  el('cmsKpiPending').textContent  = pending;
+    if (el('cmsKpiProgress')) el('cmsKpiProgress').textContent = progress;
+    if (el('cmsKpiResolved')) el('cmsKpiResolved').textContent = resolved;
+  }
+
+  async function cmsUpdateStatus(id, newStatus) {
+    try {
+      if (window.supabaseClient) {
+        const { error } = await window.supabaseClient
+          .from('complaints')
+          .update({ status: newStatus, updated_at: new Date().toISOString() })
+          .eq('id', id);
+        if (error) throw error;
+      }
+      const idx = _cmsAllComplaints.findIndex(c => c.id === id);
+      if (idx !== -1) _cmsAllComplaints[idx].status = newStatus;
+      cmsApplyFilters();
+      if (typeof showToast === 'function') showToast(`Status updated → "${newStatus}"`, 'success');
+    } catch (err) {
+      console.error('Status update failed:', err);
+      if (typeof showToast === 'function') showToast('Failed to update status.', 'error');
+    }
+  }
+
+  function cmsViewDetail(id) {
+    const c = _cmsAllComplaints.find(x => x.id === id);
+    if (!c) return;
+    _cmsCurrentId = id;
+
+    const modal  = document.getElementById('cmsDetailModal');
+    const title  = document.getElementById('cmsModalTitle');
+    const body   = document.getElementById('cmsModalBody');
+    const selEl  = document.getElementById('cmsModalStatusSelect');
+
+    if (title) title.textContent = `Complaint: ${id}`;
+    if (selEl) selEl.value = c.status || 'Pending';
+
+    const dateStr = c.created_at ? new Date(c.created_at).toLocaleString('en-IN') : '—';
+    const statusClass = c.status === 'Resolved' ? 's-resolved' : c.status === 'In Progress' ? 's-progress' : 's-pending';
+
+    if (body) body.innerHTML = `
+      <table class="officer-detail-table">
+        ${[
+          ['ID', id],
+          ['Category', c.category || '—'],
+          ['Ward', `Ward ${c.ward_id || '—'}`],
+          ['Area / Colony', c.colony || c.area || '—'],
+          ['Status', `<span class="status-badge ${statusClass}">${c.status || 'Pending'}</span>`],
+          ['Priority', c.priority || 'Medium'],
+          ['Date Filed', dateStr],
+          ['Description', c.description || 'No description provided'],
+          ['Contact', c.contact || c.complainant_name || 'Anonymous']
+        ].map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')}
+      </table>
+      ${c.photo ? `<div style="margin-top:1rem;"><img src="${c.photo}" style="max-width:100%;border-radius:8px;border:1px solid rgba(255,255,255,0.08);" alt="Complaint Photo" /></div>` : ''}
+    `;
+
+    modal.classList.add('open');
+  }
+
+  function closeCmsModal() {
+    document.getElementById('cmsDetailModal').classList.remove('open');
+    _cmsCurrentId = null;
+  }
+
+  async function cmsSaveModalStatus() {
+    if (!_cmsCurrentId) return;
+    const sel = document.getElementById('cmsModalStatusSelect');
+    if (!sel) return;
+    await cmsUpdateStatus(_cmsCurrentId, sel.value);
+    closeCmsModal();
+  }
+
+  function cmsApplyFilters() {
+    const status   = document.getElementById('cmsStatusFilter')?.value   || '';
+    const category = document.getElementById('cmsCategoryFilter')?.value || '';
+    const ward     = document.getElementById('cmsWardFilter')?.value     || '';
+    const search   = (document.getElementById('cmsSearchInput')?.value   || '').toLowerCase().trim();
+
+    let filtered = [..._cmsAllComplaints];
+    if (status)   filtered = filtered.filter(c => c.status === status);
+    if (category) filtered = filtered.filter(c => (c.category || '') === category);
+    if (ward)     filtered = filtered.filter(c => String(c.ward_id) === ward);
+    if (search)   filtered = filtered.filter(c =>
+      (c.id || '').toLowerCase().includes(search) ||
+      (c.description || '').toLowerCase().includes(search) ||
+      (c.colony || '').toLowerCase().includes(search)
+    );
+    cmsRenderTable(filtered);
+    cmsUpdateKPIs(filtered);
+  }
+
+  function cmsResetFilters() {
+    ['cmsStatusFilter','cmsCategoryFilter','cmsWardFilter'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    const si = document.getElementById('cmsSearchInput');
+    if (si) si.value = '';
+    cmsRenderTable(_cmsAllComplaints);
+    cmsUpdateKPIs(_cmsAllComplaints);
+  }
+
+  function cmsRefresh() { cmsLoadComplaints(); }
+
+  /* Toggle officer lodge-complaint form vs CMS table */
+  function toggleOfficerLodgeForm() {
+    const cms  = document.getElementById('officerCMSPage');
+    const form = document.getElementById('citizenPortal');
+    const backBtn = document.getElementById('officerLodgeBackBtnWrap');
+    const trackList = document.getElementById('citizenTrackList');
+
+    if (cms.style.display !== 'none') {
+      // Switch to lodge form
+      cms.style.display = 'none';
+      form.style.display = 'block';
+      if (backBtn)   backBtn.style.display   = 'block';
+      if (trackList) trackList.style.display = 'none';
+      // Pre-fill ward if officer has assigned ward
+      const lastWard = sessionStorage.getItem('gvmc_last_ward');
+      const wardSel  = document.getElementById('compWard');
+      if (lastWard && wardSel?.querySelector(`option[value="${lastWard}"]`)) {
+        wardSel.value = lastWard;
+        updateWardContextBanner();
+      }
+    } else {
+      // Switch back to CMS
+      form.style.display = 'none';
+      cms.style.display  = 'block';
+      if (backBtn)   backBtn.style.display   = 'none';
+      if (trackList) trackList.style.display = 'block';
+    }
+  }
+
+  // Close modal on overlay click
+  document.getElementById('cmsDetailModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('cmsDetailModal')) closeCmsModal();
+  });
+
+  // Live search
+  document.getElementById('cmsSearchInput')?.addEventListener('input', cmsApplyFilters);
+
+  /* ═══════════════════════════════════════════════════
+     CITIZEN PORTAL LOGIC
+  ═══════════════════════════════════════════════════ */
   let storedComplaints = [];
   const LOCAL_STORAGE_KEY = 'gvmc_portal_complaints';
 
-  // Seed sample complaints if empty
-  function initComplaintsData() {
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (raw) {
-      storedComplaints = JSON.parse(raw);
-    } else {
-      if (typeof sampleComplaints === 'function') {
+  async function initCitizenPortal() {
+    await initComplaintsData();
+    renderRecentComplaints();
+
+    function populateWardSelect() {
+      if (typeof WARD_DEMOGRAPHICS !== 'undefined') {
+        const select = document.getElementById('compWard');
+        if (!select) return;
+        select.innerHTML = '<option value="">— Select Ward —</option>';
+        const keys = Object.keys(WARD_DEMOGRAPHICS).sort((a, b) => parseInt(a) - parseInt(b));
+        keys.forEach(k => {
+          const option = new Option(`Ward ${k} - ${WARD_DEMOGRAPHICS[k].name || ''}`, k);
+          select.add(option);
+        });
+        applySearchedWardContext();
+      }
+    }
+
+    document.addEventListener('gvmc-demographics-loaded', populateWardSelect);
+    populateWardSelect();
+    document.getElementById('compWard')?.addEventListener('change', updateWardContextBanner);
+    document.getElementById('compColony')?.addEventListener('input', updateWardContextBanner);
+  }
+
+  async function initComplaintsData() {
+    try {
+      if (!window.supabaseClient) throw new Error('Supabase not initialized');
+      const { data, error } = await window.supabaseClient
+        .from('complaints')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      storedComplaints = data.map(item => ({
+        id: item.id,
+        ward: item.ward_id,
+        category: item.category,
+        colony: item.colony,
+        desc: item.description,
+        status: item.status,
+        date: item.date || new Date(item.created_at).toLocaleDateString('en-IN')
+      }));
+    } catch (err) {
+      console.warn('Supabase fallback:', err);
+      const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (raw) storedComplaints = JSON.parse(raw);
+      else if (typeof sampleComplaints === 'function') {
         storedComplaints = sampleComplaints(5);
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(storedComplaints));
       }
     }
   }
 
-  // Load Wards options & pre-fill from ward search
-  document.addEventListener('DOMContentLoaded', () => {
-    initComplaintsData();
-    renderRecentComplaints();
-
-    if (typeof WARD_DEMOGRAPHICS !== 'undefined') {
-      const select = document.getElementById('compWard');
-      const keys = Object.keys(WARD_DEMOGRAPHICS).sort((a,b) => parseInt(a) - parseInt(b));
-      keys.forEach(k => {
-        const option = new Option(`Ward ${k} - ${WARD_DEMOGRAPHICS[k].name || ''}`, k);
-        select.add(option);
-      });
-    }
-
-    applySearchedWardContext();
-    document.getElementById('compWard').addEventListener('change', updateWardContextBanner);
-  });
-
   function getColonyLabel(c) {
     if (c.colony) return c.colony;
     const wardKey = String(c.ward);
-    if (typeof WARD_AREAS !== 'undefined' && WARD_AREAS[wardKey]?.length) {
-      return WARD_AREAS[wardKey][0];
-    }
-    if (typeof WARD_DEMOGRAPHICS !== 'undefined' && WARD_DEMOGRAPHICS[c.ward]) {
-      return WARD_DEMOGRAPHICS[c.ward].name || '—';
-    }
+    if (typeof WARD_AREAS !== 'undefined' && WARD_AREAS[wardKey]?.length) return WARD_AREAS[wardKey][0];
+    if (typeof WARD_DEMOGRAPHICS !== 'undefined' && WARD_DEMOGRAPHICS[c.ward]) return WARD_DEMOGRAPHICS[c.ward].name || '—';
     return '—';
   }
 
@@ -476,76 +1149,54 @@
     const lastArea = sessionStorage.getItem('gvmc_last_area');
     const wardSelect = document.getElementById('compWard');
     const colonyInput = document.getElementById('compColony');
-
-    if (lastWard && wardSelect.querySelector(`option[value="${lastWard}"]`)) {
-      wardSelect.value = lastWard;
-    }
-    if (lastArea) {
-      colonyInput.value = lastArea;
-    }
+    if (lastWard && wardSelect?.querySelector(`option[value="${lastWard}"]`)) wardSelect.value = lastWard;
+    if (lastArea && colonyInput) colonyInput.value = lastArea;
     updateWardContextBanner();
   }
 
   function updateWardContextBanner() {
     const banner = document.getElementById('wardContextBanner');
-    const ward = document.getElementById('compWard').value;
-    const colony = document.getElementById('compColony').value.trim();
-    const ctxWard = document.getElementById('ctxWard');
-    const ctxArea = document.getElementById('ctxArea');
-
-    if (!ward && !colony) {
-      banner.classList.remove('show');
-      return;
-    }
-
+    const ward = document.getElementById('compWard')?.value;
+    const colony = document.getElementById('compColony')?.value.trim();
+    if (!banner) return;
+    if (!ward && !colony) { banner.classList.remove('show'); return; }
     const wardName = (typeof WARD_DEMOGRAPHICS !== 'undefined' && WARD_DEMOGRAPHICS[ward])
-      ? WARD_DEMOGRAPHICS[ward].name
-      : '';
-    ctxWard.textContent = ward ? `Ward ${ward}${wardName ? ' – ' + wardName : ''}` : 'Ward —';
-    ctxArea.textContent = colony || 'Area not specified';
+      ? WARD_DEMOGRAPHICS[ward].name : '';
+    document.getElementById('ctxWard').textContent = ward ? `Ward ${ward}${wardName ? ' – ' + wardName : ''}` : 'Ward —';
+    document.getElementById('ctxArea').textContent = colony || 'Area not specified';
     banner.classList.add('show');
   }
 
-  document.getElementById('compColony').addEventListener('input', updateWardContextBanner);
-
   function renderRecentComplaints() {
     const tbody = document.getElementById('recentComplaintsBody');
+    if (!tbody) return;
     tbody.innerHTML = '';
-    
-    // Show last 6 complaints
-    const list = [...storedComplaints].reverse().slice(0, 6);
-    
-    if (list.length === 0) {
+    const list = [...storedComplaints].slice(0, 6);
+    if (!list.length) {
       tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted)">No complaints filed yet.</td></tr>`;
       return;
     }
-
     list.forEach(c => {
       const badgeClass = c.status === 'Resolved' ? 's-resolved' : c.status === 'In Progress' ? 's-progress' : 's-pending';
-      const colony = getColonyLabel(c);
       tbody.innerHTML += `
         <tr>
           <td style="color:var(--accent);font-weight:700;">${c.id}</td>
           <td>Ward ${c.ward}</td>
-          <td>${colony}</td>
+          <td>${getColonyLabel(c)}</td>
           <td>${c.category}</td>
           <td><span class="status-badge ${badgeClass}">${c.status}</span></td>
           <td>${c.date || new Date().toLocaleDateString('en-IN')}</td>
-        </tr>
-      `;
+        </tr>`;
     });
   }
 
   function previewPhoto(e) {
-    const file = e.target.files && e.target.files[0];
+    const file = e.target.files?.[0];
     const preview = document.getElementById('compPhotoPreview');
     const img = document.getElementById('compPhotoImg');
     if (file && img) {
       const reader = new FileReader();
-      reader.onload = () => {
-        img.src = reader.result;
-        if (preview) preview.style.display = 'block';
-      };
+      reader.onload = () => { img.src = reader.result; if (preview) preview.style.display = 'block'; };
       reader.readAsDataURL(file);
     } else {
       if (img) img.src = '';
@@ -553,67 +1204,80 @@
     }
   }
 
-  function submitComplaint(e) {
+  async function submitComplaint(e) {
     e.preventDefault();
     const ward = document.getElementById('compWard').value;
     const cat = document.getElementById('compCategory').value;
     const colony = document.getElementById('compColony').value.trim();
     const desc = document.getElementById('compDesc').value.trim();
     const photoInput = document.getElementById('compPhoto');
+    const submitBtn = document.querySelector('.btn-submit');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '⏳ Submitting…'; }
 
-    if (typeof generateId !== 'function') return;
-
-    const newId = generateId('GVMC');
-
-    function finalizeSubmit(photoData) {
-      const newComplaint = {
+    async function finalizeSubmit(photoData) {
+      const newId = (typeof generateId === 'function') ? generateId('GVMC') : 'GVMC-LOCAL-' + Date.now();
+      const payload = {
         id: newId,
-        ward: parseInt(ward),
+        ward_id: parseInt(ward),
         category: cat,
-        colony: colony,
-        desc: desc,
+        colony,
+        description: desc,
         status: 'Pending',
+        priority: 'Medium',
         date: new Date().toLocaleDateString('en-IN')
       };
-      if (photoData) newComplaint.photo = photoData;
+      if (photoData) payload.photo = photoData;
 
-      storedComplaints.push(newComplaint);
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(storedComplaints));
-
-      // Toast & Reset
-      showToast(`Complaint lodged successfully! ID: ${newId}`, 'success');
+      try {
+        if (!window.supabaseClient) throw new Error('Supabase not initialized');
+        const { data, error } = await window.supabaseClient.from('complaints').insert([payload]).select().single();
+        if (error) throw error;
+        storedComplaints.unshift({ id: data.id, ward: data.ward_id, category: data.category, colony: data.colony || colony, desc: data.description || desc, status: data.status, date: data.date || new Date(data.created_at).toLocaleDateString('en-IN') });
+        if (typeof showToast === 'function') showToast(`✅ Complaint lodged! ID: ${data.id}`, 'success');
+      } catch (err) {
+        console.warn('Saving locally:', err);
+        storedComplaints.unshift({ id: newId, ward: parseInt(ward), category: cat, colony, desc, status: 'Pending', date: new Date().toLocaleDateString('en-IN') });
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(storedComplaints));
+        if (typeof showToast === 'function') showToast(`Saved locally! ID: ${newId}`, 'info');
+      }
       document.getElementById('complaintForm').reset();
       const preview = document.getElementById('compPhotoPreview');
       if (preview) preview.style.display = 'none';
       applySearchedWardContext();
       renderRecentComplaints();
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '🚀 Submit Complaint'; }
     }
 
-    if (photoInput && photoInput.files && photoInput.files[0]) {
-      const file = photoInput.files[0];
+    if (photoInput?.files?.[0]) {
       const reader = new FileReader();
       reader.onload = () => finalizeSubmit(reader.result);
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(photoInput.files[0]);
     } else {
-      finalizeSubmit(null);
+      await finalizeSubmit(null);
     }
   }
 
-  function trackComplaint() {
+  async function trackComplaint() {
     const id = document.getElementById('trackInput').value.trim().toUpperCase();
     const resBox = document.getElementById('trackResult');
+    if (!id) { resBox.classList.remove('show'); return; }
+    resBox.innerHTML = `<span style="color:var(--text-muted);font-size:0.83rem;">⏳ Searching…</span>`;
+    resBox.classList.add('show');
 
-    if (!id) {
-      resBox.classList.remove('show');
-      return;
-    }
+    let match = null;
+    try {
+      if (!window.supabaseClient) throw new Error('Supabase not initialized');
+      const { data, error } = await window.supabaseClient.from('complaints').select('*').eq('id', id).single();
+      if (error) throw error;
+      if (data) match = { id: data.id, ward: data.ward_id, category: data.category, colony: data.colony || '—', desc: data.description || '—', status: data.status, date: data.date || (data.created_at ? new Date(data.created_at).toLocaleDateString('en-IN') : '—'), photo: data.photo || null };
+    } catch (err) { console.warn('Supabase lookup failed:', err); }
 
-    const match = storedComplaints.find(c => c.id.toUpperCase() === id);
+    if (!match) match = storedComplaints.find(c => c.id.toUpperCase() === id);
 
     if (match) {
       const badgeClass = match.status === 'Resolved' ? 's-resolved' : match.status === 'In Progress' ? 's-progress' : 's-pending';
       resBox.innerHTML = `
-        <div style="display:flex;justify-content:between;align-items:center;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:8px;">
           <span style="font-weight:700;color:var(--accent)">ID: ${match.id}</span>
           <span class="status-badge ${badgeClass}">${match.status}</span>
         </div>
@@ -621,19 +1285,15 @@
           <div><strong>Category:</strong> ${match.category}</div>
           <div><strong>Ward:</strong> Ward ${match.ward}</div>
           <div><strong>Colony / Area:</strong> ${getColonyLabel(match)}</div>
-          <div><strong>Details:</strong> ${match.desc}</div>
-          ${match.photo ? `<div style="margin-top:8px;"><img src="${match.photo}" style="max-width:100%;border-radius:6px;border:1px solid rgba(255,255,255,0.06);" alt="Complaint photo" /></div>` : ''}
+          <div><strong>Details:</strong> ${match.desc || match.description || '—'}</div>
+          ${match.photo ? `<div style="margin-top:8px;"><img src="${match.photo}" style="max-width:100%;border-radius:6px;" alt="Complaint photo" /></div>` : ''}
           <div style="margin-top:4px;font-style:italic;"><strong>Filed on:</strong> ${match.date}</div>
-        </div>
-      `;
-      resBox.classList.add('show');
+        </div>`;
     } else {
       resBox.innerHTML = `<span style="color:#f87171;font-size:0.83rem;">❌ Complaint ID not found. Verify and try again.</span>`;
-      resBox.classList.add('show');
     }
+    resBox.classList.add('show');
   }
-
-
 </script>
 
 <!-- ════════════════════════════════════════════
@@ -668,10 +1328,10 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="modalUsernameInput">👤 &nbsp;Username</label>
+        <label class="form-label" for="modalUsernameInput">✉️ &nbsp;Email Address</label>
         <div class="input-icon-wrap">
-          <span class="icon">@</span>
-          <input class="form-control" type="text" id="modalUsernameInput" placeholder="Enter your username" autocomplete="username" />
+          <span class="icon">✉</span>
+          <input class="form-control" type="email" id="modalUsernameInput" placeholder="Enter your email address" autocomplete="email" />
         </div>
       </div>
 
@@ -698,8 +1358,8 @@
       <div class="demo-creds-title">🔐 Test Access Credentials</div>
       <div class="demo-row">
         <div class="demo-item">
-          <span class="demo-lbl">Username</span>
-          <span class="demo-val">admin</span>
+          <span class="demo-lbl">Email</span>
+          <span class="demo-val">admin@gmail.com</span>
         </div>
         <div class="demo-item">
           <span class="demo-lbl">Password</span>

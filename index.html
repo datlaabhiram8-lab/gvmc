@@ -797,11 +797,9 @@
 
     <!-- Suggestion Chips -->
     <div class="chips">
-      <span class="chip" onclick="chipSearch('MVP Colony')">📍 MVP Colony</span>
       <span class="chip" onclick="chipSearch('Sagarnagar')">📍 Sagarnagar</span>
       <span class="chip" onclick="chipSearch('Maddilapalem')">📍 Maddilapalem</span>
       <span class="chip" onclick="chipSearch('Arilova')">📍 Arilova</span>
-      <span class="chip" onclick="chipSearch('Gajuwaka')">📍 Gajuwaka</span>
     </div>
 
     <!-- Result Card -->
@@ -831,7 +829,7 @@
     <!-- No Result -->
     <div class="no-result" id="noResult">
       <i class="fa-solid fa-circle-exclamation" style="margin-right:6px"></i>
-      No ward found for "<span id="searchedTerm"></span>". Try MVP Colony, Sagarnagar, or another locality.
+      No ward found for "<span id="searchedTerm"></span>". Try Maddilapalem, Sagarnagar, or another locality.
     </div>
   </div>
 </section>
@@ -1052,6 +1050,9 @@
 <!-- ════════════════════════════════════════════
      SCRIPTS
 ════════════════════════════════════════════ -->
+<!-- Supabase Integration -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
 <script src="js/main.js"></script>
 <script src="js/ward_data.js"></script>
 <script src="js/demographics.js"></script>
@@ -1328,10 +1329,10 @@ window.addEventListener('DOMContentLoaded', buildInsights);
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="modalUsernameInput">👤 &nbsp;Username</label>
+        <label class="form-label" for="modalUsernameInput">✉️ &nbsp;Email Address</label>
         <div class="input-icon-wrap">
-          <span class="icon">@</span>
-          <input class="form-control" type="text" id="modalUsernameInput" placeholder="Enter your username" autocomplete="username" />
+          <span class="icon">✉</span>
+          <input class="form-control" type="email" id="modalUsernameInput" placeholder="Enter your email address" autocomplete="email" />
         </div>
       </div>
 
@@ -1353,27 +1354,6 @@ window.addEventListener('DOMContentLoaded', buildInsights);
       </button>
     </form>
 
-    <div class="login-divider"><span>Demo Credentials</span></div>
-    <div class="demo-creds">
-      <div class="demo-creds-title">🔐 Test Access Credentials</div>
-      <div class="demo-row">
-        <div class="demo-item">
-          <span class="demo-lbl">Username</span>
-          <span class="demo-val">admin</span>
-        </div>
-        <div class="demo-item">
-          <span class="demo-lbl">Password</span>
-          <span class="demo-val">admin123</span>
-        </div>
-        <button type="button" class="btn-autofill" onclick="autofillModal()">↗ Autofill</button>
-      </div>
-    </div>
-
-    <div class="login-footer-note">
-      Need help? Contact <a href="mailto:support@gvmc.gov.in">support@gvmc.gov.in</a>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>

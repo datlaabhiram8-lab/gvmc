@@ -60,8 +60,12 @@ lines.append("}")
 
 with open('ward_data.js', 'w', encoding='utf-8') as f:
     f.write('\n'.join(lines))
+import os
+os.makedirs('js', exist_ok=True)
+with open('js/ward_data.js', 'w', encoding='utf-8') as f:
+    f.write('\n'.join(lines))
 
-print("ward_data.js written successfully!")
+print("ward_data.js and js/ward_data.js written successfully!")
 print("Total wards with data:", len(clean_lookup))
 print("Total searchable area entries:", len(area_to_ward))
 

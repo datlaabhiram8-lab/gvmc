@@ -442,6 +442,128 @@
     .s-resolved { background: rgba(16,185,129,0.15); color: var(--success); }
     .s-resolved::before { background: var(--success); }
 
+    /* ── Officer Panel ── */
+    .officer-panel {
+      background: var(--bg-glass);
+      border: 1px solid rgba(26,86,219,0.3);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: none; /* hidden by default, shown for officers */
+    }
+    .officer-panel-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-glass);
+      background: linear-gradient(135deg, rgba(26,86,219,0.15) 0%, rgba(6,182,212,0.1) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .officer-panel-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .officer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(26,86,219,0.2);
+      border: 1px solid rgba(26,86,219,0.4);
+      color: var(--primary-light);
+      padding: 0.2rem 0.65rem;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .officer-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border-glass);
+      background: rgba(255,255,255,0.02);
+    }
+    .officer-filter-select {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border-glass);
+      color: var(--text-primary);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-family: inherit;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .officer-filter-select:focus {
+      outline: none;
+      border-color: var(--primary-light);
+    }
+    .officer-filter-btn {
+      background: var(--gradient-btn);
+      color: white;
+      border: none;
+      padding: 0.45rem 1rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+    .officer-filter-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .officer-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-bottom: 1px solid var(--border-glass);
+    }
+    @media (max-width: 768px) { .officer-kpi-row { grid-template-columns: repeat(2, 1fr); } }
+    .officer-kpi-item {
+      padding: 1rem 1.25rem;
+      text-align: center;
+      border-right: 1px solid var(--border-glass);
+    }
+    .officer-kpi-item:last-child { border-right: none; }
+    .officer-kpi-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .officer-kpi-lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0.25rem; }
+    /* Complaint action buttons */
+    .complaint-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+    .action-resolve { background: rgba(16,185,129,0.15); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+    .action-resolve:hover { background: rgba(16,185,129,0.3); }
+    .action-progress { background: rgba(26,86,219,0.15); color: var(--primary-light); border: 1px solid rgba(26,86,219,0.3); }
+    .action-progress:hover { background: rgba(26,86,219,0.3); }
+    .action-pending { background: rgba(245,158,11,0.15); color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
+    .action-pending:hover { background: rgba(245,158,11,0.3); }
+    .action-view { background: rgba(6,182,212,0.12); color: var(--accent); border: 1px solid rgba(6,182,212,0.25); }
+    .action-view:hover { background: rgba(6,182,212,0.25); }
+    /* Citizen poll hidden for officers */
+    .citizen-only-poll.officer-hidden { display: none !important; }
+
     /* ── Citizen Feedback ── */
     .feedback-card {
       background: var(--bg-glass);
@@ -590,22 +712,29 @@
     .amenities-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
+      gap: 1rem;
       margin-top: 1rem;
     }
-    @media (max-width: 992px) {
+    @media (max-width: 640px) {
       .amenities-grid {
         grid-template-columns: 1fr;
       }
     }
+    @media (min-width: 641px) and (max-width: 900px) {
+      .amenities-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.65rem;
+      }
+    }
     .amenities-col {
-      background: rgba(255, 255, 255, 0.01);
+      background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--border-glass);
       border-radius: var(--radius);
-      padding: 1.25rem;
+      padding: 1rem;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 0.75rem;
+      min-width: 0;
     }
     .col-title {
       font-size: 0.95rem;
@@ -626,12 +755,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      padding: 0.75rem;
+      gap: 8px;
+      padding: 0.6rem 0.75rem;
       background: rgba(26,86,219,0.02);
       border: 1px solid rgba(26,86,219,0.06);
       border-radius: var(--radius);
       transition: var(--transition);
+      min-width: 0;
     }
     .poi-item:hover {
       background: rgba(26,86,219,0.06);
@@ -864,8 +994,8 @@
           </div>
         </div>
 
-        <!-- Citizen Feedback Poll -->
-        <div class="chart-wrapper" style="display: flex; flex-direction: column;">
+        <!-- Citizen Feedback Poll — hidden for logged-in officers -->
+        <div id="citizenPollCard" class="chart-wrapper citizen-only-poll" style="display: flex; flex-direction: column;">
           <div class="chart-title">📋 Citizen Feedback Poll</div>
           <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.4;">Rate the sustainability of this ward. Your feedback contributes to the overall Citizen Satisfaction score.</p>
           <form id="pollForm" class="poll-form">
@@ -1038,8 +1168,8 @@
       <a href="#" id="compareLink" class="btn-compare">Compare Wards →</a>
     </div>
 
-    <!-- ── 6. RECENT COMPLAINTS TABLE ── -->
-    <div class="table-card">
+    <!-- ── 6. RECENT COMPLAINTS TABLE (Citizens) ── -->
+    <div class="table-card" id="citizenComplaintsCard">
       <div class="table-card-header">
         <div class="table-card-title">🚨 Recent Complaints</div>
         <a href="complaints.html" style="font-size:0.82rem;color:var(--accent);">View all →</a>
@@ -1059,6 +1189,102 @@
           </thead>
           <tbody id="complaintsTbody"></tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- ── 6b. OFFICER COMPLAINTS MANAGEMENT PANEL ── -->
+    <div class="officer-panel" id="officerComplaintsPanel">
+      <div class="officer-panel-header">
+        <div class="officer-panel-title">
+          <span>🛡️ Complaints Management Portal</span>
+          <span class="officer-badge" id="officerRoleBadge">Admin</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.6rem;">
+          <button class="officer-filter-btn" onclick="refreshOfficerComplaints()" style="background:rgba(16,185,129,0.15);color:var(--success);border:1px solid rgba(16,185,129,0.3);">⟳ Refresh</button>
+          <a href="complaints.html" class="officer-filter-btn">+ New Complaint</a>
+        </div>
+      </div>
+
+      <!-- KPI Row -->
+      <div class="officer-kpi-row">
+        <div class="officer-kpi-item">
+          <div class="officer-kpi-num" id="officerKpiTotal" style="color:var(--primary-light);">–</div>
+          <div class="officer-kpi-lbl">Total</div>
+        </div>
+        <div class="officer-kpi-item">
+          <div class="officer-kpi-num" id="officerKpiPending" style="color:var(--warning);">–</div>
+          <div class="officer-kpi-lbl">Pending</div>
+        </div>
+        <div class="officer-kpi-item">
+          <div class="officer-kpi-num" id="officerKpiProgress" style="color:var(--primary-light);">–</div>
+          <div class="officer-kpi-lbl">In Progress</div>
+        </div>
+        <div class="officer-kpi-item">
+          <div class="officer-kpi-num" id="officerKpiResolved" style="color:var(--success);">–</div>
+          <div class="officer-kpi-lbl">Resolved</div>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="officer-filter-bar">
+        <label style="font-size:0.78rem;font-weight:600;color:var(--text-muted);">Filter:</label>
+        <select id="officerStatusFilter" class="officer-filter-select">
+          <option value="">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+        </select>
+        <select id="officerCategoryFilter" class="officer-filter-select">
+          <option value="">All Categories</option>
+          <option value="Roads &amp; Infrastructure">Roads &amp; Infrastructure</option>
+          <option value="Sanitation">Sanitation</option>
+          <option value="Water Supply">Water Supply</option>
+          <option value="Electricity">Electricity</option>
+          <option value="Drainage">Drainage</option>
+          <option value="Other">Other</option>
+        </select>
+        <button class="officer-filter-btn" onclick="applyOfficerFilters()">Apply Filters</button>
+        <button class="officer-filter-btn" onclick="resetOfficerFilters()" style="background:transparent;color:var(--text-muted);border:1px solid var(--border-glass);">Reset</button>
+        <span style="margin-left:auto;font-size:0.75rem;color:var(--text-muted);" id="officerComplaintCount"></span>
+      </div>
+
+      <!-- Complaints Table -->
+      <div style="overflow-x:auto;">
+        <table class="data-table" id="officerComplaintsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Description</th>
+              <th>Area / Colony</th>
+              <th>Category</th>
+              <th>Date Filed</th>
+              <th>Status</th>
+              <th>Priority</th>
+              <th style="min-width:200px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="officerComplaintsTbody">
+            <tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-muted);">⏳ Loading complaints…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- View Detail Modal -->
+      <div id="complaintDetailModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);align-items:center;justify-content:center;">
+        <div style="background:#0f172a;border:1px solid rgba(255,255,255,0.12);border-radius:16px;max-width:560px;width:90%;padding:2rem;position:relative;max-height:90vh;overflow-y:auto;">
+          <button onclick="document.getElementById('complaintDetailModal').style.display='none'" style="position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.08);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;">✕</button>
+          <div style="font-size:1.1rem;font-weight:700;margin-bottom:1.25rem;color:#f1f5f9;" id="detailModalTitle">Complaint Details</div>
+          <div id="detailModalBody" style="font-size:0.88rem;color:#94a3b8;line-height:1.6;"></div>
+          <div style="margin-top:1.5rem;display:flex;gap:0.75rem;flex-wrap:wrap;">
+            <label style="font-size:0.78rem;font-weight:700;color:var(--text-muted);display:block;margin-bottom:0.35rem;width:100%;">Update Status:</label>
+            <select id="detailStatusSelect" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#f1f5f9;padding:0.5rem 0.9rem;border-radius:8px;font-family:inherit;flex:1;">
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Resolved">Resolved</option>
+            </select>
+            <button onclick="saveDetailStatus()" style="background:var(--gradient-btn);color:white;border:none;padding:0.5rem 1.2rem;border-radius:8px;font-weight:600;cursor:pointer;font-family:inherit;">Save Status</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1167,6 +1393,9 @@
 <!-- ═══════════════════════════════════════════════
      DATA SCRIPTS
      ═══════════════════════════════════════════════ -->
+<!-- Supabase Integration -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
 <script src="js/main.js"></script>
 <script src="js/ward_data.js"></script>
 <script src="js/demographics.js"></script>
@@ -1177,59 +1406,8 @@
      ═══════════════════════════════════════════════ -->
 <script>
 // ────────────────────────────────────────────────
-// -0. SESSION UI — show officer name + logout button
-// ────────────────────────────────────────────────
-(function sessionUI() {
-  try {
-    if (localStorage.getItem('gvmc_officer_logged_in') !== 'true') return;
-  } catch (e) { return; }
-
-  var role, name;
-  try {
-    role    = localStorage.getItem('gvmc_officer_role')  || 'Officer';
-    name    = localStorage.getItem('gvmc_officer_name') || 'Admin';
-  } catch (e) {
-    role = 'Officer';
-    name = 'Admin';
-  }
-  const area    = document.getElementById('headerSessionArea');
-  if (!area) return;
-  area.innerHTML = `
-    <div style="display:flex;align-items:center;gap:0.75rem;">
-      <div style="
-        display:flex;flex-direction:column;align-items:flex-end;
-        font-family:'Inter',sans-serif;
-      ">
-        <span style="font-size:0.75rem;font-weight:700;color:var(--text-primary);">${name}</span>
-        <span style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">${role}</span>
-      </div>
-      <div style="
-        width:36px;height:36px;border-radius:50%;
-        background:linear-gradient(135deg,#1a56db,#06b6d4);
-        display:flex;align-items:center;justify-content:center;
-        font-size:1rem;font-weight:700;color:white;
-        box-shadow:0 0 14px rgba(26,86,219,0.4);
-        flex-shrink:0;
-      ">${name.charAt(0).toUpperCase()}</div>
-      <a href="#" onclick="logoutOfficer(); return false;" style="
-        display:inline-flex;align-items:center;gap:5px;
-        background:rgba(239,68,68,0.12);
-        border:1px solid rgba(239,68,68,0.28);
-        color:#f87171;
-        padding:0.4rem 0.85rem;
-        border-radius:8px;
-        font-size:0.75rem;
-        font-weight:600;
-        text-decoration:none;
-        transition:all 0.25s;
-        white-space:nowrap;
-        cursor:pointer;
-      " onmouseover="this.style.background='rgba(239,68,68,0.22)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">
-        <i class="fa-solid fa-right-from-bracket"></i> Logout
-      </a>
-    </div>
-  `;
-})();
+// -0. SESSION UI
+// Replaced by global updateHeaderAuth() call in main.js
 
 // ────────────────────────────────────────────────
 // 0. HELPERS
@@ -1289,12 +1467,11 @@ if (!D) {
   document.getElementById('pageTitle').textContent = 'Ward Not Found';
 } else {
 
-  // Load dynamic sustainability data
-  const dynamicSustainData = getWardSustainabilityData(wardNum);
-  const sustainTotal = dynamicSustainData.finalScore;
-  const ratings = dynamicSustainData.finalRatings;
-
-
+  // ── Load dynamic sustainability data async, then render all dependent sections ──
+  (async function initSustainabilityAndDependents() {
+    const dynamicSustainData = await getWardSustainabilityData(wardNum);
+    const sustainTotal = dynamicSustainData.finalScore;
+    const ratings = dynamicSustainData.finalRatings;
 
   // ── 3a. Update page headings ──
   document.getElementById('wardNumDisplay').textContent = wardNum;
@@ -1304,18 +1481,16 @@ if (!D) {
   document.title = `Ward ${wardNum} Dashboard – GVMC Portal`;
 
   // ── 3b. Animate KPI counters ──
-  window.addEventListener('load', () => {
-    animateCounter(document.getElementById('kpiPop'), D.population, '', 1500);
-    document.getElementById('kpiPopSub').textContent =
-      `♂ ${D.male.toLocaleString('en-IN')} · ♀ ${D.female.toLocaleString('en-IN')}`;
+  animateCounter(document.getElementById('kpiPop'), D.population, '', 1500);
+  document.getElementById('kpiPopSub').textContent =
+    `♂ ${D.male.toLocaleString('en-IN')} · ♀ ${D.female.toLocaleString('en-IN')}`;
 
-    animateCounter(document.getElementById('kpiWomen'), D.womenPct, '%', 1200, 1);
-    document.getElementById('kpiWomenSub').textContent =
-      `${D.female.toLocaleString('en-IN')} women`;
+  animateCounter(document.getElementById('kpiWomen'), D.womenPct, '%', 1200, 1);
+  document.getElementById('kpiWomenSub').textContent =
+    `${D.female.toLocaleString('en-IN')} women`;
 
-    animateCounter(document.getElementById('kpiSustain'), sustainTotal, '', 1400);
-    document.getElementById('kpiSustainSub').textContent = 'out of 100';
-  });
+  animateCounter(document.getElementById('kpiSustain'), sustainTotal, '', 1400);
+  document.getElementById('kpiSustainSub').textContent = 'out of 100';
 
   // ── 3c. Demographics Charts ──
   Chart.defaults.color = '#94a3b8';
@@ -1463,16 +1638,47 @@ if (!D) {
   // ── 3f. Compare link ──
   document.getElementById('compareLink').href = `ward-comparison.html?ward1=${wardNum}`;
 
-  // ── 3g. Complaints Table (sample data) ──
-  (function renderComplaints() {
-    const wardAreas = (typeof WARD_AREAS !== 'undefined' && WARD_AREAS[String(wardNum)]) || [];
-    const complaints = [
-      { id:'CMP-2024-'+(wardNum*11+1), text:'Pothole on main approach road causing accidents', area: wardAreas[0] || D.name, cat:'Roads & Infrastructure', date:'10 Jun 2026', status:'s-progress', priority:'High' },
-      { id:'CMP-2024-'+(wardNum*11+2), text:'Street lights not working near community park', area: wardAreas[1] || wardAreas[0] || D.name, cat:'Electricity', date:'08 Jun 2026', status:'s-pending',  priority:'Medium' },
-      { id:'CMP-2024-'+(wardNum*11+3), text:'Garbage not collected for 3 days in sector area', area: wardAreas[2] || wardAreas[0] || D.name, cat:'Sanitation', date:'06 Jun 2026', status:'s-resolved', priority:'Low' },
-    ];
+  // ── 3g. Complaints Table — load from API with fallback ──
+  (async function renderComplaints() {
     const tbody = document.getElementById('complaintsTbody');
-    complaints.forEach((c, i) => {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text-muted)">⏳ Loading complaints…</td></tr>`;
+
+    let complaints = [];
+    try {
+      if (!window.supabaseClient) throw new Error("Supabase client not initialized");
+      const { data, error } = await window.supabaseClient
+        .from('complaints')
+        .select('*')
+        .eq('ward_id', wardNum)
+        .order('created_at', { ascending: false })
+        .limit(5);
+      if (error) throw error;
+      
+      complaints = data.map(c => ({
+        id: c.id,
+        text: c.description || 'No description provided',
+        area: c.colony || D.name,
+        cat: c.category,
+        date: c.created_at ? new Date(c.created_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—',
+        status: c.status === 'Resolved' ? 's-resolved' : c.status === 'In Progress' ? 's-progress' : 's-pending',
+        priority: 'Medium'
+      }));
+    } catch (err) {
+      console.warn('Could not load complaints from Supabase, using sample data:', err);
+    }
+
+    // Fallback to sample data if API returned nothing
+    if (!complaints.length) {
+      const wardAreas = (typeof WARD_AREAS !== 'undefined' && WARD_AREAS[String(wardNum)]) || [];
+      complaints = [
+        { id:'CMP-2024-'+(wardNum*11+1), text:'Pothole on main approach road causing accidents', area: wardAreas[0] || D.name, cat:'Roads & Infrastructure', date:'10 Jun 2026', status:'s-progress', priority:'High' },
+        { id:'CMP-2024-'+(wardNum*11+2), text:'Street lights not working near community park', area: wardAreas[1] || wardAreas[0] || D.name, cat:'Electricity', date:'08 Jun 2026', status:'s-pending', priority:'Medium' },
+        { id:'CMP-2024-'+(wardNum*11+3), text:'Garbage not collected for 3 days near market area', area: wardAreas[2] || wardAreas[0] || D.name, cat:'Sanitation', date:'05 Jun 2026', status:'s-pending', priority:'Medium' },
+      ];
+    }
+
+    tbody.innerHTML = '';
+    complaints.forEach((c) => {
       const statusLabel = c.status === 's-pending' ? 'Pending' : c.status === 's-progress' ? 'In Progress' : 'Resolved';
       const prioColor = c.priority === 'High' ? '#f87171' : c.priority === 'Medium' ? '#f59e0b' : '#10b981';
       tbody.innerHTML += `
@@ -1488,41 +1694,6 @@ if (!D) {
     });
   })();
 
-  // ── 3h. Citizen Feedback Ratings ──
-  (function renderFeedback() {
-    const categories = [
-      { icon: '🧹', name: 'Cleanliness & Waste', rating: +(ratings.cleanliness / 2).toFixed(1) },
-      { icon: '💧', name: 'Water Availability', rating: +(ratings.water / 2).toFixed(1) },
-      { icon: '🚌', name: 'Public Transport', rating: +(ratings.transport / 2).toFixed(1) },
-      { icon: '🌳', name: 'Green Spaces', rating: +(ratings.green / 2).toFixed(1) },
-      { icon: '🛣️', name: 'Road Infrastructure', rating: +(ratings.roads / 2).toFixed(1) },
-      { icon: '🌬️', name: 'Air/Noise Pollution', rating: +(ratings.pollution / 2).toFixed(1) },
-      { icon: '🛡️', name: 'Disaster Safety', rating: +(ratings.disaster / 2).toFixed(1) },
-      { icon: '🗳️', name: 'Citizen Participation', rating: +(ratings.governance / 2).toFixed(1) }
-    ];
-
-    function starsHTML(r) {
-      let html = '';
-      for (let i = 1; i <= 5; i++) {
-        if (r >= i)          html += '<span class="star-filled">★</span>';
-        else if (r >= i-0.5) html += '<span class="star-half">★</span>';
-        else                 html += '<span class="star-empty">★</span>';
-      }
-      return html;
-    }
-
-    const grid = document.getElementById('feedbackGrid');
-    grid.innerHTML = '';
-    categories.forEach(c => {
-      grid.innerHTML += `
-        <div class="feedback-item">
-          <div class="feedback-icon">${c.icon}</div>
-          <div class="feedback-category">${c.name}</div>
-          <div class="stars-wrap">${starsHTML(c.rating)}</div>
-          <div class="feedback-score">${c.rating} / 5.0</div>
-        </div>`;
-    });
-  })();
 
   // ── 3i. Active Projects ──
   (function renderProjects() {
@@ -1554,31 +1725,34 @@ if (!D) {
     ];
 
     const list = document.getElementById('projectList');
-    projects.forEach(p => {
-      const tagsHTML = p.tags.map(t => `<span class="project-tag ${t.cls}">${t.label}</span>`).join('');
-      list.innerHTML += `
-        <div class="project-item">
-          <div class="project-header">
-            <div>
-              <div class="project-name">${p.name}</div>
-              <div class="project-meta">${tagsHTML}</div>
+    if (list) {
+      list.innerHTML = '';
+      projects.forEach(p => {
+        const tagsHTML = p.tags.map(t => `<span class="project-tag ${t.cls}">${t.label}</span>`).join('');
+        list.innerHTML += `
+          <div class="project-item">
+            <div class="project-header">
+              <div>
+                <div class="project-name">${p.name}</div>
+                <div class="project-meta">${tagsHTML}</div>
+              </div>
+              <div class="project-pct" style="color:${p.pct >= 60 ? 'var(--success)' : p.pct >= 35 ? 'var(--warning)' : 'var(--accent)'}">
+                ${p.pct}%
+              </div>
             </div>
-            <div class="project-pct" style="color:${p.pct >= 60 ? 'var(--success)' : p.pct >= 35 ? 'var(--warning)' : 'var(--accent)'}">
-              ${p.pct}%
+            <div class="proj-bar-wrap">
+              <div class="proj-bar">
+                <div class="proj-fill" style="width:${p.pct}%;background:${p.color}"></div>
+              </div>
             </div>
-          </div>
-          <div class="proj-bar-wrap">
-            <div class="proj-bar">
-              <div class="proj-fill" style="width:${p.pct}%;background:${p.color}"></div>
+            <div class="proj-dates">
+              <span>📅 Start: ${p.start}</span>
+              <span>Budget: ${p.budget}</span>
+              <span>🏁 End: ${p.end}</span>
             </div>
-          </div>
-          <div class="proj-dates">
-            <span>📅 Start: ${p.start}</span>
-            <span>Budget: ${p.budget}</span>
-            <span>🏁 End: ${p.end}</span>
-          </div>
-        </div>`;
-    });
+          </div>`;
+      });
+    }
   })();
 
   // ── 3j. Render Nearby Amenities ──
@@ -1588,11 +1762,9 @@ if (!D) {
     const wardCoords = GVMC_MAP.getWardCoords(wardNum);
     if (!wardCoords) return;
 
-    // Get the ward boundary polygon if available (wards 73-120)
     const hasBoundary = typeof WARD_BOUNDARIES !== 'undefined' && WARD_BOUNDARIES[wardNum];
     const boundary = hasBoundary ? WARD_BOUNDARIES[wardNum] : null;
 
-    // Ray-casting point-in-polygon test
     function isInsideBoundary(lat, lng, polygon) {
       let inside = false;
       for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
@@ -1605,46 +1777,83 @@ if (!D) {
       return inside;
     }
 
-    // Helper to calculate distance in km using Haversine
     function getDistance(lat1, lon1, lat2, lon2) {
       const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLon = (lon2 - lon1) * Math.PI / 180;
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      return R * c;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
-    // Max radius (km) for wards without boundary data
     const MAX_RADIUS_KM = 2;
 
     function getNearby(category, maxCount = 4) {
       const wNum = parseInt(wardNum);
-      if (wNum === 1 || wNum === 2 || wNum === 3) {
+      if ([1, 2, 3].includes(wNum)) {
+        let items = [];
+        if (category === 'park') items = [{ name: "Waves Amusement Park", lat: 17.8920, lng: 83.4485 }, { name: "Mandi Park", lat: 17.8905, lng: 83.4460 }, { name: "Divis Park", lat: 17.8885, lng: 83.4495 }, { name: "Beach Park", lat: 17.8890, lng: 83.4510 }];
+        else if (category === 'school') items = [{ name: "Cambridge School", lat: 17.8910, lng: 83.4450 }, { name: "Govt High School Bheemili", lat: 17.8935, lng: 83.4470 }, { name: "CBM School", lat: 17.8870, lng: 83.4435 }, { name: "Saint Ann's School", lat: 17.8950, lng: 83.4500 }];
+        else if (category === 'hospital') items = [{ name: "Apollo Pharmacy", lat: 17.8915, lng: 83.4465 }, { name: "Varun Health Centre", lat: 17.8925, lng: 83.4490 }, { name: "Veterinary Hospital", lat: 17.8860, lng: 83.4445 }, { name: "Govt Hospital", lat: 17.8940, lng: 83.4525 }];
+        return items.map(item => ({ ...item, distance: getDistance(wardCoords.lat, wardCoords.lng, item.lat, item.lng) })).sort((a, b) => a.distance - b.distance);
+      }
+      if (wNum === 8) {
         let items = [];
         if (category === 'park') {
           items = [
-            { name: "Waves Amusement Park", lat: 17.8920, lng: 83.4485 },
-            { name: "Mandi Park", lat: 17.8905, lng: 83.4460 },
-            { name: "Divis Park", lat: 17.8885, lng: 83.4495 },
-            { name: "Beach Park", lat: 17.8890, lng: 83.4510 }
+            { name: "NTR PARK, SAGARNAGAR", address: "12, Sagar Nagar, Endada, Andhra Pradesh 530045, India", lat: 17.7912, lng: 83.3345 },
+            { name: "M.G.D. Park", address: "Q984+2XX, opp. to Shankar Saloon, Ntr Marg, Sagar Nagar, Endada, Andhra Pradesh 530045, India", lat: 17.7891, lng: 83.3372 }
           ];
         } else if (category === 'school') {
           items = [
-            { name: "Cambridge School", lat: 17.8910, lng: 83.4450 },
-            { name: "Government High School Bheemunipatnam", lat: 17.8935, lng: 83.4470 },
-            { name: "CBM School", lat: 17.8870, lng: 83.4435 },
-            { name: "Saint Ann's English Medium School", lat: 17.8950, lng: 83.4500 }
+            { name: "The phoenix school international", address: "plot no 61, opposite Basketball ground, Ntr Marg, Sagar Nagar, Endada, Andhra Pradesh 530045, India", lat: 17.7938, lng: 83.3392 }
           ];
         } else if (category === 'hospital') {
           items = [
-            { name: "Apollo Pharmacy Bheemunipatnam", lat: 17.8915, lng: 83.4465 },
-            { name: "Varun Health Centren Bheemili", lat: 17.8925, lng: 83.4490 },
-            { name: "Veterinary Hospital", lat: 17.8860, lng: 83.4445 },
-            { name: "Government Hospital", lat: 17.8940, lng: 83.4525 }
+            { name: "Sagar Eye Care & Opticals", address: "LIG-B247, near Govt.Hospital, near Alluri Seetharama Raju, Ntr Marg, Sagar Nagar, Endada, Andhra Pradesh 530045, India", lat: 17.7925, lng: 83.3355 },
+            { name: "Apollo Pharmacy", address: "Plot No. 61, Beach Rd, Ntr Marg, Sagar Nagar, Endada, Andhra Pradesh 530045, India", lat: 17.7885, lng: 83.3338 },
+            { name: "Cheshvi's Orthodontic&Dental specialities", address: "Near, sitaramaraju statu, opp. Apollo pharmacy, Ntr Marg, Sagar Nagar, Endada, Andhra Pradesh 530045, India", lat: 17.7905, lng: 83.3385 }
+          ];
+        }
+        return items.map(item => ({ ...item, distance: getDistance(wardCoords.lat, wardCoords.lng, item.lat, item.lng) })).sort((a, b) => a.distance - b.distance);
+      }
+      if (wNum === 11) {
+        let items = [];
+        if (category === 'park') {
+          items = [
+            { name: "Bhagath Singh park", address: "6-384, BNR Nagar, Arilova Colony, Ravindra Nagar, Visakhapatnam, Andhra Pradesh 530040, India", lat: 17.7725, lng: 83.3442 }
+          ];
+        } else if (category === 'school') {
+          items = [
+            { name: "Thotagaruvu High School", address: "13-1521, Ramapadu, Balaji Nagar, Arilova, Visakhapatnam, Andhra Pradesh 530040, India", lat: 17.7770, lng: 83.3475 },
+            { name: "MPPS THOTAGARUVU, PRIMARY SCHOOL, beside RADHA KRISHNA FUNCTION HALL, ZYM OPPOSITE STREET", address: "8-25/1, Thota Garuvu, Arilova, Visakhapatnam, Andhra Pradesh 530040, India", lat: 17.7745, lng: 83.3460 },
+            { name: "Government school", address: "D-49, Alluri Seetha Rama Raju Nagar, Arilova Colony, Arilova, Visakhapatnam, Andhra Pradesh 530057, India", lat: 17.7732, lng: 83.3430 }
+          ];
+        } else if (category === 'hospital') {
+          items = [
+            { name: "Government Hospital", address: "Ward No: 2, Me Seva, Mustafa Colony, Arilova, Drivers Colony, Mustafa Colony, Arilova, Visakhapatnam, Andhra Pradesh 530057, India", lat: 17.7755, lng: 83.3421 },
+            { name: "Apollo Pharmacy", address: "13/1473, Golla St, near Smart Dental Clinic, Ramapadu, Balaji Nagar, Arilova, Visakhapatnam, Andhra Pradesh 530057, India", lat: 17.7738, lng: 83.3468 },
+            { name: "MedPlus Arilova Main Road", address: "H.No.8-125/1, Thotagaruvu,Arilova Junction, Near Jesus Hall Ravindra Nagar, Golla St, Ramapadu, Balaji Nagar, Arilova, Visakhapatnam, Andhra Pradesh 530040, India", lat: 17.7762, lng: 83.3435 }
+          ];
+        }
+        return items.map(item => ({ ...item, distance: getDistance(wardCoords.lat, wardCoords.lng, item.lat, item.lng) })).sort((a, b) => a.distance - b.distance);
+      }
+      if (wNum === 16) {
+        let items = [];
+        if (category === 'park') {
+          items = [
+            { name: "KRM Colony Park", address: "KRM Colony, Maddilapalem, Visakhapatnam, Andhra Pradesh 530013, India", lat: 17.7635, lng: 83.3295 },
+            { name: "GVMC Rama Raju Nagar Park", address: "P8MH+8MV, Ramaraju Nagar, Mangapuram Colony, Pithapuram Colony, Maddilapalem, Visakhapatnam, Andhra Pradesh 530017, India", lat: 17.7610, lng: 83.3325 },
+            { name: "Pithapuram Colony Park", address: "Vinayagar Dayal Apartments, Pithapuram Colony, Maddilapalem, Visakhapatnam, Andhra Pradesh 530003, India", lat: 17.7645, lng: 83.3340 }
+          ];
+        } else if (category === 'school') {
+          items = [
+            { name: "Dr. V. S. Krishna Govt. Degree & P.G. College (A)", address: "P8RC+6FH, Bhanu Nagar Rd, Bhanu Nagar, Maddilapalem, Visakhapatnam, Andhra Pradesh 530013, India", lat: 17.7595, lng: 83.3335 },
+            { name: "Ram Awtar English Medium School", address: "53-29-29, Near Venkateshwara Temple, KRM Colony Main Rd, Seethamadhara, Maddilapalem, Visakhapatnam, Andhra Pradesh 530013, India", lat: 17.7650, lng: 83.3302 }
+          ];
+        } else if (category === 'hospital') {
+          items = [
+            { name: "Rajkumar Medical", address: "54-9-30, rajkumar medical street, Kranthi Nagar, Isukathota, H B Colony, Visakhapatnam, Andhra Pradesh 530022, India", lat: 17.7602, lng: 83.3288 },
+            { name: "Cure Children Clinic", address: "KRM Colony main road 51-8-42/10, bharath apartment, beside canara bank, rythu bazaar, road, KRM Colony, backside, Visakhapatnam, Andhra Pradesh 530013, India", lat: 17.7628, lng: 83.3315 }
           ];
         }
         return items.map(item => {
@@ -1687,15 +1896,20 @@ if (!D) {
 
       container.innerHTML = '';
       items.forEach(item => {
-        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.name)}+${item.lat},${item.lng}`;
+        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.name + (item.address ? ', ' + item.address : ''))}+${item.lat},${item.lng}`;
         const distStr = item.distance < 1 
           ? `${(item.distance * 1000).toFixed(0)} m away`
           : `${item.distance.toFixed(2)} km away`;
 
+        const addrHtml = item.address 
+          ? `<span class="poi-addr" style="font-size:0.72rem;color:var(--text-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="${item.address}">${item.address}</span>` 
+          : '';
+
         container.innerHTML += `
           <div class="poi-item">
-            <div class="poi-info">
+            <div class="poi-info" style="display:flex;flex-direction:column;gap:2px;overflow:hidden;">
               <span class="poi-name" title="${item.name}">${item.name}</span>
+              ${addrHtml}
               <span class="poi-dist">📍 ${distStr}</span>
             </div>
             <a href="${mapsUrl}" target="_blank" rel="noopener" class="poi-map-btn" title="Open in Google Maps">
@@ -1708,6 +1922,31 @@ if (!D) {
     renderCategoryList('poiHospitals', getNearby('hospital', 4));
     renderCategoryList('poiSchools', getNearby('school', 4));
     renderCategoryList('poiParks', getNearby('park', 4));
+  })();
+
+  // ────────────────────────────────────────────────
+  // 3e. HIDE POLL FOR OFFICERS / SHOW OFFICER PANEL
+  // ────────────────────────────────────────────────
+  (function setupOfficerView() {
+    const isOfficer = localStorage.getItem('gvmc_officer_logged_in') === 'true';
+    if (isOfficer) {
+      // Hide citizen-only sections
+      const pollCard = document.getElementById('citizenPollCard');
+      if (pollCard) pollCard.classList.add('officer-hidden');
+      const citizenComplaintsCard = document.getElementById('citizenComplaintsCard');
+      if (citizenComplaintsCard) citizenComplaintsCard.style.display = 'none';
+      // Show officer panel
+      const panel = document.getElementById('officerComplaintsPanel');
+      if (panel) panel.style.display = 'block';
+      // Set role badge
+      const roleBadge = document.getElementById('officerRoleBadge');
+      if (roleBadge) {
+        const role = localStorage.getItem('gvmc_officer_role') || 'Officer';
+        roleBadge.textContent = role;
+      }
+      // Load complaints for officer
+      loadOfficerComplaints();
+    }
   })();
 
   // ────────────────────────────────────────────────
@@ -1749,41 +1988,276 @@ if (!D) {
     updateScore();
     
     // Handle form submit
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
       const finalScore = Math.round(Array.from(sliders).reduce((acc, slider) => {
         return acc + (parseInt(slider.value) * parseInt(slider.getAttribute('data-weight'))) / 10;
       }, 0));
       
-      // Save to localStorage
-      const submissions = JSON.parse(localStorage.getItem('gvmc_sustainability_feedback') || '[]');
-      const newSubmission = {
-        id: 'CSB-' + Date.now(),
+      const payload = {
         ward: wardNum,
-        wardName: (D && D.name) ? D.name : `Ward ${wardNum}`,
-        score: finalScore,
-        ratings: {
-          cleanliness: parseInt(sliders[0].value),
-          water: parseInt(sliders[1].value),
-          transport: parseInt(sliders[2].value),
-          green: parseInt(sliders[3].value),
-          roads: parseInt(sliders[4].value),
-          pollution: parseInt(sliders[5].value),
-          disaster: parseInt(sliders[6].value),
-          governance: parseInt(sliders[7].value)
-        },
-        date: new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })
+        cleanliness: parseInt(sliders[0].value),
+        water: parseInt(sliders[1].value),
+        transport: parseInt(sliders[2].value),
+        green: parseInt(sliders[3].value),
+        roads: parseInt(sliders[4].value),
+        pollution: parseInt(sliders[5].value),
+        disaster: parseInt(sliders[6].value),
+        governance: parseInt(sliders[7].value)
       };
-      
-      submissions.unshift(newSubmission);
-      localStorage.setItem('gvmc_sustainability_feedback', JSON.stringify(submissions));
-      
-      alert(`Thank you! Your feedback for Ward ${wardNum} has been recorded. Current satisfaction rating: ${finalScore}/100.`);
+
+      try {
+        if (!window.supabaseClient) throw new Error("Supabase client not initialized");
+        const { data, error } = await window.supabaseClient
+          .from('sustainability_feedback')
+          .insert({
+            id: 'CSB-' + Date.now(),
+            ward_id: wardNum,
+            cleanliness: parseInt(sliders[0].value),
+            water: parseInt(sliders[1].value),
+            transport: parseInt(sliders[2].value),
+            green: parseInt(sliders[3].value),
+            roads: parseInt(sliders[4].value),
+            pollution: parseInt(sliders[5].value),
+            disaster: parseInt(sliders[6].value),
+            governance: parseInt(sliders[7].value),
+            score: finalScore,
+            date: new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })
+          })
+          .select();
+        if (error) throw error;
+        alert(`Thank you! Your feedback for Ward ${wardNum} has been saved. Current satisfaction rating: ${finalScore}/100.`);
+      } catch (err) {
+        console.warn('Supabase unavailable. Saving locally:', err);
+        // Save to localStorage as fallback
+        const submissions = JSON.parse(localStorage.getItem('gvmc_sustainability_feedback') || '[]');
+        const newSubmission = {
+          id: 'CSB-' + Date.now(),
+          ward: wardNum,
+          wardName: (D && D.name) ? D.name : `Ward ${wardNum}`,
+          score: finalScore,
+          ratings: {
+            cleanliness: parseInt(sliders[0].value),
+            water: parseInt(sliders[1].value),
+            transport: parseInt(sliders[2].value),
+            green: parseInt(sliders[3].value),
+            roads: parseInt(sliders[4].value),
+            pollution: parseInt(sliders[5].value),
+            disaster: parseInt(sliders[6].value),
+            governance: parseInt(sliders[7].value)
+          },
+          date: new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })
+        };
+        submissions.unshift(newSubmission);
+        localStorage.setItem('gvmc_sustainability_feedback', JSON.stringify(submissions));
+        alert(`Thank you! Your feedback for Ward ${wardNum} has been recorded locally. Current satisfaction rating: ${finalScore}/100.`);
+      }
       location.reload(); // Reload to update dashboard stats and gauge
     });
   })();
 
+  })(); // end initSustainabilityAndDependents
+
 } // end if (D)
+
+// ────────────────────────────────────────────────
+// OFFICER COMPLAINTS MANAGEMENT SYSTEM
+// ────────────────────────────────────────────────
+let _officerAllComplaints = [];
+let _currentDetailId = null;
+
+async function loadOfficerComplaints(statusFilter, categoryFilter) {
+  const tbody = document.getElementById('officerComplaintsTbody');
+  if (!tbody) return;
+  tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-muted);">⏳ Loading complaints…</td></tr>`;
+
+  let complaints = [];
+  try {
+    if (!window.supabaseClient) throw new Error("Supabase not configured");
+    let query = window.supabaseClient
+      .from('complaints')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    // Admin can see all wards; Ward Officer sees their ward
+    const role = localStorage.getItem('gvmc_officer_role') || 'Officer';
+    if (role !== 'Admin') {
+      query = query.eq('ward_id', wardNum);
+    }
+    if (statusFilter) query = query.eq('status', statusFilter);
+    if (categoryFilter) query = query.eq('category', categoryFilter);
+
+    const { data, error } = await query;
+    if (error) throw error;
+    complaints = data || [];
+  } catch (err) {
+    console.warn('Could not load from Supabase, using sample data:', err);
+    // Fallback sample data
+    const wardAreas = (typeof WARD_AREAS !== 'undefined' && WARD_AREAS[String(wardNum)]) || [];
+    const sampleStatuses = ['Pending', 'In Progress', 'Resolved'];
+    const sampleCats = ['Roads & Infrastructure', 'Sanitation', 'Water Supply', 'Electricity', 'Drainage'];
+    complaints = Array.from({ length: 8 }, (_, i) => ({
+      id: `GVMC-CMP-${2024 + (i % 2)}-${String(wardNum * 10 + i + 1).padStart(4, '0')}`,
+      description: ['Pothole on main road causing vehicle damage', 'Garbage not collected for 4 days', 'Water supply disruption in colony', 'Street light failure near school', 'Open drainage causing smell issues', 'Damaged footpath near bus stop', 'Overflowing garbage bin near market', 'Road waterlogging during rain'][i],
+      colony: wardAreas[i % wardAreas.length] || D?.name || `Area ${i + 1}`,
+      category: sampleCats[i % sampleCats.length],
+      created_at: new Date(Date.now() - i * 2 * 86400000).toISOString(),
+      status: sampleStatuses[i % 3],
+      priority: ['High', 'Medium', 'Low'][i % 3],
+      ward_id: wardNum
+    }));
+  }
+
+  _officerAllComplaints = complaints;
+  renderOfficerTable(complaints);
+  updateOfficerKPIs(complaints);
+}
+
+function renderOfficerTable(complaints) {
+  const tbody = document.getElementById('officerComplaintsTbody');
+  const countEl = document.getElementById('officerComplaintCount');
+  if (!tbody) return;
+
+  if (countEl) countEl.textContent = `${complaints.length} complaint${complaints.length !== 1 ? 's' : ''}`;
+
+  if (!complaints.length) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-muted);">✅ No complaints found matching your filters.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = '';
+  complaints.forEach(c => {
+    const status = c.status || 'Pending';
+    const statusClass = status === 'Resolved' ? 's-resolved' : status === 'In Progress' ? 's-progress' : 's-pending';
+    const priority = c.priority || 'Medium';
+    const prioColor = priority === 'High' ? '#f87171' : priority === 'Medium' ? '#f59e0b' : '#10b981';
+    const dateStr = c.created_at ? new Date(c.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+    const desc = (c.description || 'No description').substring(0, 60) + ((c.description || '').length > 60 ? '…' : '');
+    const idStr = c.id || '—';
+
+    tbody.innerHTML += `
+      <tr data-id="${idStr}">
+        <td style="color:var(--accent);font-weight:600;font-size:0.78rem;white-space:nowrap;">${idStr}</td>
+        <td style="max-width:200px;white-space:normal;color:var(--text-primary);">${desc}</td>
+        <td style="color:var(--text-primary);">${c.colony || c.area || D?.name || '—'}</td>
+        <td><span class="status-badge" style="background:rgba(6,182,212,0.12);color:var(--accent);border:1px solid rgba(6,182,212,0.25);">${c.category || '—'}</span></td>
+        <td style="white-space:nowrap;">${dateStr}</td>
+        <td><span class="status-badge ${statusClass}">${status}</span></td>
+        <td style="color:${prioColor};font-weight:700;">${priority}</td>
+        <td style="white-space:nowrap;">
+          <div style="display:flex;gap:4px;flex-wrap:wrap;">
+            <button class="complaint-action-btn action-view" onclick="viewComplaintDetail('${idStr}')">👁 View</button>
+            ${status !== 'In Progress' ? `<button class="complaint-action-btn action-progress" onclick="updateComplaintStatus('${idStr}', 'In Progress')">▶ Progress</button>` : ''}
+            ${status !== 'Resolved' ? `<button class="complaint-action-btn action-resolve" onclick="updateComplaintStatus('${idStr}', 'Resolved')">✓ Resolve</button>` : ''}
+            ${status !== 'Pending' ? `<button class="complaint-action-btn action-pending" onclick="updateComplaintStatus('${idStr}', 'Pending')">↩ Reopen</button>` : ''}
+          </div>
+        </td>
+      </tr>`;
+  });
+}
+
+function updateOfficerKPIs(complaints) {
+  const total = complaints.length;
+  const pending = complaints.filter(c => (c.status || 'Pending') === 'Pending').length;
+  const inProgress = complaints.filter(c => c.status === 'In Progress').length;
+  const resolved = complaints.filter(c => c.status === 'Resolved').length;
+
+  const el = id => document.getElementById(id);
+  if (el('officerKpiTotal'))    el('officerKpiTotal').textContent = total;
+  if (el('officerKpiPending'))  el('officerKpiPending').textContent = pending;
+  if (el('officerKpiProgress')) el('officerKpiProgress').textContent = inProgress;
+  if (el('officerKpiResolved')) el('officerKpiResolved').textContent = resolved;
+}
+
+async function updateComplaintStatus(complaintId, newStatus) {
+  try {
+    if (window.supabaseClient) {
+      const { error } = await window.supabaseClient
+        .from('complaints')
+        .update({ status: newStatus, updated_at: new Date().toISOString() })
+        .eq('id', complaintId);
+      if (error) throw error;
+    }
+    // Update local state
+    const idx = _officerAllComplaints.findIndex(c => c.id === complaintId);
+    if (idx !== -1) _officerAllComplaints[idx].status = newStatus;
+    renderOfficerTable(_officerAllComplaints);
+    updateOfficerKPIs(_officerAllComplaints);
+    if (typeof showToast === 'function') showToast(`Status updated to "${newStatus}"`, 'success');
+  } catch (err) {
+    console.error('Status update failed:', err);
+    if (typeof showToast === 'function') showToast('Status update failed. Try again.', 'error');
+  }
+}
+
+function viewComplaintDetail(complaintId) {
+  const complaint = _officerAllComplaints.find(c => c.id === complaintId);
+  if (!complaint) return;
+  _currentDetailId = complaintId;
+
+  const modal = document.getElementById('complaintDetailModal');
+  const title = document.getElementById('detailModalTitle');
+  const body  = document.getElementById('detailModalBody');
+  const sel   = document.getElementById('detailStatusSelect');
+
+  if (title) title.textContent = `Complaint: ${complaintId}`;
+  if (sel)   sel.value = complaint.status || 'Pending';
+
+  const dateStr = complaint.created_at ? new Date(complaint.created_at).toLocaleString('en-IN') : '—';
+  if (body) body.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;">
+      ${[
+        ['ID', complaintId],
+        ['Category', complaint.category || '—'],
+        ['Ward', `Ward ${complaint.ward_id || wardNum}`],
+        ['Area / Colony', complaint.colony || complaint.area || '—'],
+        ['Status', `<span style="color:${complaint.status === 'Resolved' ? 'var(--success)' : complaint.status === 'In Progress' ? 'var(--primary-light)' : 'var(--warning)'};font-weight:700;">${complaint.status || 'Pending'}</span>`],
+        ['Priority', complaint.priority || 'Medium'],
+        ['Date Filed', dateStr],
+        ['Description', complaint.description || 'No description provided'],
+        ['Contact', complaint.contact || complaint.complainant_name || 'Anonymous']
+      ].map(([k, v]) => `<tr><td style="padding:0.5rem 0;font-weight:600;color:var(--text-muted);width:130px;vertical-align:top;">${k}</td><td style="padding:0.5rem 0;color:#e2e8f0;">${v}</td></tr>`).join('')}
+    </table>`;
+
+  if (modal) modal.style.display = 'flex';
+}
+
+async function saveDetailStatus() {
+  if (!_currentDetailId) return;
+  const sel = document.getElementById('detailStatusSelect');
+  if (!sel) return;
+  await updateComplaintStatus(_currentDetailId, sel.value);
+  // Update the status shown in the modal body
+  const complaint = _officerAllComplaints.find(c => c.id === _currentDetailId);
+  if (complaint) complaint.status = sel.value;
+  document.getElementById('complaintDetailModal').style.display = 'none';
+}
+
+function applyOfficerFilters() {
+  const status   = document.getElementById('officerStatusFilter')?.value || '';
+  const category = document.getElementById('officerCategoryFilter')?.value || '';
+  let filtered = [..._officerAllComplaints];
+  if (status)   filtered = filtered.filter(c => c.status === status);
+  if (category) filtered = filtered.filter(c => (c.category || '') === category);
+  renderOfficerTable(filtered);
+  updateOfficerKPIs(filtered);
+}
+
+function resetOfficerFilters() {
+  const statusEl = document.getElementById('officerStatusFilter');
+  const catEl    = document.getElementById('officerCategoryFilter');
+  if (statusEl) statusEl.value = '';
+  if (catEl)    catEl.value = '';
+  renderOfficerTable(_officerAllComplaints);
+  updateOfficerKPIs(_officerAllComplaints);
+}
+
+function refreshOfficerComplaints() {
+  const status   = document.getElementById('officerStatusFilter')?.value || '';
+  const category = document.getElementById('officerCategoryFilter')?.value || '';
+  loadOfficerComplaints(status || undefined, category || undefined);
+}
 
 // ────────────────────────────────────────────────
 // 4. GOOGLE MAPS
@@ -1855,10 +2329,10 @@ document.addEventListener('click', (e) => {
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="modalUsernameInput">👤 &nbsp;Username</label>
+        <label class="form-label" for="modalUsernameInput">✉️ &nbsp;Email Address</label>
         <div class="input-icon-wrap">
-          <span class="icon">@</span>
-          <input class="form-control" type="text" id="modalUsernameInput" placeholder="Enter your username" autocomplete="username" />
+          <span class="icon">✉</span>
+          <input class="form-control" type="email" id="modalUsernameInput" placeholder="Enter your email address" autocomplete="email" />
         </div>
       </div>
 
@@ -1885,8 +2359,8 @@ document.addEventListener('click', (e) => {
       <div class="demo-creds-title">🔐 Test Access Credentials</div>
       <div class="demo-row">
         <div class="demo-item">
-          <span class="demo-lbl">Username</span>
-          <span class="demo-val">admin</span>
+          <span class="demo-lbl">Email</span>
+          <span class="demo-val">admin@gmail.com</span>
         </div>
         <div class="demo-item">
           <span class="demo-lbl">Password</span>

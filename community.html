@@ -558,6 +558,9 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <!-- SCRIPTS -->
+<!-- Supabase Integration -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
 <script src="js/main.js"></script>
 <script>
   // Navbar scroll & Hamburger
@@ -873,10 +876,10 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="modalUsernameInput">👤 &nbsp;Username</label>
+        <label class="form-label" for="modalUsernameInput">✉️ &nbsp;Email Address</label>
         <div class="input-icon-wrap">
-          <span class="icon">@</span>
-          <input class="form-control" type="text" id="modalUsernameInput" placeholder="Enter your username" autocomplete="username" />
+          <span class="icon">✉</span>
+          <input class="form-control" type="email" id="modalUsernameInput" placeholder="Enter your email address" autocomplete="email" />
         </div>
       </div>
 
@@ -904,7 +907,7 @@
       <div class="demo-row">
         <div class="demo-item">
           <span class="demo-lbl">Username</span>
-          <span class="demo-val">admin</span>
+          <span class="demo-val">admin@gmail.com</span>
         </div>
         <div class="demo-item">
           <span class="demo-lbl">Password</span>

@@ -3,7 +3,7 @@
    js/main.js
    ============================================ */
 
-// ---- Navbar Toggle ----
+// ---- Navbar Toggle & Global Handlers ----
 document.addEventListener('DOMContentLoaded', () => {
   const hamburger = document.getElementById('hamburger');
   const navLinks  = document.getElementById('navLinks');
@@ -249,14 +249,17 @@ function sampleProjects(count = 5) {
   }));
 }
 
-// ---- Officer Auth ----
+// ---- Officer Auth Helpers ----
 function requireOfficerAuth() {
-  const officer = localStorage.getItem('gvmc_officer');
-  if (!officer) {
-    window.location.href = 'officer-login.html';
+  const isLoggedIn = localStorage.getItem('gvmc_officer_logged_in') === 'true';
+  if (!isLoggedIn) {
+    window.location.href = 'index.html?login=required';
     return null;
   }
-  return JSON.parse(officer);
+  return {
+    name: localStorage.getItem('gvmc_officer_name') || 'Admin',
+    role: localStorage.getItem('gvmc_officer_role') || 'Ward Officer'
+  };
 }
 
 function logoutOfficer() {
@@ -265,7 +268,16 @@ function logoutOfficer() {
   localStorage.removeItem('gvmc_officer_role');
   localStorage.removeItem('gvmc_officer_name');
   localStorage.removeItem('gvmc_officer_login_time');
-  window.location.reload();
+  if (window.supabaseClient) {
+    window.supabaseClient.auth.signOut().then(() => {
+      window.location.reload();
+    }).catch(err => {
+      console.warn("Supabase signout failed, reloading anyway:", err);
+      window.location.reload();
+    });
+  } else {
+    window.location.reload();
+  }
 }
 
 // ---- Login Modal Handlers ----
@@ -293,12 +305,57 @@ function toggleModalPwd() {
   }
 }
 
+function initLoginModalUI() {
+  const modal = document.getElementById('loginModal');
+  if (!modal) return;
+
+  // Add Register Toggle Option
+  const form = document.getElementById('modalLoginForm');
+  if (form && !document.getElementById('modalRegisterToggleWrap')) {
+    const toggleWrap = document.createElement('div');
+    toggleWrap.id = 'modalRegisterToggleWrap';
+    toggleWrap.style.cssText = 'text-align:center; margin-top:1.25rem; font-size:0.83rem; color:var(--text-muted);';
+    toggleWrap.innerHTML = `
+      <span id="toggleModeText">Don't have an account?</span> 
+      <a href="#" id="toggleModeBtn" style="color:var(--accent); font-weight:700; text-decoration:none; margin-left:4px;">Register Here</a>
+    `;
+    form.appendChild(toggleWrap);
+
+    let isRegisterMode = false;
+    const toggleBtn = toggleWrap.querySelector('#toggleModeBtn');
+    const toggleText = toggleWrap.querySelector('#toggleModeText');
+    const loginBtn = document.getElementById('modalLoginBtn');
+    const titleEl = modal.querySelector('.login-title');
+
+    toggleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      isRegisterMode = !isRegisterMode;
+      if (isRegisterMode) {
+        titleEl.textContent = 'Officer Portal Registration';
+        loginBtn.innerHTML = '<span>🚀 Register Account</span>';
+        toggleText.textContent = 'Already have an account?';
+        toggleBtn.textContent = 'Sign In';
+        form.dataset.mode = 'register';
+      } else {
+        titleEl.textContent = 'Officer Portal Login';
+        loginBtn.innerHTML = '<span>🚀 Sign In to Portal</span>';
+        toggleText.textContent = "Don't have an account?";
+        toggleBtn.textContent = 'Register Here';
+        form.dataset.mode = 'login';
+      }
+      // Reset error message
+      const errEl = document.getElementById('modalFormError');
+      if (errEl) errEl.classList.remove('show');
+    });
+  }
+}
+
 function autofillModal() {
   const role = document.getElementById('modalRoleSelect');
   const user = document.getElementById('modalUsernameInput');
   const pass = document.getElementById('modalPasswordInput');
   if (role && user && pass) {
-    user.value = 'admin';
+    user.value = 'admin@gmail.com';
     pass.value = 'admin123';
     role.value = 'Admin';
     showToast('Demo credentials filled!', 'info');
@@ -313,80 +370,176 @@ function handleModalLogin(e) {
   const errEl = document.getElementById('modalFormError');
   const errMsg = document.getElementById('modalErrorMsg');
   const btn = document.getElementById('modalLoginBtn');
+  const form = document.getElementById('modalLoginForm');
 
-  if (!role || !usernameInput || !passwordInput || !errEl || !errMsg || !btn) return;
+  if (!role || !usernameInput || !passwordInput || !errEl || !errMsg || btn === null) return;
 
   const roleVal = role.value.trim();
   const user = usernameInput.value.trim();
   const pass = passwordInput.value;
+  const isRegisterMode = form && form.dataset.mode === 'register';
 
   errEl.classList.remove('show');
 
   if (!roleVal) {
-    errMsg.textContent = 'Please select a role before logging in.';
+    errMsg.textContent = 'Please select a role before submitting.';
     errEl.classList.add('show');
     return;
   }
   if (!user || !pass) {
-    errMsg.textContent = 'Username and password are required.';
+    errMsg.textContent = 'Email and password are required.';
     errEl.classList.add('show');
     return;
   }
 
-  const VALID_USER = 'admin';
-  const VALID_PASS = 'admin123';
-
-  if (user !== VALID_USER || pass !== VALID_PASS) {
-    errMsg.textContent = 'Invalid credentials. Use admin / admin123.';
-    errEl.classList.add('show');
-    return;
-  }
-
-  btn.innerHTML = '<span>⏳ Authenticating…</span>';
+  btn.innerHTML = isRegisterMode ? '<span>⏳ Creating Account…</span>' : '<span>⏳ Authenticating…</span>';
   btn.classList.add('loading');
 
-  try {
-    localStorage.setItem('gvmc_officer_logged_in', 'true');
-    localStorage.setItem('gvmc_officer_role', roleVal);
-    localStorage.setItem('gvmc_officer_name', user.charAt(0).toUpperCase() + user.slice(1));
-    localStorage.setItem('gvmc_officer_login_time', new Date().toISOString());
-  } catch (storageErr) {
-    console.warn('localStorage unavailable:', storageErr);
-  }
-
-  const isCommunityPage = window.location.pathname.indexOf('community.html') !== -1;
-
-  if (isCommunityPage) {
-    showToast('Login successful!', 'success');
-    setTimeout(() => {
-      closeLoginModal();
-      updateHeaderAuth();
-      if (typeof window.checkOfficerAccess === 'function') {
-        window.checkOfficerAccess();
+  (async function() {
+    try {
+      if (!window.supabaseClient) {
+        throw new Error("Supabase is not configured. Please use the settings widget at the bottom right.");
       }
-      // Reset button state
-      btn.innerHTML = '<span>🚀 Sign In to Portal</span>';
-      btn.classList.remove('loading');
-    }, 900);
-  } else {
-    showToast('Login successful! Redirecting…', 'success');
-    setTimeout(() => {
+
+      // Supabase requires an email address. Map to email format if needed.
+      const email = user.includes('@') ? user : `${user}@gmail.com`;
+
+      // If we are in register mode:
+      if (isRegisterMode) {
+        const signUpRes = await window.supabaseClient.auth.signUp({
+          email: email,
+          password: pass,
+          options: {
+            data: {
+              username: email.split('@')[0],
+              role: roleVal
+            }
+          }
+        });
+        if (signUpRes.error) throw signUpRes.error;
+        
+        showToast('Registration successful! Switch to Sign In to log in.', 'success');
+        
+        // Auto toggle back to login mode
+        const toggleBtn = document.getElementById('toggleModeBtn');
+        if (toggleBtn) toggleBtn.click();
+        
+        btn.innerHTML = '<span>🚀 Sign In to Portal</span>';
+        btn.classList.remove('loading');
+        return;
+      }
+
+      // 1. Attempt login
+      let authData = null;
+      let authError = null;
+
       try {
-        const lastWard = sessionStorage.getItem('gvmc_last_ward');
-        window.location.href = lastWard
-          ? `ward-dashboard.html?ward=${lastWard}`
-          : 'ward-dashboard.html?ward=17';
-      } catch (navErr) {
-        // Fallback: direct navigation if sessionStorage also fails
-        window.location.href = 'ward-dashboard.html?ward=17';
+        const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+          email: email,
+          password: pass
+        });
+        authData = data;
+        authError = error;
+      } catch (signInErr) {
+        authError = signInErr;
       }
-    }, 900);
-  }
+
+      // 2. Demo Auto-registration fallback for admin / admin123
+      if (authError && (authError.message || '').includes("Invalid login credentials") && user.startsWith('admin') && pass === 'admin123') {
+        console.log("Auto-registering demo admin account in Supabase...");
+        const signUpRes = await window.supabaseClient.auth.signUp({
+          email: 'admin@gmail.com',
+          password: 'admin123',
+          options: {
+            data: {
+              username: 'admin',
+              role: 'Admin'
+            }
+          }
+        });
+        if (signUpRes.error) throw signUpRes.error;
+
+        const retryRes = await window.supabaseClient.auth.signInWithPassword({
+          email: 'admin@gmail.com',
+          password: 'admin123'
+        });
+        if (retryRes.error) throw retryRes.error;
+        authData = retryRes.data;
+        authError = null;
+      }
+
+      if (authError) throw authError;
+
+      // 3. Retrieve user profile role
+      const userId = authData.user.id;
+      const { data: profile } = await window.supabaseClient
+         .from('profiles')
+         .select('role, username')
+         .eq('id', userId)
+         .maybeSingle();
+
+      const userRole = (profile && profile.role) ? profile.role : roleVal;
+      const userName = (profile && profile.username) ? profile.username : user.split('@')[0];
+
+      try {
+        localStorage.setItem('gvmc_officer_logged_in', 'true');
+        localStorage.setItem('gvmc_officer_role', userRole);
+        localStorage.setItem('gvmc_officer_name', userName.charAt(0).toUpperCase() + userName.slice(1));
+        localStorage.setItem('gvmc_officer_login_time', new Date().toISOString());
+      } catch (storageErr) {
+        console.warn('localStorage unavailable:', storageErr);
+      }
+
+      const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+      const isCommunityPage  = currentPage === 'community.html';
+      const isComplaintsPage = currentPage === 'complaints.html';
+
+      if (isCommunityPage) {
+        // Stay on community page, refresh officer UI
+        showToast('Login successful!', 'success');
+        setTimeout(() => {
+          closeLoginModal();
+          updateHeaderAuth();
+          if (typeof window.checkOfficerAccess === 'function') {
+            window.checkOfficerAccess();
+          }
+          btn.innerHTML = '<span>🚀 Sign In to Portal</span>';
+          btn.classList.remove('loading');
+        }, 900);
+      } else if (isComplaintsPage) {
+        // Reload complaints page — officer CMS will activate on reload
+        showToast('Login successful! Loading Officer CMS…', 'success');
+        setTimeout(() => {
+          window.location.reload();
+        }, 900);
+      } else {
+        // Default: go to ward dashboard
+        showToast('Login successful! Redirecting…', 'success');
+        setTimeout(() => {
+          try {
+            const lastWard = sessionStorage.getItem('gvmc_last_ward');
+            window.location.href = lastWard
+              ? `ward-dashboard.html?ward=${lastWard}`
+              : 'ward-dashboard.html?ward=17';
+          } catch (navErr) {
+            window.location.href = 'ward-dashboard.html?ward=17';
+          }
+        }, 900);
+      }
+    } catch (err) {
+      console.error("Auth error:", err);
+      errMsg.textContent = err.message || 'Error occurred during authentication.';
+      errEl.classList.add('show');
+      btn.innerHTML = isRegisterMode ? '<span>🚀 Register Account</span>' : '<span>🚀 Sign In to Portal</span>';
+      btn.classList.remove('loading');
+    }
+  })();
 }
 
 document.addEventListener('click', e => {
-  if (e.target.classList.contains('login-modal')) {
-    e.target.classList.remove('open');
+  const target = e.target;
+  if (target && target.classList.contains('login-modal')) {
+    target.classList.remove('open');
   }
 });
 
@@ -432,98 +585,272 @@ function updateHeaderAuth() {
 }
 
 // ---- Get Dynamic Sustainability Data ----
-function getWardSustainabilityData(wardNum) {
+async function getWardSustainabilityData(wardNum) {
   const n = parseInt(wardNum, 10);
-  // Get base score from WARD_DEMOGRAPHICS or default to 70
-  let baseScore = 70;
-  if (typeof WARD_DEMOGRAPHICS !== 'undefined' && WARD_DEMOGRAPHICS[n]) {
-    baseScore = WARD_DEMOGRAPHICS[n].sustainability || Math.floor(60 + ((n * 17) % 36));
-  } else {
-    baseScore = Math.floor(60 + ((n * 17) % 36));
-  }
-
-  // Seed base values
-  const keys = ['cleanliness', 'water', 'transport', 'green', 'roads', 'pollution', 'disaster', 'governance'];
-  const baseVal = baseScore / 10;
-  const baseRatings = {};
-
-  keys.forEach((key, idx) => {
-    // Deterministic variation between -1.5 and +1.5 based on ward number
-    const variation = Math.sin(n * (idx + 1)) * 1.5;
-    baseRatings[key] = Math.max(1, Math.min(10, Math.round(baseVal + variation)));
-  });
-
-  // Adjust to exactly match baseScore
-  const getWeightedSum = (r) => {
-    return Math.round(
-      r.cleanliness * 2.0 +
-      r.water * 1.5 +
-      r.transport * 1.5 +
-      r.green * 1.0 +
-      r.roads * 1.0 +
-      r.pollution * 1.0 +
-      r.disaster * 1.0 +
-      r.governance * 1.0
-    );
-  };
-
-  let loops = 0;
-  while (getWeightedSum(baseRatings) !== baseScore && loops < 100) {
-    loops++;
-    const diff = baseScore - getWeightedSum(baseRatings);
-    const key = keys[Math.floor(Math.abs(Math.sin(n + loops) * keys.length))];
-    const step = diff > 0 ? 1 : -1;
-    if (baseRatings[key] + step >= 1 && baseRatings[key] + step <= 10) {
-      baseRatings[key] += step;
-    }
-  }
-
-  // 2. Fetch citizen feedback from localStorage
-  let submissions = [];
   try {
-    submissions = JSON.parse(localStorage.getItem('gvmc_sustainability_feedback') || '[]');
-  } catch (e) {
-    console.error(e);
-  }
-
-  const wardReviews = submissions.filter(s => parseInt(s.ward) === n);
-
-  let finalRatings = { ...baseRatings };
-  let citizenAvgRatings = null;
-
-  if (wardReviews.length > 0) {
-    citizenAvgRatings = {};
-    keys.forEach(key => {
-      let sum = 0;
-      wardReviews.forEach(rev => {
-        sum += (rev.ratings && rev.ratings[key] !== undefined) ? rev.ratings[key] : 5;
-      });
-      citizenAvgRatings[key] = sum / wardReviews.length;
+    if (!window.supabaseClient) throw new Error("Supabase client not initialized");
+    
+    // Fetch all sustainability feedback for this ward from Supabase
+    const { data: feedbacks, error } = await window.supabaseClient
+      .from('sustainability_feedback')
+      .select('*')
+      .eq('ward_id', n);
       
-      // Dynamic mix: 50% municipal, 50% citizen feedback
-      finalRatings[key] = (baseRatings[key] + citizenAvgRatings[key]) / 2;
+    if (error) throw error;
+
+    // Get base score from WARD_DEMOGRAPHICS or default to formula
+    let baseScore = 70;
+    if (typeof WARD_DEMOGRAPHICS !== 'undefined' && WARD_DEMOGRAPHICS[n]) {
+      baseScore = WARD_DEMOGRAPHICS[n].sustainability || Math.floor(60 + ((n * 17) % 36));
+    } else {
+      baseScore = Math.floor(60 + ((n * 17) % 36));
+    }
+
+    // Seed base values
+    const keys = ['cleanliness', 'water', 'transport', 'green', 'roads', 'pollution', 'disaster', 'governance'];
+    const baseVal = baseScore / 10;
+    const baseRatings = {};
+
+    keys.forEach((key, idx) => {
+      // Deterministic variation between -1.5 and +1.5 based on ward number
+      const variation = Math.sin(n * (idx + 1)) * 1.5;
+      baseRatings[key] = Math.max(1, Math.min(10, Math.round(baseVal + variation)));
     });
+
+    // Adjust to exactly match baseScore
+    const getWeightedSum = (r) => {
+      return Math.round(
+        r.cleanliness * 2.0 +
+        r.water * 1.5 +
+        r.transport * 1.5 +
+        r.green * 1.0 +
+        r.roads * 1.0 +
+        r.pollution * 1.0 +
+        r.disaster * 1.0 +
+        r.governance * 1.0
+      );
+    };
+
+    let loops = 0;
+    while (getWeightedSum(baseRatings) !== baseScore && loops < 100) {
+      loops++;
+      const diff = baseScore - getWeightedSum(baseRatings);
+      const key = keys[Math.floor(Math.abs(Math.sin(n + loops) * keys.length))];
+      const step = diff > 0 ? 1 : -1;
+      if (baseRatings[key] + step >= 1 && baseRatings[key] + step <= 10) {
+        baseRatings[key] += step;
+      }
+    }
+
+    let finalRatings = { ...baseRatings };
+    let citizenAvgRatings = null;
+
+    if (feedbacks && feedbacks.length > 0) {
+      citizenAvgRatings = {};
+      keys.forEach(key => {
+        let sum = 0;
+        feedbacks.forEach(rev => {
+          sum += (rev[key] !== undefined) ? rev[key] : 5;
+        });
+        citizenAvgRatings[key] = sum / feedbacks.length;
+        
+        // Dynamic mix: 50% municipal, 50% citizen feedback
+        finalRatings[key] = (baseRatings[key] + citizenAvgRatings[key]) / 2;
+      });
+    }
+
+    // Calculate final score
+    const finalScore = Math.round(
+      finalRatings.cleanliness * 2.0 +
+      finalRatings.water * 1.5 +
+      finalRatings.transport * 1.5 +
+      finalRatings.green * 1.0 +
+      finalRatings.roads * 1.0 +
+      finalRatings.pollution * 1.0 +
+      finalRatings.disaster * 1.0 +
+      finalRatings.governance * 1.0
+    );
+
+    const formatRatings = (r) => {
+      if (!r) return null;
+      const formatted = {};
+      Object.keys(r).forEach(k => {
+        formatted[k] = parseFloat(parseFloat(r[k]).toFixed(1));
+      });
+      return formatted;
+    };
+
+    return {
+      baseScore,
+      finalScore,
+      baseRatings: formatRatings(baseRatings),
+      citizenAvgRatings: formatRatings(citizenAvgRatings),
+      finalRatings: formatRatings(finalRatings),
+      reviewCount: feedbacks.length
+    };
+  } catch (err) {
+    console.warn("Fallback to local sustainability calculation:", err);
+    // Get base score from WARD_DEMOGRAPHICS or default to 70
+    let baseScore = 70;
+    if (typeof WARD_DEMOGRAPHICS !== 'undefined' && WARD_DEMOGRAPHICS[n]) {
+      baseScore = WARD_DEMOGRAPHICS[n].sustainability || Math.floor(60 + ((n * 17) % 36));
+    } else {
+      baseScore = Math.floor(60 + ((n * 17) % 36));
+    }
+
+    // Seed base values
+    const keys = ['cleanliness', 'water', 'transport', 'green', 'roads', 'pollution', 'disaster', 'governance'];
+    const baseVal = baseScore / 10;
+    const baseRatings = {};
+
+    keys.forEach((key, idx) => {
+      const variation = Math.sin(n * (idx + 1)) * 1.5;
+      baseRatings[key] = Math.max(1, Math.min(10, Math.round(baseVal + variation)));
+    });
+
+    const getWeightedSum = (r) => {
+      return Math.round(
+        r.cleanliness * 2.0 +
+        r.water * 1.5 +
+        r.transport * 1.5 +
+        r.green * 1.0 +
+        r.roads * 1.0 +
+        r.pollution * 1.0 +
+        r.disaster * 1.0 +
+        r.governance * 1.0
+      );
+    };
+
+    let loops = 0;
+    while (getWeightedSum(baseRatings) !== baseScore && loops < 100) {
+      loops++;
+      const diff = baseScore - getWeightedSum(baseRatings);
+      const key = keys[Math.floor(Math.abs(Math.sin(n + loops) * keys.length))];
+      const step = diff > 0 ? 1 : -1;
+      if (baseRatings[key] + step >= 1 && baseRatings[key] + step <= 10) {
+        baseRatings[key] += step;
+      }
+    }
+
+    // Fetch citizen feedback from localStorage
+    let submissions = [];
+    try {
+      submissions = JSON.parse(localStorage.getItem('gvmc_sustainability_feedback') || '[]');
+    } catch (e) {
+      console.error(e);
+    }
+
+    const wardReviews = submissions.filter(s => parseInt(s.ward) === n);
+
+    let finalRatings = { ...baseRatings };
+    let citizenAvgRatings = null;
+
+    if (wardReviews.length > 0) {
+      citizenAvgRatings = {};
+      keys.forEach(key => {
+        let sum = 0;
+        wardReviews.forEach(rev => {
+          sum += (rev.ratings && rev.ratings[key] !== undefined) ? rev.ratings[key] : 5;
+        });
+        citizenAvgRatings[key] = sum / wardReviews.length;
+        finalRatings[key] = (baseRatings[key] + citizenAvgRatings[key]) / 2;
+      });
+    }
+
+    const finalScore = getWeightedSum(finalRatings);
+
+    const formatRatings = (r) => {
+      if (!r) return null;
+      const formatted = {};
+      Object.keys(r).forEach(k => {
+        formatted[k] = parseFloat(parseFloat(r[k]).toFixed(1));
+      });
+      return formatted;
+    };
+
+    return {
+      baseScore,
+      finalScore,
+      baseRatings: formatRatings(baseRatings),
+      citizenAvgRatings: formatRatings(citizenAvgRatings),
+      finalRatings: formatRatings(finalRatings),
+      reviewCount: wardReviews.length
+    };
   }
-
-  // Calculate final score
-  const finalScore = Math.round(
-    finalRatings.cleanliness * 2.0 +
-    finalRatings.water * 1.5 +
-    finalRatings.transport * 1.5 +
-    finalRatings.green * 1.0 +
-    finalRatings.roads * 1.0 +
-    finalRatings.pollution * 1.0 +
-    finalRatings.disaster * 1.0 +
-    finalRatings.governance * 1.0
-  );
-
-  return {
-    baseScore,
-    finalScore,
-    baseRatings,
-    citizenAvgRatings,
-    finalRatings,
-    reviewCount: wardReviews.length
-  };
 }
 
+// ---- Global API demographics loader ----
+async function initApiDemographics() {
+  try {
+    if (!window.supabaseClient) throw new Error("Supabase client not initialized");
+
+    // Fetch wards and sustainability feedbacks in parallel to calculate scores
+    const [wardsRes, feedbackRes] = await Promise.all([
+      window.supabaseClient.from('wards').select('*'),
+      window.supabaseClient.from('sustainability_feedback').select('ward_id, score')
+    ]);
+
+    if (wardsRes.error) throw wardsRes.error;
+    if (feedbackRes.error) throw feedbackRes.error;
+
+    const wards = wardsRes.data;
+    const feedbacks = feedbackRes.data || [];
+
+    // Calculate averages per ward
+    const wardScores = {};
+    const wardFeedbackCounts = {};
+    feedbacks.forEach(fb => {
+      const wId = fb.ward_id;
+      if (!wardScores[wId]) {
+        wardScores[wId] = 0;
+        wardFeedbackCounts[wId] = 0;
+      }
+      wardScores[wId] += fb.score;
+      wardFeedbackCounts[wId]++;
+    });
+
+    const wardAverages = {};
+    Object.keys(wardScores).forEach(wId => {
+      wardAverages[wId] = Math.round(wardScores[wId] / wardFeedbackCounts[wId]);
+    });
+
+    wards.forEach(w => {
+      const id = w.ward;
+      if (typeof WARD_DEMOGRAPHICS !== 'undefined' && WARD_DEMOGRAPHICS[id]) {
+        const target = WARD_DEMOGRAPHICS[id];
+        target.name = w.name;
+        target.population = w.population;
+        target.male = w.male;
+        target.female = w.female;
+        target.sc = w.sc;
+        target.st = w.st;
+        target.secretariat = w.secretariat;
+        target.womenPct = +((w.female / w.population) * 100).toFixed(2);
+        target.scPct = +((w.sc / w.population) * 100).toFixed(2);
+        target.stPct = +((w.st / w.population) * 100).toFixed(2);
+
+        // Map sustainability score (avg from DB or fallback formula)
+        const avgScore = wardAverages[id];
+        target.sustainability = avgScore !== undefined ? avgScore : Math.floor(60 + ((id * 17) % 36));
+      }
+    });
+
+    // Fire a custom event to notify pages that API demographics are loaded
+    document.dispatchEvent(new CustomEvent('gvmc-demographics-loaded'));
+  } catch (e) {
+    console.warn("Failed to load demographics from Supabase. Fallback to static JS data:", e);
+  }
+}
+
+// Auto-initializer
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    initApiDemographics();
+    initLoginModalUI();
+    updateHeaderAuth();
+  });
+} else {
+  initApiDemographics();
+  initLoginModalUI();
+  updateHeaderAuth();
+}

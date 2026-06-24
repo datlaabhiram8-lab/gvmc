@@ -328,7 +328,10 @@
             "Adavivaram",
             "Mudasaralova",
             "Darapalem village",
-            "Mudasarlova"
+            "Mudasarlova",
+            "KRM Colony",
+            "Maddilapalem",
+            "Maddilapalem Depot"
         ]
     },
     {
@@ -365,14 +368,11 @@
         "ward": 19,
         "areas": [
             "Bible Mission Church",
-            "KRM Colony",
             "Sri Lakshmi Nilayam Apartments",
             "NTR Statue",
             "Krishna College Road",
             "Automotive Junction",
             "NH-16",
-            "Maddilapalem",
-            "Maddilapalem Depot",
             "Kakatiya Function Hall",
             "Chaitanya Nagar Gedda",
             "Dumping Yard",

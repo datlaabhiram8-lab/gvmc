@@ -127,6 +127,35 @@ gvmc/
 | **Font Awesome 6** | Icons throughout the interface |
 | **Google Fonts (Outfit, Inter)** | Typography system |
 | **localStorage** | Persistent citizen feedback and session management |
+| **Django REST Framework** | Backend API for data management |
+| **Supabase / PostgreSQL** | Cloud database for ward data and complaints |
+
+### Backend Architecture
+The project includes a Django backend (`gvmc_backend/`) for:
+- RESTful API endpoints for ward data, complaints, and feedback
+- Database migrations and schema management
+- Admin interface for GVMC staff data management
+- Integration with Supabase PostgreSQL database
+
+Backend structure:
+```
+gvmc_backend/
+├── manage.py
+├── gvmc_backend/          # Django project settings
+│   ├── settings.py
+│   ├── urls.py
+│   ├── asgi.py
+│   └── wsgi.py
+├── wards/                 # Main application
+│   ├── models.py          # Ward, Complaint, Feedback models
+│   ├── serializers.py     # DRF serializers
+│   ├── views.py           # API views
+│   ├── urls.py            # API routes
+│   └── management/
+│       └── commands/
+│           └── seed_data.py  # Database seed script
+└── db.sqlite3             # Local development database
+```
 
 ---
 
@@ -182,6 +211,8 @@ Officers can access ward-specific management features after login.
 
 ## 🚀 Getting Started
 
+### Frontend
+
 No build tools or server required. Simply open any HTML file in a modern browser:
 
 ```bash
@@ -202,9 +233,59 @@ const GVMC_MAP = {
 };
 ```
 
+### Backend Setup
+
+To run the Django backend:
+
+```bash
+# Navigate to backend directory
+cd gvmc_backend
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Apply migrations
+python manage.py migrate
+
+# Create superuser for admin panel
+python manage.py createsuperuser
+
+# Load seed data
+python manage.py seed_data
+
+# Run development server
+python manage.py runserver
+```
+
+**Environment Variables** (create `.env` file in `gvmc_backend/`):
+```
+SUPABASE_URL=your_supabase_url
+SUPABASE_KEY=your_supabase_api_key
+SECRET_KEY=your_django_secret_key
+DEBUG=True
+```
+
+The API will be available at `http://localhost:8000/api/`
+
 ---
 
-## 📊 Data Coverage
+## �️ Database Schema
+
+The Supabase PostgreSQL database includes the following tables:
+
+| Table | Purpose |
+|---|---|
+| `wards` | Ward master data (number, name, population, coords) |
+| `complaints` | Citizen complaints with status tracking |
+| `feedback` | Citizen feedback ratings and sustainability scores |
+| `public_services` | POI data (hospitals, schools, parks) |
+| `projects` | Active municipal projects per ward |
+
+Full schema available in `supabase_schema.sql`
+
+---
+
+## �📊 Data Coverage
 
 | Metric | Value |
 |---|---|

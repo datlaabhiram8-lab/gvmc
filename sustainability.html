@@ -756,6 +756,9 @@
 
 <!-- SCRIPTS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<!-- Supabase Integration -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
 <script src="js/main.js"></script>
 <script src="js/ward_data.js"></script>
 <script src="js/demographics.js"></script>
@@ -884,8 +887,8 @@
     return ratings;
   }
 
-  // Official Dashboard Render
-  function renderSustainability() {
+  // Official Dashboard Render (async - uses backend API)
+  async function renderSustainability() {
     const val = document.getElementById('wardSelect').value;
     const dash = document.getElementById('susDashboard');
 
@@ -897,12 +900,16 @@
     const wardNum = parseInt(val);
     const ward = WARD_DEMOGRAPHICS[val];
     
-    // Calculate dynamic sustainability data
-    const dynamicData = getWardSustainabilityData(wardNum);
+    // Show loading state
+    document.getElementById('scoreVal').textContent = '…';
+    dash.classList.add('show');
+    
+    // Fetch dynamic sustainability data from API (with local fallback)
+    const dynamicData = await getWardSustainabilityData(wardNum);
     const score = dynamicData.finalScore;
     const ratings = dynamicData.finalRatings;
     
-    document.getElementById('susWardName').textContent = `Ward ${val} - ${ward.name || ''}`;
+    document.getElementById('susWardName').textContent = `Ward ${val} - ${(ward && ward.name) || ''}`;
     document.getElementById('scoreVal').textContent = score;
 
     // Get color and text
@@ -1006,7 +1013,7 @@
   }
 
   // Handle Citizen Survey Submission
-  function handleSurveySubmit(e) {
+  async function handleSurveySubmit(e) {
     e.preventDefault();
     const wardSelect = document.getElementById('surveyWardSelect');
     const wardNum = parseInt(wardSelect.value);
@@ -1017,13 +1024,12 @@
     }
 
     const finalScore = calculateCurrentSurveyScore();
+    const wardName = (WARD_DEMOGRAPHICS[wardNum] && WARD_DEMOGRAPHICS[wardNum].name) || `Ward ${wardNum}`;
     
-    // Store in LocalStorage
-    const submissions = JSON.parse(localStorage.getItem('gvmc_sustainability_feedback') || '[]');
     const newSubmission = {
       id: 'CSB-' + Date.now(),
       ward: wardNum,
-      wardName: WARD_DEMOGRAPHICS[wardNum].name || `Ward ${wardNum}`,
+      wardName,
       score: finalScore,
       ratings: {
         cleanliness: parseInt(document.getElementById('valCleanliness').value),
@@ -1038,15 +1044,42 @@
       date: new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })
     };
 
-    submissions.unshift(newSubmission);
-    localStorage.setItem('gvmc_sustainability_feedback', JSON.stringify(submissions));
+    // POST to Supabase backend
+    try {
+      if (!window.supabaseClient) throw new Error("Supabase client not initialized");
+      const { data, error } = await window.supabaseClient
+        .from('sustainability_feedback')
+        .insert({
+          id: newSubmission.id,
+          ward_id: wardNum,
+          cleanliness: newSubmission.ratings.cleanliness,
+          water: newSubmission.ratings.water,
+          transport: newSubmission.ratings.transport,
+          green: newSubmission.ratings.green,
+          roads: newSubmission.ratings.roads,
+          pollution: newSubmission.ratings.pollution,
+          disaster: newSubmission.ratings.disaster,
+          governance: newSubmission.ratings.governance,
+          score: finalScore,
+          date: newSubmission.date
+        })
+        .select();
+      if (error) throw error;
+      console.log('Survey saved to Supabase:', data);
+    } catch (err) {
+      console.warn('Supabase unavailable. Saving survey locally:', err);
+      // Fallback: Store in LocalStorage
+      const submissions = JSON.parse(localStorage.getItem('gvmc_sustainability_feedback') || '[]');
+      submissions.unshift(newSubmission);
+      localStorage.setItem('gvmc_sustainability_feedback', JSON.stringify(submissions));
+    }
 
     // Show Success Panel
     document.getElementById('surveyFormCard').style.display = 'none';
     document.getElementById('surveySuccessPanel').style.display = 'block';
 
     // Populate Success Metrics
-    document.getElementById('successWardName').textContent = `Ward ${wardNum} - ${newSubmission.wardName}`;
+    document.getElementById('successWardName').textContent = `Ward ${wardNum} - ${wardName}`;
     document.getElementById('successWeighted').textContent = `${finalScore} / 100`;
     
     const labelInfo = getCitizenSustainabilityLabel(finalScore);
@@ -1064,11 +1097,38 @@
     loadSurveyHistory();
   }
 
-  // Load and render survey history
-  function loadSurveyHistory() {
-    const submissions = JSON.parse(localStorage.getItem('gvmc_sustainability_feedback') || '[]');
+  // Load and render survey history (from API, fallback to localStorage)
+  async function loadSurveyHistory() {
     const historyCard = document.getElementById('historyCard');
     const list = document.getElementById('recentReviewsList');
+    let submissions = [];
+
+    try {
+      if (!window.supabaseClient) throw new Error("Supabase client not initialized");
+      const { data, error } = await window.supabaseClient
+        .from('sustainability_feedback')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+      if (error) throw error;
+      
+      submissions = data.map(item => {
+        const wardName = (typeof WARD_DEMOGRAPHICS !== 'undefined' && WARD_DEMOGRAPHICS[item.ward_id] && WARD_DEMOGRAPHICS[item.ward_id].name) || `Ward ${item.ward_id}`;
+        return {
+          id: item.id,
+          ward: item.ward_id,
+          wardName,
+          score: item.score ||
+            Math.round((item.cleanliness * 20 + item.water * 15 + item.transport * 15 +
+              item.green * 10 + item.roads * 10 + item.pollution * 10 +
+              item.disaster * 10 + item.governance * 10) / 10),
+          date: item.created_at ? new Date(item.created_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : ''
+        };
+      });
+    } catch (err) {
+      console.warn('Loading survey history from localStorage:', err);
+      submissions = JSON.parse(localStorage.getItem('gvmc_sustainability_feedback') || '[]');
+    }
     
     if (submissions.length === 0) {
       historyCard.style.display = 'none';
@@ -1166,7 +1226,7 @@
       <div class="demo-row">
         <div class="demo-item">
           <span class="demo-lbl">Username</span>
-          <span class="demo-val">admin</span>
+          <span class="demo-val">admin@gmail.com</span>
         </div>
         <div class="demo-item">
           <span class="demo-lbl">Password</span>
